@@ -35,11 +35,19 @@ staff with individual Sanity accounts (see Handover).
   it is bundling Studio (one 4 MB chunk; 841 packages, 51 under `@sanity/`).
   That cost is fixed, not proportional to page count, so it won't grow much in
   later phases. Build at phase boundaries, not on every change.
-- **`vitest.config.ts` must use the `vite-tsconfig-paths` plugin** for the `@/`
-  alias. `resolve: { tsconfigPaths: true }` is not a real Vite option — Vite
-  ignores it silently and tests then fail intermittently with
-  `Cannot read properties of undefined (reading 'config')`, most often right
-  after a build. Don't "simplify" it back.
+- **`vitest.config.ts` needs something to teach Vite the `@/` alias** from
+  `tsconfig.json` — Vitest does not pick it up on its own. Verified 2026-07-26
+  on Vite 8.1.5: `resolve: { tsconfigPaths: true }` is now native and works, so
+  the `vite-tsconfig-paths` plugin is gone. **Before Vite 8 that option did not
+  exist**, and Vite ignores unknown config keys silently, which is how the old
+  note came to say it was never real — tests failed with
+  `Cannot read properties of undefined (reading 'config')`. If you ever
+  downgrade Vite, the plugin comes back.
+  - **Removing it fails exactly one test file**, so the breakage reads as flaky
+    rather than as a config error. Only `utils.test.ts` imports a *value*
+    through `@/`; `places.test.ts` uses `@/` for a `import type` only, which is
+    erased before runtime and so resolves fine either way. Don't take a mostly
+    green run as proof the alias works.
 
 ### Sanity project (settings live outside this repo)
 
