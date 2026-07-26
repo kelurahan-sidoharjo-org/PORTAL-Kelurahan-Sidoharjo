@@ -9,9 +9,17 @@
  * lives outside src/app and is imported by nothing, so Next never bundles it —
  * the write token stays terminal-only.
  *
- * Every document uses a `seed.*` id and is written with createOrReplace, so:
+ * Every document uses a `seed-*` id (hyphens, NOT dots) and is written with
+ * createOrReplace, so:
  *   - re-running is safe (it overwrites, never duplicates), and
  *   - `--delete` can find and remove exactly what this script created.
+ *
+ * Why hyphens and not dots: Sanity treats a `.` in a document id as a reserved
+ * namespace (e.g. `drafts.`), and the PUBLIC (tokenless) API refuses to serve
+ * any document whose id contains a dot — it's considered private/system. An
+ * earlier version used `seed.place.1` etc.; those documents existed and were
+ * readable WITH a token, but the live website (which reads without a token)
+ * never saw them. Dotless ids like `seed-place-1` are ordinary public docs.
  *
  * Usage (from the project root):
  *   node scripts/seed.mjs                                  # dry run: prints, writes nothing
@@ -111,7 +119,7 @@ function slugify(text) {
 // --- build the documents from the CSVs -------------------------------------
 
 const places = readCsv("places.csv").map((r, i) => ({
-  _id: `seed.place.${i + 1}`,
+  _id: `seed-place-${i + 1}`,
   _type: "place",
   name: r.name,
   category: r.category,
@@ -119,7 +127,7 @@ const places = readCsv("places.csv").map((r, i) => ({
 }));
 
 const umkm = readCsv("umkm.csv").map((r, i) => ({
-  _id: `seed.umkm.${i + 1}`,
+  _id: `seed-umkm-${i + 1}`,
   _type: "umkm",
   businessName: r.businessName,
   description: r.description,
@@ -130,20 +138,20 @@ const umkm = readCsv("umkm.csv").map((r, i) => ({
 }));
 
 const staff = readCsv("staff.csv").map((r, i) => ({
-  _id: `seed.staff.${i + 1}`,
+  _id: `seed-staff-${i + 1}`,
   _type: "staffMember",
   name: r.name,
   position: r.position,
   order: Number(r.order),
 }));
 
-// Per-category counter so ids read seed.post.berita.1, seed.post.prestasi.1, …
+// Per-category counter so ids read seed-post-berita-1, seed-post-prestasi-1, …
 const postCounts = {};
 const posts = readCsv("posts.csv").map((r) => {
   const n = (postCounts[r.category] = (postCounts[r.category] ?? 0) + 1);
   const [y, m, d] = r.publishedAt.split("-").map(Number);
   return {
-    _id: `seed.post.${r.category}.${n}`,
+    _id: `seed-post-${r.category}-${n}`,
     _type: "post",
     title: r.title,
     category: r.category,
@@ -246,7 +254,11 @@ async function main() {
   const client = await makeClient();
 
   if (mode === "delete") {
-    const ids = await client.fetch('*[_id in path("seed.**")]._id');
+    // Match new hyphen ids (`seed-…`) plus any legacy dotted ones
+    // (`seed.…` and their `drafts.seed.…` versions) so old seeds get cleaned up.
+    const ids = await client.fetch(
+      '*[string::startsWith(_id, "seed-") || string::startsWith(_id, "seed.") || string::startsWith(_id, "drafts.seed.")]._id',
+    );
     if (ids.length === 0) {
       console.log("No seeded documents found.");
       return;

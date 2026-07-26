@@ -1,9 +1,6 @@
-
 # Portal Kelurahan Sidoharjo
 
-Lightweight, near-zero-cost government site for Kelurahan Sidoharjo. Solo
-beginner dev. Build style: **"I build, you explain"** — implement directly and
-explain the reasoning, not a guided-coding curriculum.
+* [ ] 
 
 ## Rules for the assistant
 
@@ -58,7 +55,7 @@ just public reads):
 npx sanity cors add http://localhost:3000 --credentials   # npx sanity cors list
 ```
 
-Add the deployed origin at Phase 5, once the final domain is settled, rather
+Add the deployed origin at Phase 4, once the final domain is settled, rather
 than accumulating stale origins now.
 
 ## Content model — `sanity/schemaTypes/*`, aggregated in `index.ts`
@@ -167,7 +164,7 @@ at build/revalidation, so load scales with content changes, not traffic.
   `src/app/api/revalidate/route.ts` so posts appear instantly. Built: POST,
   auth via an `x-revalidate-secret` header matching `SANITY_REVALIDATE_SECRET`,
   mapping `_type` → paths. **The webhook itself is still unconfigured** — set it
-  up in sanity.io/manage at Phase 5, once there's a deployed URL (Sanity cannot
+  up in sanity.io/manage at Phase 4, once there's a deployed URL (Sanity cannot
   reach `localhost`).
 - **`/berita/[slug]` is the shared article route** — it serves Prestasi posts
   too, since `PrestasiCard` links into it. Never filter that query or
@@ -199,6 +196,12 @@ runs the builds — see Rules above.)
   unmounts the field and stops the sync. That same input also seeds `excerpt`
   from the first line of `body` — a *default*, not a lock: it tracks the body
   until the editor types their own summary, then backs off.
+  **Both auto-patch effects must bail when `props.readOnly` is set.** A
+  read-only form (viewing the *Published* version via the perspective switcher,
+  an old revision, or a release) rejects every patch, so an unguarded
+  `onChange` throws "Attempted to patch a read-only document" and crashes the
+  form. Only surfaces on a post that has both a published and a draft version —
+  single-version posts never hit the read-only path.
 - [X] **Phase 2 — Static pages wired to Sanity.** Build `src/lib/sanity/*`, then
   easiest→hardest: Header/Footer → Pemerintah Kelurahan → UMKM → Prestasi →
   Berita (portable text, dynamic routes, paginated) → homepage. Add
@@ -208,19 +211,29 @@ runs the builds — see Rules above.)
   Peta & Tempat Publik, UMKM Lokal, Prestasi Kelurahan — icon + label, no
   preview) → "Berita Kelurahan" with the 3 latest posts + "lihat semua"
   (the only fetched content) → "Video Profil" embed (`heroVideoUrl`).
-- [ ] **Phase 3 — Peta.** Two columns desktop, stacked mobile:
+- [X] **Phase 3 — Peta.** Two columns desktop, stacked mobile:
   `kelurahanMapImage` left, list right. **Static image, not an interactive
   map** — no map library. Right column: search ("Cari Tempat Umum"), filter
   pills, 2-up grid of cards (icon + name + "lihat peta" → `googleMapsUrl`).
   Client-side filter + search. Pills lead with a **"Semua"** state that is not
   a category; every real category shows its full name capitalised
   (`pemerintahan` → "Pemerintahan"), so no category→label map is needed —
-  category→icon resolves mechanically too.
-- [ ] **Phase 4 — Demographics.** Server component groups `demographicStat` by
-  `statType`; one Recharts client component per chart.
-- [ ] **Phase 5 — Deploy polish + domain + handover.** Vercel env audit,
+  category→icon resolves mechanically too. Places list is **paginated
+  client-side** (`PLACES_PER_PAGE = 8`); `presentCategories`/`filterPlaces`/
+  `categoryLabel` are pure helpers in `src/lib/places.ts` (unit-tested), so
+  `PlaceExplorer` only does state + rendering. Empty states: "Belum ada tempat
+  yang terdaftar." (nothing seeded) vs "Tidak ada tempat yang cocok." (filtered
+  to none). Map panel shows "Peta belum diunggah." when `kelurahanMapImage` is
+  unset.
+- [ ] **Phase 4 — Deploy polish + domain + handover.** Vercel env audit,
   `cdn.sanity.io` image domain, SEO metadata/sitemap/robots, `.go.id` via
   PANDI, DNS cutover, then the Handover checklist below.
+- [ ] **Phase 5 — Demographics (deferred to a post-launch iteration).** Server
+  component groups `demographicStat` by `statType`; one Recharts client
+  component per chart. **Moved after deploy on purpose:** the other six content
+  areas are done, so the site can launch and hand over without the charts, and
+  demografi lands as a follow-up iteration once the kelurahan supplies real
+  numbers. Not a launch blocker; `/demografi` simply isn't linked until built.
 
 ## Handover (the project's actual end state)
 
@@ -248,7 +261,7 @@ turnover into a password-redistribution exercise. Invites are per **email
 address** and must match the Google account exactly — ask each person which
 Gmail they actually use. Non-Gmail users fall back to email + password.
 
-### Transfer plan (Phase 5, after the site is live and stable)
+### Transfer plan (Phase 4, after the site is live and stable)
 
 End state: kelurahan owns everything, **dev keeps a member/collaborator seat on
 each service** as a best-effort safety net. Ownership and billing move; access
@@ -284,7 +297,7 @@ every problem escalates to the dev by default and handover is cosmetic.
    best-effort, not a maintenance commitment — for future staff who never met
    the dev. That's the difference between a safety net and unpaid on-call.
 
-### Staff guide (Phase 5 deliverable)
+### Staff guide (Phase 4 deliverable)
 
 A short **Bahasa Indonesia** guide with screenshots: how to log in, add a
 berita, add a photo, edit `siteSettings`, and who to contact if something
@@ -321,5 +334,5 @@ status, gender ratio alone. The flat schema absorbs additions with no changes.
 
 Vercel + Sanity free tier (Rp 0). Domain **TBD** — kelurahan is a government
 instansi, so `.go.id`, **not** `.desa.id`. Often fee-free for verified instansi,
-but confirm requirements/cost with PANDI or Dinas Kominfo before Phase 5; do not
+but confirm requirements/cost with PANDI or Dinas Kominfo before Phase 4; do not
 assume the old `.desa.id` price.

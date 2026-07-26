@@ -72,7 +72,7 @@ function truncate(text: string): string {
  * document-level input stays mounted no matter which fields render.
  */
 export function PostDocumentInput(props: ObjectInputProps) {
-  const { onChange } = props;
+  const { onChange, readOnly } = props;
   const title = useFormValue(["title"]) as string | undefined;
   const createdAt = useFormValue(["_createdAt"]) as string | undefined;
   const currentSlug = (useFormValue(["slug"]) as SlugValue | undefined)?.current;
@@ -85,15 +85,18 @@ export function PostDocumentInput(props: ObjectInputProps) {
   const lastAutoExcerptRef = useRef("");
 
   useEffect(() => {
-    if (!title) return;
+    // When the form is read-only (viewing the Published version, an old
+    // revision, or a release) Sanity rejects any patch, so don't attempt one.
+    if (readOnly || !title) return;
     const datePart = (createdAt ?? fallbackDateRef.current).slice(0, 10);
     const next = `${slugify(title)}-${datePart}`;
     if (currentSlug !== next) {
       onChange(set({ _type: "slug", current: next }, ["slug"]));
     }
-  }, [title, createdAt, currentSlug, onChange]);
+  }, [title, createdAt, currentSlug, onChange, readOnly]);
 
   useEffect(() => {
+    if (readOnly) return;
     const current = currentExcerpt ?? "";
     const isStillAuto = current === "" || current === lastAutoExcerptRef.current;
     if (!isStillAuto) return;
@@ -103,7 +106,7 @@ export function PostDocumentInput(props: ObjectInputProps) {
       onChange(next ? set(next, ["excerpt"]) : unset(["excerpt"]));
       lastAutoExcerptRef.current = next;
     }
-  }, [body, currentExcerpt, onChange]);
+  }, [body, currentExcerpt, onChange, readOnly]);
 
   return props.renderDefault(props);
 }
