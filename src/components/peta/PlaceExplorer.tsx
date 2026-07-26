@@ -53,7 +53,7 @@ export function PlaceExplorer({ places }: { places: Place[] }) {
   const pageItems = visible.slice(pageInfo.start, pageInfo.end);
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-3 shadow-sm">
         <Search className="size-5 shrink-0 text-muted-foreground" aria-hidden />
         <input
@@ -68,7 +68,7 @@ export function PlaceExplorer({ places }: { places: Place[] }) {
 
       {/* Horizontal scroll on mobile so pills never wrap into a tall block;
           wraps normally from sm: up. */}
-      <div className="mt-4 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
+      <div className="mt-4 flex gap-2 overflow-x-auto sm:flex-wrap sm:overflow-visible">
         <FilterPill
           active={category === "semua"}
           onClick={() => selectCategory("semua")}

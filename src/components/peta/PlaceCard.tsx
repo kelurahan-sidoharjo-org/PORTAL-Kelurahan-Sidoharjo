@@ -9,19 +9,17 @@ import type { Place } from "@/lib/sanity/types";
  */
 export function PlaceCard({ place }: { place: Place }) {
   return (
-    <li className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm transition-shadow hover:shadow-lg sm:gap-4 sm:p-4">
-      <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand/10">
-        <Image
-          src={`/images/ic-place-${place.category}.png`}
-          alt=""
-          width={24}
-          height={24}
-          unoptimized
-          className="size-6 object-contain"
-        />
-      </span>
+    <li className="flex items-center rounded-2xl bg-white p-3 shadow-sm transition-shadow hover:shadow-lg gap-2 p-3">
+      <Image
+        src={`/images/ic-place-${place.category}.png`}
+        alt=""
+        width={24}
+        height={24}
+        unoptimized
+        className="size-7 object-contain"
+      />
 
-      <h2 className="min-w-0 flex-1 truncate text-sm font-bold text-brand-navy sm:text-base">
+      <h2 className="min-w-0 flex-1 truncate text-sm font-semibold text-brand-navy sm:text-base">
         {place.name}
       </h2>
 
@@ -29,7 +27,7 @@ export function PlaceCard({ place }: { place: Place }) {
         href={place.googleMapsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-black/15 px-3 py-2 text-xs sm:text-sm font-medium transition-colors hover:bg-black/5"
+        className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-black/15 px-2 py-2 text-xs font-medium transition-colors hover:bg-black/5"
       >
         <MapPin className="size-4" aria-hidden />
         lihat peta
