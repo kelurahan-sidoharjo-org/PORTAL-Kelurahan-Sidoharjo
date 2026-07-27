@@ -6,7 +6,7 @@ import { PortableBody } from "@/components/berita/PortableBody";
 import { BackButton } from "@/components/layout/BackButton";
 import { formatDateLong } from "@/lib/format";
 import { client } from "@/lib/sanity/client";
-import { imageProps } from "@/lib/sanity/image";
+import { imageProps, urlFor } from "@/lib/sanity/image";
 import { allPostSlugsQuery, postBySlugQuery } from "@/lib/sanity/queries";
 import type { PostDetail } from "@/lib/sanity/types";
 
@@ -28,11 +28,36 @@ async function getPost(slug: string) {
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const post = await getPost((await params).slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
   if (!post) return { title: "Tidak ditemukan" };
+
+  /**
+   * Articles are what actually gets shared — pasted into village WhatsApp
+   * groups, mostly — and a link with no preview image reads as broken or
+   * suspicious. The cover photo is already in Sanity, so this asks its CDN for
+   * a 1200x630 crop (the size every platform expects) rather than shipping a
+   * separate asset.
+   */
+  const ogImage = post.coverImage
+    ? urlFor(post.coverImage).width(1200).height(630).fit("crop").url()
+    : undefined;
+
+  const description = post.excerpt ?? undefined;
+
   return {
-    title: `${post.title} — Portal Kelurahan Sidoharjo`,
-    description: post.excerpt ?? undefined,
+    // Suffix comes from the title template in the root layout.
+    title: post.title,
+    description,
+    alternates: { canonical: `/berita/${slug}` },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description,
+      publishedTime: post.publishedAt,
+      url: `/berita/${slug}`,
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630 }] }),
+    },
   };
 }
 

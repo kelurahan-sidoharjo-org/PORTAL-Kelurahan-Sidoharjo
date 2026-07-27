@@ -117,3 +117,15 @@ export const postBySlugQuery = groq`
 export const allPostSlugsQuery = groq`
   *[_type == "post" && defined(slug.current)].slug.current
 `;
+
+/**
+ * Same documents as allPostSlugsQuery, but sitemap.xml also wants a
+ * `lastModified` per entry — hence `_updatedAt` (last edit) rather than
+ * `publishedAt` (the editable display date, which can be backdated).
+ */
+export const sitemapPostsQuery = groq`
+  *[_type == "post" && defined(slug.current)]{
+    "slug": slug.current,
+    _updatedAt
+  }
+`;

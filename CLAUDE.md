@@ -187,6 +187,10 @@ at build/revalidation, so load scales with content changes, not traffic.
 - `src/app/(site)/` is the public route group; `/admin` has its own layout so
   Studio doesn't inherit site fonts/chrome.
 - `design-reference/` holds design screenshots (gitignored).
+- `src/lib/site.ts` — site URL + name + description, the single source for
+  `metadataBase`, Open Graph, `sitemap.ts` and `robots.ts`. Server-only.
+- `docs/` — handover deliverables: `panduan-staf.md` (staff guide, Bahasa
+  Indonesia), `handover.md` (transfer runbook), `domain-go-id.md`.
 
 ## Roadmap & progress
 
@@ -233,9 +237,21 @@ runs the builds — see Rules above.)
   yang terdaftar." (nothing seeded) vs "Tidak ada tempat yang cocok." (filtered
   to none). Map panel shows "Peta belum diunggah." when `kelurahanMapImage` is
   unset.
-- [ ] **Phase 4 — Deploy polish + domain + handover.** Vercel env audit,
-  `cdn.sanity.io` image domain, SEO metadata/sitemap/robots, `.go.id` via
-  PANDI, DNS cutover, then the Handover checklist below.
+- [~] **Phase 4 — Deploy polish + domain + handover.** Code and docs are done;
+  the domain is not started (it blocks on an institutional email, which is
+  bureaucratic rather than technical).
+  - Done: env audit (`src/lib/site.ts` resolves the site URL from
+    `NEXT_PUBLIC_SITE_URL` → Vercel's own → localhost, so the `.go.id` cutover
+    is one env var); `metadataBase`, title template, per-page descriptions,
+    per-article Open Graph images from `coverImage`; `sitemap.ts`, `robots.ts`,
+    a generated `opengraph-image.tsx`; favicon replaced with the regency seal
+    (`src/app/icon.png`); starter SVGs deleted; revalidation webhook and
+    production CORS configured; `docs/` written.
+  - **No `cdn.sanity.io` image domain is needed** — the custom loader in
+    `next.config.ts` bypasses `/_next/image` entirely, so Next never fetches
+    remote images and has no host to validate. The old roadmap line was wrong.
+  - Remaining: `.go.id` via PANDI, DNS cutover, and the Handover checklist —
+    all tracked in `docs/domain-go-id.md` and `docs/handover.md`.
 - [ ] **Phase 5 — Demographics (deferred to a post-launch iteration).** Server
   component groups `demographicStat` by `statType`; one Recharts client
   component per chart. **Moved after deploy on purpose:** the other six content
@@ -305,12 +321,16 @@ every problem escalates to the dev by default and handover is cosmetic.
    best-effort, not a maintenance commitment — for future staff who never met
    the dev. That's the difference between a safety net and unpaid on-call.
 
-### Staff guide (Phase 4 deliverable)
+### Staff guide — written, see `docs/panduan-staf.md`
 
-A short **Bahasa Indonesia** guide with screenshots: how to log in, add a
-berita, add a photo, edit `siteSettings`, and who to contact if something
-breaks. This converts "the developer knows how it works" into "the kelurahan
-knows how it works."
+**Bahasa Indonesia**, plain language, no assumed computer skills: how to log in,
+add a berita/prestasi, upload a photo **via Select** (with the storage reason
+spelled out), edit `siteSettings`, and who to contact. Converts "the developer
+knows how it works" into "the kelurahan knows how it works."
+
+Two things still owed on it: the `![tangkapan layar: …]` placeholders need real
+screenshots from a logged-in Studio, and the contact names at the end need
+filling in. Both are listed in `docs/handover.md` step 6.
 
 ### The honest limit
 

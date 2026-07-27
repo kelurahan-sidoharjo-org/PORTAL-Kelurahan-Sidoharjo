@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { siteDescription, siteName, siteUrl } from "@/lib/site";
 import "../globals.css";
 
 const montserrat = Montserrat({
@@ -16,8 +17,29 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Website Kelurahan Sidoharjo",
-  description: "Situs resmi Kelurahan Sidoharjo, Kecamatan Sidoharjo, Kabupaten Wonogiri.",
+  /**
+   * Without metadataBase, Next emits Open Graph image paths as relative URLs.
+   * They resolve fine in a browser that already knows what site it's on, but
+   * WhatsApp and Google read the page from outside and simply drop them — so
+   * shared links lose their preview image.
+   */
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteName,
+    // Pages set a bare title ("Berita Kelurahan"); this appends the suffix, so
+    // it lives in one place instead of being retyped on every page.
+    template: `%s — ${siteName}`,
+  },
+  description: siteDescription,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    siteName,
+    url: siteUrl,
+    title: siteName,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({

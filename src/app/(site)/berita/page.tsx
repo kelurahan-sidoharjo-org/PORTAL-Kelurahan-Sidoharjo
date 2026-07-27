@@ -10,8 +10,12 @@ import type { PostSummary } from "@/lib/sanity/types";
 
 export const revalidate = 3600;
 
+// Suffix comes from the title template in the root layout.
 export const metadata: Metadata = {
-  title: "Berita Kelurahan — Portal Kelurahan Sidoharjo",
+  title: "Berita Kelurahan",
+  description:
+    "Kabar, pengumuman, dan kegiatan terbaru dari Kelurahan Sidoharjo.",
+  alternates: { canonical: "/berita" },
 };
 
 export default async function BeritaPage({

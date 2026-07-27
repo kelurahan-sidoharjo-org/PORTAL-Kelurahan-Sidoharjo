@@ -10,7 +10,10 @@ import type { PostSummary } from "@/lib/sanity/types";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Prestasi Kelurahan — Portal Kelurahan Sidoharjo",
+  title: "Prestasi Kelurahan",
+  description:
+    "Penghargaan dan capaian Kelurahan Sidoharjo dari tahun ke tahun.",
+  alternates: { canonical: "/prestasi" },
 };
 
 export default async function PrestasiPage() {

@@ -10,7 +10,10 @@ import type { Place, SiteSettings } from "@/lib/sanity/types";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Peta & Tempat Publik — Portal Kelurahan Sidoharjo",
+  title: "Peta & Tempat Publik",
+  description:
+    "Peta Kelurahan Sidoharjo beserta daftar tempat umum: kantor pemerintahan, masjid, sekolah, dan toko.",
+  alternates: { canonical: "/peta" },
 };
 
 export default async function PetaPage() {

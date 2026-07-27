@@ -8,7 +8,10 @@ import type { Umkm } from "@/lib/sanity/types";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "UMKM Lokal — Portal Kelurahan Sidoharjo",
+  title: "UMKM Lokal",
+  description:
+    "Direktori usaha mikro, kecil, dan menengah milik warga Kelurahan Sidoharjo.",
+  alternates: { canonical: "/umkm" },
 };
 
 export default async function UmkmPage() {

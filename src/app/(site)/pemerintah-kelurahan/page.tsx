@@ -11,7 +11,10 @@ import type { SiteSettings, StaffMember } from "@/lib/sanity/types";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Kantor Kelurahan — Portal Kelurahan Sidoharjo",
+  title: "Kantor Kelurahan",
+  description:
+    "Struktur organisasi, perangkat kelurahan, dan kontak resmi Kantor Kelurahan Sidoharjo.",
+  alternates: { canonical: "/pemerintah-kelurahan" },
 };
 
 export default async function PemerintahKelurahanPage() {
@@ -43,7 +46,7 @@ export default async function PemerintahKelurahanPage() {
         <div className="absolute inset-0 bg-brand-navy/50" />
 
         <div className="relative mx-auto w-full max-w-6xl px-4 py-10 text-white drop-shadow-2xl sm:px-6 sm:py-16">
-          <BackButton className="bg-white/20 backdrop-blur-lg" />
+          <BackButton className="sm:bg-white/15 sm:backdrop-blur-lg hover:text-white hover:bg-white/20" />
           <h1 className="mt-6 text-xl tracking-[-0.05em] sm:text-4xl">
             Kantor Kelurahan {villageName}
           </h1>
