@@ -63,8 +63,9 @@ just public reads):
 npx sanity cors add http://localhost:3000 --credentials   # npx sanity cors list
 ```
 
-Add the deployed origin at Phase 4, once the final domain is settled, rather
-than accumulating stale origins now.
+The Vercel production origin is added. Add the `.go.id` origin at Phase 5, once
+the domain actually exists — pre-adding a guessed hostname leaves a stale entry
+nobody can later tell apart from a real one.
 
 ## Content model — `sanity/schemaTypes/*`, aggregated in `index.ts`
 
@@ -171,9 +172,13 @@ at build/revalidation, so load scales with content changes, not traffic.
 - **On-demand revalidation is not optional** for a news site: Sanity webhook →
   `src/app/api/revalidate/route.ts` so posts appear instantly. Built: POST,
   auth via an `x-revalidate-secret` header matching `SANITY_REVALIDATE_SECRET`,
-  mapping `_type` → paths. **The webhook itself is still unconfigured** — set it
-  up in sanity.io/manage at Phase 4, once there's a deployed URL (Sanity cannot
-  reach `localhost`).
+  mapping `_type` → paths. Webhook configured in sanity.io/manage at Phase 4
+  (URL, POST, `production`, create/update/delete, projection `{_type, slug}`).
+  **The header value must carry no surrounding quotes** — the route compares it
+  with `!==`, so a quoted value 401s every delivery and the only symptom is that
+  the site quietly keeps serving stale pages. Settings are documented in
+  `README.md`; Sanity cannot reach `localhost`, so this only works against a
+  deployed URL.
 - **`/berita/[slug]` is the shared article route** — it serves Prestasi posts
   too, since `PrestasiCard` links into it. Never filter that query or
   `generateStaticParams` by `category`; doing so 404s every Prestasi article.
@@ -237,27 +242,57 @@ runs the builds — see Rules above.)
   yang terdaftar." (nothing seeded) vs "Tidak ada tempat yang cocok." (filtered
   to none). Map panel shows "Peta belum diunggah." when `kelurahanMapImage` is
   unset.
-- [~] **Phase 4 — Deploy polish + domain + handover.** Code and docs are done;
-  the domain is not started (it blocks on an institutional email, which is
-  bureaucratic rather than technical).
-  - Done: env audit (`src/lib/site.ts` resolves the site URL from
+- [X] **Phase 4 — Deploy polish.** Everything that makes the live site findable
+  and shareable. Verified 2026-07-27: build/lint/tsc/50 tests clean, and a test
+  post published in Studio reached the live site in seconds
+  (`{"revalidated":true}` in the webhook attempt log).
+  - Env audit (`src/lib/site.ts` resolves the site URL from
     `NEXT_PUBLIC_SITE_URL` → Vercel's own → localhost, so the `.go.id` cutover
-    is one env var); `metadataBase`, title template, per-page descriptions,
-    per-article Open Graph images from `coverImage`; `sitemap.ts`, `robots.ts`,
-    a generated `opengraph-image.tsx`; favicon replaced with the regency seal
-    (`src/app/icon.png`); starter SVGs deleted; revalidation webhook and
-    production CORS configured; `docs/` written.
+    in Phase 5 is one env var); `metadataBase`, title template, per-page
+    descriptions, per-article Open Graph images from `coverImage`; `sitemap.ts`,
+    `robots.ts`, a generated `opengraph-image.tsx`; favicon replaced with the
+    regency seal (`src/app/icon.png`); starter SVGs deleted; revalidation
+    webhook and production CORS configured; `docs/` written.
+  - **`opengraph-image.tsx` must live in `src/app/(site)/`, not `src/app/`.**
+    There is no root layout at `src/app/` — `(site)` and `admin` are separate
+    roots — so a file-convention OG image placed there is silently ignored: the
+    build passes and every page just ships without `og:image`. Only visible by
+    fetching a page and grepping the meta tags.
   - **No `cdn.sanity.io` image domain is needed** — the custom loader in
     `next.config.ts` bypasses `/_next/image` entirely, so Next never fetches
     remote images and has no host to validate. The old roadmap line was wrong.
-  - Remaining: `.go.id` via PANDI, DNS cutover, and the Handover checklist —
-    all tracked in `docs/domain-go-id.md` and `docs/handover.md`.
-- [ ] **Phase 5 — Demographics (deferred to a post-launch iteration).** Server
-  component groups `demographicStat` by `statType`; one Recharts client
-  component per chart. **Moved after deploy on purpose:** the other six content
-  areas are done, so the site can launch and hand over without the charts, and
-  demografi lands as a follow-up iteration once the kelurahan supplies real
-  numbers. Not a launch blocker; `/demografi` simply isn't linked until built.
+  - **The webhook header value must carry no surrounding quotes.** The route
+    compares it with `!==`, so a quoted value 401s every delivery — and the only
+    symptom is that the site quietly serves stale pages. This cost time once;
+    don't reintroduce it.
+  - **A 200 in the attempt log is not proof it worked.** When the payload maps
+    to no pages the route still returns 200, with `revalidated: false` and
+    "No pages mapped" — which happens if the projection drops `_type`. Read the
+    response body, not the status code.
+  - `NEXT_PUBLIC_SITE_URL` is intentionally **empty** for now. `src/lib/site.ts`
+    uses `||`, not `??`, so an empty value falls through to Vercel's own
+    production URL rather than winning the chain and handing `new URL("")` an
+    empty string to throw on. Give it a real value at the Phase 5 cutover.
+- [ ] **Phase 5 — Domain + handover.** `.go.id` via PANDI, DNS cutover, account
+  transfers, then the staff walkthrough. **Split out of Phase 4 on purpose:**
+  it's bureaucratic rather than technical and blocks on an institutional email
+  the kelurahan controls, so it moves on a different clock from anything in the
+  repo. Already specified in `docs/domain-go-id.md` (what to ask PANDI / Dinas
+  Kominfo) and `docs/handover.md` (the transfer runbook) — those are the working
+  documents; don't duplicate their checklists here.
+  - One domain covers both faces of the site: `<domain>` is the public site and
+    `<domain>/admin` is Studio, since Studio is embedded in the same Next app
+    rather than hosted separately. That's why the cutover has to re-run
+    `npx sanity cors add <origin> --credentials`.
+  - Still owed on the docs: real screenshots in `docs/panduan-staf.md` (they
+    need a logged-in Studio) and the contact names at its end.
+- [ ] **Phase 6 — Demographics (post-launch iteration).** Server component
+  groups `demographicStat` by `statType`; one Recharts client component per
+  chart. **Deliberately last:** the other six content areas are done, so the
+  site launches and hands over without the charts, and demografi lands once the
+  kelurahan supplies real numbers — which realistically won't be before
+  handover. Not a launch blocker; `/demografi` isn't linked, and is kept out of
+  `sitemap.ts`, until it's built.
 
 ## Handover (the project's actual end state)
 
@@ -271,11 +306,24 @@ couldn't add a colleague, resolve a billing notice, or recover access without
 them. Sanity, Vercel, GitHub, and the domain must all end up under a
 **kelurahan-controlled email**.
 
-**At least one staff member must be a Sanity Administrator.** Editors can write
-content but cannot invite people, so if the dev is the only Administrator, staff
-can't onboard a colleague after handover. Promote the most computer-comfortable
-person (often the sekretaris); everyone else stays **Editor** (create/edit/
-publish, no project settings, no dataset deletion).
+**Every content editor is an Administrator — the free plan has no middle role.**
+Confirmed 2026-07-27: Sanity's Free tier gives **2 permission roles only,
+Administrator and Viewer** (20 seats, which is ample). Viewer is read-only, so
+anyone who publishes a berita must be an Administrator. There is no Editor role
+to demote people to — that's a paid Growth feature, and upgrading breaks the
+Rp 0 constraint this project exists under.
+
+Two consequences, one good and one bad:
+
+- **Good:** the old worry — "if the dev is the only Administrator, staff can't
+  onboard a colleague" — disappears. Every staff member can invite the next one.
+- **Bad:** every staff member can also change project settings and delete the
+  dataset. **The safeguard is now written, not technical.** `docs/panduan-staf.md`
+  has to tell staff plainly which parts of Studio not to touch, because nothing
+  in the software will stop them.
+
+Use **Viewer** for anyone who only needs to look — someone being trained, or a
+camat who wants visibility without edit rights.
 
 **Individual accounts, Google sign-in preferred** — not a shared login. Password
 resets are the most common support request, and Google sign-in routes them to
@@ -285,13 +333,18 @@ turnover into a password-redistribution exercise. Invites are per **email
 address** and must match the Google account exactly — ask each person which
 Gmail they actually use. Non-Gmail users fall back to email + password.
 
-### Transfer plan (Phase 4, after the site is live and stable)
+### Transfer plan (Phase 5, after the site is live and stable)
+
+**The executable version of this lives in `docs/handover.md`** — tick-boxes,
+ordered, with the verification sequence. The summary below is the reasoning
+behind it; work from the doc, not from here.
 
 End state: kelurahan owns everything, **dev keeps a member/collaborator seat on
 each service** as a best-effort safety net. Ownership and billing move; access
 stays. Access alone is not responsibility — but access *only* by the dev is,
-which is why the staff Administrator above is a hard prerequisite. Without it
-every problem escalates to the dev by default and handover is cosmetic.
+which is why staff Administrators are a hard prerequisite. Without them every
+problem escalates to the dev by default and handover is cosmetic. On the free
+plan this is automatic: everyone who can edit is already an Administrator.
 
 0. **Institutional email — blocking dependency.** The kelurahan needs one email
    they control (not a staff personal Gmail, which just relocates the single
@@ -362,5 +415,6 @@ status, gender ratio alone. The flat schema absorbs additions with no changes.
 
 Vercel + Sanity free tier (Rp 0). Domain **TBD** — kelurahan is a government
 instansi, so `.go.id`, **not** `.desa.id`. Often fee-free for verified instansi,
-but confirm requirements/cost with PANDI or Dinas Kominfo before Phase 4; do not
-assume the old `.desa.id` price.
+but confirm requirements/cost with PANDI or Dinas Kominfo before Phase 5; do not
+assume the old `.desa.id` price. `docs/domain-go-id.md` holds the question list
+and a table to record the answers in.

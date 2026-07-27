@@ -17,19 +17,33 @@ Start them first.
   personal Gmail — that just relocates the single point of failure from the
   developer to one individual. Every account below gets registered to this
   address. This is the blocking dependency for the entire runbook.
-- [ ] **At least one staff member is a Sanity Administrator.** Editors can write
-  content but cannot invite people. If the developer is the only
-  Administrator, staff can never onboard a colleague and the handover is
-  cosmetic — every problem still escalates to the developer by default.
-  Promote the most computer-comfortable person, often the sekretaris.
-  Everyone else stays **Editor**: create, edit and publish content, but no
-  project settings and no dataset deletion.
+- [ ] **Every staff member who edits content is a Sanity Administrator.** Not a
+  choice — the Free plan has exactly **two roles, Administrator and Viewer**
+  (confirmed 2026-07-27; 20 seats available, which is plenty). Viewer is
+  read-only, so anyone publishing a berita needs Administrator. There is no
+  restricted Editor role on this plan, and upgrading to get one breaks the Rp 0
+  running cost the project is built around.
+  - This removes a problem: staff can invite their own colleagues without the
+    developer, so the handover isn't hostage to one account.
+  - It adds another: **any of them can change project settings or delete the
+    dataset.** Nothing in the software prevents it, so the protection has to be
+    the staff guide plus a spoken explanation. Cover this in the walkthrough at
+    step 6 — don't rely on the document alone.
+  - Give **Viewer** to anyone who only needs to look: someone in training, or a
+    camat who wants visibility without edit rights.
 
 ## 1. Sanity — transfer, do not recreate
 
 - [ ] In sanity.io/manage, transfer project ownership to the institutional email
-- [ ] Demote the developer's account to Administrator (do **not** remove it)
-- [ ] Confirm every staff member appears with the right role
+- [ ] Keep the developer's account as an Administrator (do **not** remove it)
+- [ ] Confirm every staff member appears, and that content editors are
+      Administrators rather than Viewers — a Viewer will hit a read-only Studio
+      and reasonably report it as broken
+- [ ] **Confirm the plan reads "Free", not "Growth trial".** The trial expires
+      on its own and downgrades automatically. Nothing is deleted, and the two
+      webhooks survive, but asset storage drops from 100 GB to 5 GB — so don't
+      let the trial's headroom encourage bulk-uploading full-size photos that
+      won't fit afterwards. See the storage budget in `README.md`.
 
 **Transfer keeps the project ID.** That single fact is why this must never be
 done by recreating the project: the ID is baked into `.env.local`, the Vercel
@@ -116,7 +130,7 @@ Nobody at the kelurahan can do that, and the original developer's help is
 
 Two things soften this considerably:
 
-1. **The sit****e fails safe.** Pages are static and cached at Vercel's edge, so a
+1. **The site fails safe.** Pages are static and cached at Vercel's edge, so a
    broken build or a Sanity outage leaves the last published version serving
    normally rather than taking the site down.
 2. **Any developer can pick this up.** The architecture, the reasoning behind

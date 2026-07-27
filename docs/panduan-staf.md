@@ -159,7 +159,35 @@ Sekolah, Toko, atau Lainnya.
 Tampilan berupa angka: 1 tampil paling awal, lalu 2, 3, dan seterusnya. Biasanya
 Lurah diberi angka 1.
 
-## 9. Mengubah atau menghapus
+## 9. Yang sebaiknya TIDAK diubah
+
+Akun Anda punya wewenang penuh atas situs ini. Itu bukan pilihan kami — paket
+gratis Sanity hanya menyediakan dua tingkat akses, dan tingkat yang lebih rendah
+sama sekali tidak bisa menulis. Jadi semua orang yang bisa menulis berita juga
+bisa mengubah pengaturan teknis.
+
+Artinya: **tidak ada pengaman otomatis.** Program tidak akan menahan Anda.
+Karena itu, tolong hindari bagian-bagian berikut.
+
+**Jangan disentuh:**
+
+- **Menu pengaturan proyek** (project settings) di sanity.io/manage — berisi
+  pengaturan teknis yang tidak berhubungan dengan isi situs
+- **Dataset** — bila dihapus, **seluruh isi situs hilang sekaligus**: semua
+  berita, foto, data UMKM, dan perangkat kelurahan. Tidak ada tombol pembatal.
+- **Vision** (menu bergambar mata di Ruang Kerja) — alat pemeriksa untuk
+  pengembang, bukan untuk mengisi konten
+- **API, Tokens, CORS origins, Webhooks** — semuanya sambungan teknis; bila
+  diubah, situs bisa berhenti memperbarui diri tanpa pemberitahuan apa pun
+
+**Yang aman Anda kerjakan** adalah semua yang dijelaskan di panduan ini: menu
+Berita, Prestasi, Tempat Umum, UMKM, Perangkat Kelurahan, dan Pengaturan Situs.
+
+Ragu-ragu? **Jangan diklik, tanyakan dulu.** Bertanya butuh satu menit;
+memulihkan data yang terhapus bisa butuh berhari-hari — atau tidak mungkin sama
+sekali.
+
+## 10. Mengubah atau menghapus
 
 - **Mengubah:** klik isinya di daftar, perbaiki, lalu **Publish** lagi.
 - **Menghapus:** buka isinya, klik tanda tiga titik di dekat tombol Publish,
@@ -168,7 +196,7 @@ Lurah diberi angka 1.
 Salah menghapus? Jangan panik. Sanity menyimpan riwayat perubahan. Hubungi
 Administrator — biasanya masih bisa dikembalikan.
 
-## 10. Kapan perubahan muncul di situs?
+## 11. Kapan perubahan muncul di situs?
 
 **Beberapa detik setelah Anda menekan Publish.** Coba muat ulang halamannya
 (tekan Ctrl+F5 di komputer, atau tarik layar ke bawah di HP).
@@ -177,7 +205,7 @@ Kalau setelah beberapa menit tetap belum berubah, catat waktunya lalu laporkan
 ke Administrator. Itu tanda ada sambungan yang perlu diperiksa, bukan kesalahan
 Anda.
 
-## 11. Bila ada masalah
+## 12. Bila ada masalah
 
 Isi bagian ini sebelum panduan dibagikan:
 
