@@ -5,11 +5,6 @@ situs. Tidak perlu pengalaman komputer khusus. Bila ada langkah yang tidak
 cocok dengan yang Anda lihat di layar, hubungi orang yang tercantum di bagian
 **Bila Ada Masalah** di halaman terakhir.
 
-> **Catatan untuk pemasang panduan ini:** tanda `![tangkapan layar: ...]` di
-> bawah adalah tempat gambar. Ambil tangkapan layar sesuai keterangannya,
-> simpan di `docs/images/`, lalu ganti tandanya. Tangkapan layar harus diambil
-> dari Studio yang sudah berisi data sungguhan.
-
 ---
 
 ## 1. Dua bagian yang perlu dipahami
@@ -18,8 +13,8 @@ Situs ini terdiri dari dua bagian yang terpisah:
 
 | Bagian | Alamat | Untuk siapa |
 | --- | --- | --- |
-| **Situs publik** | alamat utama situs | Semua orang, tanpa perlu masuk |
-| **Ruang Kerja (Studio)** | alamat utama + `/admin` | Hanya perangkat kelurahan |
+| **Situs publik** | `{{SITE_URL}}` | Semua orang, tanpa perlu masuk |
+| **Ruang Kerja (Studio)** | `{{SITE_URL}}/admin` | Hanya perangkat kelurahan |
 
 Warga hanya melihat situs publik. Semua tulisan, foto, dan data yang muncul di
 sana Anda isi lewat Ruang Kerja.
@@ -29,8 +24,8 @@ warga, tidak ada formulir, tidak ada yang bisa diubah orang luar.
 
 ## 2. Masuk ke Ruang Kerja
 
-1. Buka alamat situs, lalu tambahkan `/admin` di belakangnya.
-   Contoh: `https://alamat-situs/admin`
+1. Buka [{{SITE_URL}}/admin]({{SITE_URL}}/admin) — yaitu alamat situs dengan
+   tambahan `/admin` di belakangnya. Sebaiknya simpan sebagai bookmark.
 2. Pilih **Continue with Google**.
 3. Gunakan akun Google Anda sendiri — bukan akun bersama.
 

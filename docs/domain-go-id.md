@@ -21,11 +21,11 @@ They are different processes with different requirements.
 ## Before calling anyone
 
 - [ ] Confirm the institutional email exists (see [handover.md](./handover.md)
-      step 0). Registration will be tied to it, and doing this with a personal
-      address recreates the exact problem the handover is meant to solve.
+  step 0). Registration will be tied to it, and doing this with a personal
+  address recreates the exact problem the handover is meant to solve.
 - [ ] Agree internally on the domain name you want, plus a second choice.
 - [ ] Identify who at the kelurahan is authorised to sign — registration is an
-      institutional act, not something a developer can do on their behalf.
+  institutional act, not something a developer can do on their behalf.
 
 ## Who to ask
 
@@ -39,30 +39,30 @@ They are different processes with different requirements.
 **Eligibility and process**
 
 - [ ] Is a kelurahan eligible to register a `.go.id` directly, or must it go
-      through the kabupaten? (This one question can change everything below.)
+  through the kabupaten? (This one question can change everything below.)
 - [ ] Would we get our own domain, or a subdomain under the kabupaten's existing
-      domain? A subdomain is often faster and free — and works fine here.
+  domain? A subdomain is often faster and free — and works fine here.
 - [ ] Which documents are required? (Typically some combination of a permohonan
-      letter on official letterhead, a surat kuasa, and identification for the
-      authorised applicant — **confirm, don't assume**.)
+  letter on official letterhead, a surat kuasa, and identification for the
+  authorised applicant — **confirm, don't assume**.)
 - [ ] Who must sign, and at what level?
 - [ ] Is the requested name available?
 
 **Cost and renewal**
 
 - [ ] What is the registration fee, if any? `.go.id` is often free or nominal
-      for verified instansi — but confirm rather than planning around it.
+  for verified instansi — but confirm rather than planning around it.
 - [ ] What is the renewal period and cost?
 - [ ] **Who receives the renewal notice, and at which address?** An expired
-      domain takes the site offline with no warning to anyone. Make sure it goes
-      to the institutional email, not an individual.
+  domain takes the site offline with no warning to anyone. Make sure it goes
+  to the institutional email, not an individual.
 - [ ] Is there a budget line this has to go through, and what is its timeline?
 
 **Technical** — the only part that concerns the site itself
 
 - [ ] Can we set our own DNS records (specifically an `A` record and a `CNAME`)?
-      This is required to point the domain at Vercel. If DNS is managed by
-      Kominfo, we simply send them the two values; that is fine, just slower.
+  This is required to point the domain at Vercel. If DNS is managed by
+  Kominfo, we simply send them the two values; that is fine, just slower.
 - [ ] How long does a DNS change take to be applied?
 
 ## What happens on our side once the domain exists
@@ -88,17 +88,17 @@ no way to tell which are real.
 
 ## Answers — fill in as you get them
 
-| Question | Answer | Date | Who told us |
-| --- | --- | --- | --- |
-| Eligible directly, or via kabupaten? | | | |
-| Own domain or subdomain? | | | |
-| Documents required | | | |
-| Who signs | | | |
-| Registration fee | | | |
-| Renewal period + cost | | | |
-| Renewal notice goes to | | | |
-| Can we manage our own DNS? | | | |
-| Expected timeline | | | |
+| Question                             | Answer | Date | Who told us |
+| ------------------------------------ | ------ | ---- | ----------- |
+| Eligible directly, or via kabupaten? |        |      |             |
+| Own domain or subdomain?             |        |      |             |
+| Documents required                   |        |      |             |
+| Who signs                            |        |      |             |
+| Registration fee                     |        |      |             |
+| Renewal period + cost                |        |      |             |
+| Renewal notice goes to               |        |      |             |
+| Can we manage our own DNS?           |        |      |             |
+| Expected timeline                    |        |      |             |
 
 **Chosen domain:** ..............................................
 

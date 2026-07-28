@@ -17,8 +17,10 @@ project id is missing.
 ## Documentation
 
 - **[docs/panduan-staf.md](./docs/panduan-staf.md)** — staff guide, in Bahasa
-  Indonesia. How to log in, publish a berita, upload photos. Hand this to
-  kelurahan staff.
+  Indonesia. How to log in, publish a berita, upload photos. **Also served at
+  `/panduan`** (rendered from this exact file, linked in the footer, `noindex`
+  and kept out of the sitemap) — that URL is what you give kelurahan staff, not
+  this one.
 - **[docs/handover.md](./docs/handover.md)** — the transfer runbook, and an
   honest statement of what the kelurahan can and can't do without a developer.
 - **[docs/domain-go-id.md](./docs/domain-go-id.md)** — questions to put to PANDI

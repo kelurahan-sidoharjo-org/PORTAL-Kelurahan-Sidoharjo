@@ -105,6 +105,16 @@ unrecoverable. That is why verification comes before revoking anything.
 - [ ] Fill in the contact names at the end of
   [panduan-staf.md](./panduan-staf.md)
 - [ ] Take the screenshots that guide asks for, from a real logged-in Studio
+      holding real content — not an empty dataset. There are four, marked in the
+      Markdown as `![tangkapan layar: …]` with no image path, which is why they
+      currently render on the site as dashed "Gambar menyusul" boxes. To finish
+      one: save the image to `public/images/panduan/`, then replace the marker
+      with ordinary Markdown, e.g.
+      `![Halaman masuk Studio](/images/panduan/02-login.png)`. The box turns
+      into the picture automatically — no code change.
+- [ ] Give staff the guide's URL: **`<site>/panduan`**. It renders straight from
+      `docs/panduan-staf.md`, so editing that file updates the page. The link is
+      also in the footer of every page.
 - [ ] Walk one staff member through publishing a real berita, start to finish,
   while they drive and you watch
 

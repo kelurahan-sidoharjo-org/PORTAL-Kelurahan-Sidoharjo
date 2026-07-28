@@ -3,7 +3,7 @@ import { withUploadHint } from "./uploadHint";
 
 export const staffMember = defineType({
   name: "staffMember",
-  title: "Perangkat Kelurahan",
+  title: "Anggota Kelurahan",
   type: "document",
   fields: [
     defineField({
