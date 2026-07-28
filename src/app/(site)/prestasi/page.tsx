@@ -21,11 +21,11 @@ export default async function PrestasiPage() {
   const years = groupByYear(posts, (post) => post.publishedAt);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <PageHeading>Prestasi Kelurahan</PageHeading>
 
       {years.length > 0 ? (
-        <div className="mt-12">
+        <div className="mt-12 sm:ml-17">
           {years.map(({ year, items }) => (
             <section key={year} className="relative pb-10 sm:pl-8">
               {/* The vertical rail, drawn per-group so it never runs past the
@@ -35,18 +35,18 @@ export default async function PrestasiPage() {
                 className="absolute bottom-0 left-5 top-10 hidden w-px bg-black/10 sm:block"
               />
 
-              <h2 className="relative flex items-center gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand sm:-ml-8">
+              <h2 className="relative flex items-center gap-4">
+                <span className="sm:-ml-7">
                   <Image
                     src="/images/ic-trophy.png"
                     alt=""
                     width={32}
                     height={32}
                     unoptimized
-                    className="size-6"
+                    className="object-cover sm:size-9"
                   />
                 </span>
-                <span className="rounded-full bg-black/5 px-4 py-1 font-heading text-xs sm:text-sm font-bold">
+                <span className="font-heading text-xl sm:text-3xl font-bold">
                   {year}
                 </span>
               </h2>

@@ -90,7 +90,7 @@ export default async function PemerintahKelurahanPage() {
                 rel="noopener noreferrer"
                 // bg-brand/85, not solid: backdrop-blur only shows through a
                 // translucent background.
-                className="rounded-lg bg-brand/85 px-10 py-3 font-heading text-xs font-bold text-white backdrop-blur-md transition-opacity hover:opacity-90 sm:text-sm"
+                className="rounded-lg bg-brand/85 px-10 py-3 font-heading text-xs font-bold text-white backdrop-blur-md transition-opacity hover:bg-brand/100 sm:text-sm"
               >
                 Hubungi
               </a>

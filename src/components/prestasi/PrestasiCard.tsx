@@ -20,7 +20,7 @@ export function PrestasiCard({ post }: { post: PostSummary }) {
   const href = `/berita/${post.slug}`;
 
   return (
-    <article className="overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-lg">
+    <article className="overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow sm:max-w-sm sm:ml-10 hover:shadow-lg">
       {cover && (
         <Image
           {...cover}
