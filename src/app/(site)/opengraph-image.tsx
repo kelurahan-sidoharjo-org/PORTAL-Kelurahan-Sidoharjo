@@ -22,6 +22,7 @@ export const contentType = "image/png";
 const BRAND = "#2c694e";
 const BRAND_NAVY = "#002046";
 const PAGE_TOP = "#f8f6f0";
+const PAGE_BOT = "#e9f6eb";
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -34,14 +35,14 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: `linear-gradient(160deg, ${BRAND_NAVY} 0%, ${BRAND} 100%)`,
+          background: `linear-gradient(160deg, ${PAGE_TOP} %, ${PAGE_BOT} 100%)`,
         }}
       >
         <div
           style={{
             fontSize: 34,
             letterSpacing: "0.05em",
-            color: PAGE_TOP,
+            color: "#000000",
             opacity: 0.75,
           }}
         >
@@ -53,7 +54,7 @@ export default function OpengraphImage() {
             fontSize: 92,
             fontWeight: 700,
             lineHeight: 1.1,
-            color: "#ffffff",
+            color: "#000000",
           }}
         >
           Kelurahan Sidoharjo
@@ -62,7 +63,7 @@ export default function OpengraphImage() {
           style={{
             marginTop: 32,
             fontSize: 38,
-            color: PAGE_TOP,
+            color: "#000000",
             opacity: 0.9,
           }}
         >
