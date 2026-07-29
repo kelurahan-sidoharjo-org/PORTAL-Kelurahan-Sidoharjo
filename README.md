@@ -16,13 +16,18 @@ project id is missing.
 
 ## Documentation
 
-- **[docs/panduan-staf.md](./docs/panduan-staf.md)** — staff guide, in Bahasa
-  Indonesia. How to log in, publish a berita, upload photos. **Also served at
+**Everything in `docs/` is in Bahasa Indonesia** — its readers are at the
+kelurahan. This file and `CLAUDE.md` are the developer-facing pair, in English.
+
+- **[docs/panduan-staf.md](./docs/panduan-staf.md)** — staff guide. How to log
+  in, publish a berita, upload photos. **Also served at
   `/panduan`** (rendered from this exact file, linked in the footer, `noindex`
   and kept out of the sitemap) — that URL is what you give kelurahan staff, not
   this one.
 - **[docs/handover.md](./docs/handover.md)** — the transfer runbook, and an
-  honest statement of what the kelurahan can and can't do without a developer.
+  honest statement of what the kelurahan can and can't do without a developer —
+  including the closing section on what support is and isn't promised, which
+  they need to read and agree to.
 - **[docs/domain-go-id.md](./docs/domain-go-id.md)** — questions to put to PANDI
   / Dinas Kominfo before registering the domain.
 - **[CLAUDE.md](./CLAUDE.md)** — architecture, content model, and the reasoning

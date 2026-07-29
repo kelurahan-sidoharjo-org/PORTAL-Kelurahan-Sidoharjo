@@ -179,8 +179,12 @@ build/revalidation only, so load scales with content changes, not traffic.
 - `src/app/(site)/` is the public route group; `/admin` has its own layout so
   Studio doesn't inherit site fonts/chrome. **They are separate root layouts —
   there is no layout at `src/app/`.**
-- `docs/` — `panduan-staf.md` (staff guide, Bahasa Indonesia), `handover.md`
-  (transfer runbook), `domain-go-id.md`. Work from these, don't duplicate them.
+- `docs/` — `panduan-staf.md` (staff guide), `handover.md` (transfer runbook),
+  `domain-go-id.md` (PANDI question list). **All three are in Bahasa
+  Indonesia**; every one of them is read or acted on by the kelurahan, not only
+  by a developer. `CLAUDE.md` and `README.md` are the developer-facing pair and
+  stay English. Work from these, don't duplicate them — a translated copy
+  alongside an original would drift, and nobody maintains either after handover.
 - `design-reference/` — design screenshots (gitignored).
 
 ## Roadmap & progress
@@ -273,11 +277,26 @@ useless for "who changed this?", and turn staff turnover into password
 redistribution. Invites are per **email address** and must match the Google
 account exactly.
 
-**Transfer order** (detail in `docs/handover.md`): institutional email → Sanity
-(**transfer, never recreate** — keeps the project ID, so env vars and CORS keep
-working) → GitHub → Vercel (**Hobby, never a Team** — paid, no benefit at this
-scale) → DNS → verify end-to-end. The real risk is a half-finished transfer that
-looks fine until the next content edit silently stops deploying.
+**Transfer order** (detail in `docs/handover.md`): institutional email → **create
+the three receiving accounts** → Sanity (**transfer, never recreate** — keeps the
+project ID, so env vars and CORS keep working) → GitHub → Vercel (**Hobby, never
+a Team** — paid, no benefit at this scale) → DNS → verify end-to-end. The real
+risk is a half-finished transfer that looks fine until the next content edit
+silently stops deploying.
+
+- The runbook assumes the kelurahan starts with **only a Gmail address**, and
+  that **nobody there has ever set up two-factor auth**. Both shape step 1.
+  **Sign up for Vercel via GitHub and Sanity via Google** — not by email. That
+  isn't just convenience: Vercel then rides GitHub's login and Sanity rides
+  Google's, so the number of accounts needing their own 2FA drops from four to
+  **two**, and GitHub's 2FA is mandatory regardless. Enrol two people's phones
+  from the same QR code, print the recovery codes, and prove them by actually
+  logging in with one before leaving — step 1d.
+- **Moving the Vercel project can change the `*.vercel.app` address.** Pages
+  follow it automatically (`NEXT_PUBLIC_SITE_URL` is empty by design), but the
+  Sanity CORS origin and the webhook URL do not — and both fail silently: the
+  first walls off `/admin`, the second stops publishing without any error. They
+  get updated twice: once on the account move, once at the domain cutover.
 
 ### The honest limit
 

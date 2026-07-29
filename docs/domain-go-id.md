@@ -1,105 +1,117 @@
-# Domain `.go.id` — what to find out
+# Domain `.go.id` — yang perlu dicari tahu
 
-**This is a list of questions, not a list of answers.** `.go.id` requirements,
-documents and fees are set by PANDI and the relevant ministry, and they change.
-Anything written here from memory would be stale by the time somebody acts on
-it — and a wrong assumption about a government registration process costs weeks.
+**Ini daftar pertanyaan, bukan daftar jawaban.** Persyaratan, dokumen, dan biaya
+`.go.id` ditetapkan oleh PANDI dan kementerian terkait, dan semuanya bisa
+berubah. Apa pun yang ditulis di sini dari ingatan sudah akan basi ketika ada
+orang yang benar-benar mengerjakannya — dan salah menduga tentang proses
+pendaftaran pemerintah berbiaya berminggu-minggu.
 
-So: use this as a call sheet. Ask, then write the answers into the table at the
-bottom and commit it.
+Jadi: pakai berkas ini sebagai bahan bertanya. Tanyakan dulu, lalu tulis
+jawabannya ke tabel di bagian bawah dan commit.
 
-## Why `.go.id` and not `.desa.id`
+## Mengapa `.go.id`, bukan `.desa.id`
 
-A **kelurahan** is a government instansi under the camat, staffed by civil
-servants — administratively different from a **desa**, which has its own elected
-head and village government. `.desa.id` is for desa. Sidoharjo is a kelurahan,
-so `.go.id` is the correct namespace.
+**Kelurahan** adalah instansi pemerintah di bawah camat yang diisi pegawai
+negeri — secara administratif berbeda dari **desa**, yang punya kepala desa
+terpilih dan pemerintahan desa sendiri. `.desa.id` diperuntukkan bagi desa.
+Sidoharjo adalah kelurahan, jadi `.go.id` adalah ranah yang tepat.
 
-Practical consequence: **do not budget using `.desa.id` prices or paperwork.**
-They are different processes with different requirements.
+Akibat praktisnya: **jangan menyusun anggaran atau berkas dengan acuan
+`.desa.id`.** Keduanya proses yang berbeda dengan persyaratan yang berbeda pula.
 
-## Before calling anyone
+## Sebelum menghubungi siapa pun
 
-- [ ] Confirm the institutional email exists (see [handover.md](./handover.md)
-  step 0). Registration will be tied to it, and doing this with a personal
-  address recreates the exact problem the handover is meant to solve.
-- [ ] Agree internally on the domain name you want, plus a second choice.
-- [ ] Identify who at the kelurahan is authorised to sign — registration is an
-  institutional act, not something a developer can do on their behalf.
+- [ ] Pastikan email institusi sudah ada (lihat [handover.md](./handover.md)
+  langkah 0). Pendaftaran akan diikatkan ke alamat itu, dan mengerjakannya
+  dengan alamat pribadi justru mengulang persis masalah yang ingin dihindari
+  oleh serah terima ini.
+- [ ] Sepakati lebih dulu di internal nama domain yang diinginkan, beserta satu
+  pilihan cadangan.
+- [ ] Tentukan siapa di kelurahan yang berwenang menandatangani — pendaftaran
+  adalah tindakan kelembagaan, bukan sesuatu yang bisa diwakilkan kepada
+  pengembang.
 
-## Who to ask
+## Kepada siapa bertanya
 
-1. **Dinas Kominfo Kabupaten Wonogiri** — start here. They handle this for
-   instansi in the regency routinely, and may already have a standing process
-   (or an existing subdomain arrangement) that skips most of the work below.
-2. **PANDI** (pandi.id) — the registry itself, for anything Kominfo can't answer.
+1. **Dinas Kominfo Kabupaten Wonogiri** — mulailah dari sini. Mereka rutin
+   mengurus hal ini untuk instansi di kabupaten, dan mungkin sudah punya alur
+   baku (atau pengaturan subdomain yang sudah berjalan) yang membuat sebagian
+   besar langkah di bawah tidak perlu dikerjakan.
+2. **PANDI** (pandi.id) — registrinya langsung, untuk hal yang tidak bisa
+   dijawab Kominfo.
 
-## Questions to ask, in order
+## Pertanyaan yang perlu diajukan, berurutan
 
-**Eligibility and process**
+**Kelayakan dan proses**
 
-- [ ] Is a kelurahan eligible to register a `.go.id` directly, or must it go
-  through the kabupaten? (This one question can change everything below.)
-- [ ] Would we get our own domain, or a subdomain under the kabupaten's existing
-  domain? A subdomain is often faster and free — and works fine here.
-- [ ] Which documents are required? (Typically some combination of a permohonan
-  letter on official letterhead, a surat kuasa, and identification for the
-  authorised applicant — **confirm, don't assume**.)
-- [ ] Who must sign, and at what level?
-- [ ] Is the requested name available?
+- [ ] Apakah kelurahan boleh mendaftarkan `.go.id` secara langsung, atau harus
+  melalui kabupaten? (Satu pertanyaan ini bisa mengubah seluruh isi di bawahnya.)
+- [ ] Apakah kami akan mendapat domain sendiri, atau subdomain di bawah domain
+  kabupaten yang sudah ada? Subdomain sering kali lebih cepat dan gratis — dan
+  untuk kebutuhan ini pun sudah memadai.
+- [ ] Dokumen apa saja yang diperlukan? (Biasanya berupa gabungan surat
+  permohonan di atas kop resmi, surat kuasa, dan identitas pemohon yang
+  berwenang — **pastikan, jangan menduga**.)
+- [ ] Siapa yang harus menandatangani, dan pada tingkat jabatan apa?
+- [ ] Apakah nama yang diminta masih tersedia?
 
-**Cost and renewal**
+**Biaya dan perpanjangan**
 
-- [ ] What is the registration fee, if any? `.go.id` is often free or nominal
-  for verified instansi — but confirm rather than planning around it.
-- [ ] What is the renewal period and cost?
-- [ ] **Who receives the renewal notice, and at which address?** An expired
-  domain takes the site offline with no warning to anyone. Make sure it goes
-  to the institutional email, not an individual.
-- [ ] Is there a budget line this has to go through, and what is its timeline?
+- [ ] Berapa biaya pendaftarannya, kalau ada? `.go.id` sering kali gratis atau
+  bernilai kecil bagi instansi yang sudah terverifikasi — tetapi pastikan dulu,
+  jangan langsung dijadikan dasar rencana.
+- [ ] Berapa masa berlaku dan biaya perpanjangannya?
+- [ ] **Siapa yang menerima pemberitahuan perpanjangan, dan ke alamat mana?**
+  Domain yang telanjur kedaluwarsa membuat situs mati tanpa peringatan kepada
+  siapa pun. Pastikan pemberitahuannya masuk ke email institusi, bukan ke
+  perorangan.
+- [ ] Apakah ini harus melewati mata anggaran tertentu, dan bagaimana jadwalnya?
 
-**Technical** — the only part that concerns the site itself
+**Teknis** — satu-satunya bagian yang menyangkut situsnya sendiri
 
-- [ ] Can we set our own DNS records (specifically an `A` record and a `CNAME`)?
-  This is required to point the domain at Vercel. If DNS is managed by
-  Kominfo, we simply send them the two values; that is fine, just slower.
-- [ ] How long does a DNS change take to be applied?
+- [ ] Bisakah kami mengatur sendiri data DNS-nya (khususnya satu `A` record dan
+  satu `CNAME`)? Ini diperlukan untuk mengarahkan domain ke Vercel. Bila DNS
+  dikelola Kominfo, kami tinggal mengirimkan dua nilai itu kepada mereka; tidak
+  masalah, hanya lebih lambat.
+- [ ] Berapa lama perubahan DNS berlaku setelah diajukan?
 
-## What happens on our side once the domain exists
+## Yang dikerjakan di sisi kami begitu domainnya ada
 
-Small by design — four steps, all reversible:
+Sengaja dibuat sedikit — empat langkah, semuanya bisa dibatalkan:
 
-1. Add the domain in the Vercel project settings; Vercel shows the exact DNS
-   records to create.
-2. Set `NEXT_PUBLIC_SITE_URL` to `https://<domain>` in Vercel, then redeploy.
-   This is the single value that updates page metadata, link previews,
-   `sitemap.xml` and `robots.txt` — see `src/lib/site.ts`.
-3. `npx sanity cors add https://<domain> --credentials`, so `/admin` keeps
-   working on the new address.
-4. Update the webhook URL in sanity.io/manage → API → Webhooks.
+1. Tambahkan domain di pengaturan proyek Vercel; Vercel akan menampilkan data
+   DNS persis yang perlu dibuat.
+2. Isi `NEXT_PUBLIC_SITE_URL` dengan `https://<domain>` di Vercel, lalu deploy
+   ulang. Ini satu-satunya nilai yang memperbarui metadata halaman, pratinjau
+   tautan, `sitemap.xml`, dan `robots.txt` — lihat `src/lib/site.ts`.
+3. `npx sanity cors add https://<domain> --credentials`, agar `/admin` tetap
+   bekerja di alamat yang baru.
+4. Perbarui alamat webhook di sanity.io/manage → API → Webhooks.
 
-Then re-run the end-to-end check in [handover.md](./handover.md) step 5.
+Setelah itu, jalankan lagi pemeriksaan ujung ke ujung di
+[handover.md](./handover.md) langkah 6.
 
-**Don't do any of this early.** Adding a guessed origin or a domain that isn't
-registered yet leaves stale entries for a future developer to puzzle over, with
-no way to tell which are real.
+**Jangan mengerjakan ini lebih awal.** Menambahkan origin tebakan atau domain
+yang belum terdaftar hanya meninggalkan entri usang yang membingungkan
+pengembang di kemudian hari, tanpa cara membedakan mana yang benar-benar
+dipakai.
 
 ---
 
-## Answers — fill in as you get them
+## Jawaban — isi begitu diperoleh
 
-| Question                             | Answer | Date | Who told us |
-| ------------------------------------ | ------ | ---- | ----------- |
-| Eligible directly, or via kabupaten? |        |      |             |
-| Own domain or subdomain?             |        |      |             |
-| Documents required                   |        |      |             |
-| Who signs                            |        |      |             |
-| Registration fee                     |        |      |             |
-| Renewal period + cost                |        |      |             |
-| Renewal notice goes to               |        |      |             |
-| Can we manage our own DNS?           |        |      |             |
-| Expected timeline                    |        |      |             |
+| Pertanyaan                              | Jawaban | Tanggal | Sumber jawaban |
+| --------------------------------------- | ------- | ------- | -------------- |
+| Boleh langsung, atau lewat kabupaten?   |         |         |                |
+| Domain sendiri atau subdomain?          |         |         |                |
+| Dokumen yang diperlukan                 |         |         |                |
+| Siapa yang menandatangani               |         |         |                |
+| Biaya pendaftaran                       |         |         |                |
+| Masa berlaku + biaya perpanjangan       |         |         |                |
+| Pemberitahuan perpanjangan dikirim ke   |         |         |                |
+| Bisakah kami mengelola DNS sendiri?     |         |         |                |
+| Perkiraan jangka waktu                  |         |         |                |
 
-**Chosen domain:** ..............................................
+**Domain yang dipilih:** ..............................................
 
-**Registered on:** ...............  **Renews:** ...............
+**Terdaftar pada:** ...............  **Perpanjangan:** ...............
