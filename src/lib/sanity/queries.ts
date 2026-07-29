@@ -81,15 +81,36 @@ const postCardFields = groq`
   coverImage${imageFields}
 `;
 
-/** One page of Berita. $start/$end are computed from the ?page= param. */
+/**
+ * The Berita filter, shared by the list and its count so the two can never
+ * disagree about how many results exist — a mismatch there would show page
+ * links that lead to empty grids.
+ *
+ * `$q` is a match pattern from `toMatchPattern` in src/lib/search.ts, or null
+ * when the reader isn't searching: `!defined($q)` then short-circuits the rest
+ * away, so one query serves both cases instead of two that drift apart.
+ *
+ * Title *and* excerpt, because someone searching "kebersihan" expects to find
+ * "Kerja Bakti", where the word only appears in the summary.
+ */
+const beritaFilter = groq`
+  _type == "post" && category == "berita" &&
+  (!defined($q) || title match $q || excerpt match $q)
+`;
+
+/**
+ * One page of Berita. $start/$end come from the ?page= param, $q from ?q=.
+ * Both are parameters, never interpolated — nothing a reader types can alter
+ * the shape of the query.
+ */
 export const beritaListQuery = groq`
-  *[_type == "post" && category == "berita"] | order(publishedAt desc) [$start...$end]{
+  *[${beritaFilter}] | order(publishedAt desc) [$start...$end]{
     ${postCardFields}
   }
 `;
 
 export const beritaCountQuery = groq`
-  count(*[_type == "post" && category == "berita"])
+  count(*[${beritaFilter}])
 `;
 
 /** The three newest Berita, for the homepage. */

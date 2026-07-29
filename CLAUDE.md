@@ -144,6 +144,16 @@ build/revalidation only, so load scales with content changes, not traffic.
   `generateStaticParams` by `category`; doing so 404s every Prestasi article.
 - **`/berita` is paginated** via GROQ slice (`[$start...$end]`). Never render
   all posts.
+  - **Search (`?q=`) therefore runs in GROQ, not in the browser** — the opposite
+    of `/peta`. Copying `PlaceExplorer`'s client-side filter would search only
+    the twelve posts on screen and answer "tidak ada" for everything older,
+    looking correct while lying. `toMatchPattern` (`src/lib/search.ts`) turns
+    typed text into a `match` pattern; `null` means no filter, which
+    `!defined($q)` short-circuits away, so one query serves both cases. The
+    list and count queries **must** share that filter or the pager offers pages
+    that don't exist. `BeritaSearch` is a client component only to debounce
+    typing — the URL stays the source of truth, so results are shareable and
+    survive a reload.
 - **`/panduan` renders `docs/panduan-staf.md`** (read at build via
   `force-static`, so no filesystem access at request time; a missing file fails
   the build loudly). One source of truth — edit the Markdown, the page follows.

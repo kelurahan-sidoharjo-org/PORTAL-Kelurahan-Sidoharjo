@@ -19,7 +19,7 @@ Situs ini terdiri dari dua bagian yang terpisah:
 Warga hanya melihat situs publik. Semua tulisan, foto, dan data yang muncul di
 sana Anda isi lewat Ruang Kerja.
 
-Situs publik **tidak punya tombol masuk**. Itu memang disengaja: tidak ada akun
+Situs publik **tidak punya tombol login**. Itu memang disengaja: tidak ada akun
 warga, tidak ada formulir, tidak ada yang bisa diubah orang luar.
 
 ## 2. Masuk ke Ruang Kerja
@@ -31,11 +31,10 @@ warga, tidak ada formulir, tidak ada yang bisa diubah orang luar.
 
 ![tangkapan layar: halaman masuk Studio dengan tombol "Continue with Google"]
 
-**Setiap orang memakai akun sendiri.** Alasannya sederhana:
+**Setiap orang memakai akun sendiri.** agar:
 
 - Bila lupa sandi, Anda bisa mengurusnya sendiri lewat Google.
-- Riwayat perubahan mencatat siapa yang mengubah apa. Dengan akun bersama,
-  catatan itu jadi tidak berguna.
+- Riwayat perubahan mencatat siapa yang mengubah apa.
 - Bila ada pegawai yang pindah tugas, aksesnya tinggal dicabut, tanpa perlu
   mengganti sandi semua orang.
 

@@ -7,11 +7,28 @@ import { cn } from "@/lib/utils";
  * Plain links, no client-side state — so paging works without JavaScript and
  * each page stays independently cacheable and crawlable.
  */
-export function Pagination({ info }: { info: PageInfo }) {
+export function Pagination({
+  info,
+  query,
+}: {
+  info: PageInfo;
+  /** The active `?q=` search, carried into every page link so that paging
+   *  through results doesn't silently drop back to all posts. */
+  query?: string;
+}) {
   const { page, totalPages, hasPrev, hasNext } = info;
   if (totalPages <= 1) return null;
 
-  const href = (n: number) => (n === 1 ? "/berita" : `/berita?page=${n}`);
+  const href = (n: number) => {
+    const params = new URLSearchParams();
+    if (query?.trim()) params.set("q", query.trim());
+    // Page 1 is the bare address, so /berita and /berita?page=1 don't become
+    // two addresses for the same thing.
+    if (n > 1) params.set("page", String(n));
+    const search = params.toString();
+    return search ? `/berita?${search}` : "/berita";
+  };
+
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
