@@ -18,9 +18,7 @@ export const alt = siteName;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Mirrors --brand / --brand-navy / --page-top in globals.css.
-const BRAND = "#2c694e";
-const BRAND_NAVY = "#002046";
+// Mirrors --page-top / --page-bottom in globals.css.
 const PAGE_TOP = "#f8f6f0";
 const PAGE_BOT = "#e9f6eb";
 
@@ -35,7 +33,11 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: `linear-gradient(160deg, ${PAGE_TOP} %, ${PAGE_BOT} 100%)`,
+          // The `0%` is load-bearing: a bare `%` is not a valid colour stop, so
+          // the whole declaration used to be discarded and the card rendered on
+          // an empty background — invisible locally, only wrong in the preview
+          // WhatsApp and Google draw from the deployed page.
+          background: `linear-gradient(160deg, ${PAGE_TOP} 0%, ${PAGE_BOT} 100%)`,
         }}
       >
         <div

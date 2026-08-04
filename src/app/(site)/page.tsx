@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { BeritaCard } from "@/components/berita/BeritaCard";
 import { LayananNav } from "@/components/home/LayananNav";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { latestPostsQuery, siteSettingsQuery } from "@/lib/sanity/queries";
 import type { PostSummary, SiteSettings } from "@/lib/sanity/types";
 import { toEmbedUrl } from "@/lib/youtube";
@@ -11,8 +11,8 @@ export const revalidate = 3600;
 
 export default async function Home() {
   const [settings, posts] = await Promise.all([
-    client.fetch<SiteSettings | null>(siteSettingsQuery),
-    client.fetch<PostSummary[]>(latestPostsQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    sanityFetch<PostSummary[]>(latestPostsQuery),
   ]);
 
   const embedUrl = toEmbedUrl(settings?.heroVideoUrl);

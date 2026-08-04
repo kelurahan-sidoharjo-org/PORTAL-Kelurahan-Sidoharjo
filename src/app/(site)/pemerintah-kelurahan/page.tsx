@@ -3,7 +3,7 @@ import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { BackButton } from "@/components/layout/BackButton";
 import { StaffCard } from "@/components/pemerintah/StaffCard";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { imageFillProps, imageProps } from "@/lib/sanity/image";
 import { siteSettingsQuery, staffMembersQuery } from "@/lib/sanity/queries";
 import type { SiteSettings, StaffMember } from "@/lib/sanity/types";
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 export default async function PemerintahKelurahanPage() {
   const [settings, staff] = await Promise.all([
-    client.fetch<SiteSettings | null>(siteSettingsQuery),
-    client.fetch<StaffMember[]>(staffMembersQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    sanityFetch<StaffMember[]>(staffMembersQuery),
   ]);
 
   const office = imageFillProps(settings?.officeImage);

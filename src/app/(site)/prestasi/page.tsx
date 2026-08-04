@@ -3,7 +3,7 @@ import Image from "next/image";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { PrestasiCard } from "@/components/prestasi/PrestasiCard";
 import { groupByYear } from "@/lib/format";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { prestasiListQuery } from "@/lib/sanity/queries";
 import type { PostSummary } from "@/lib/sanity/types";
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PrestasiPage() {
-  const posts = await client.fetch<PostSummary[]>(prestasiListQuery);
+  const posts = await sanityFetch<PostSummary[]>(prestasiListQuery);
   const years = groupByYear(posts, (post) => post.publishedAt);
 
   return (

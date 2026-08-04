@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { sitemapPostsQuery } from "@/lib/sanity/queries";
 import { siteUrl } from "@/lib/site";
 
@@ -29,7 +29,7 @@ interface SitemapPost {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await client.fetch<SitemapPost[]>(sitemapPostsQuery);
+  const posts = await sanityFetch<SitemapPost[]>(sitemapPostsQuery);
   const now = new Date();
 
   return [

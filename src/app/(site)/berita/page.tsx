@@ -6,7 +6,7 @@ import { Pagination } from "@/components/berita/Pagination";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { getPageInfo, parsePageParam } from "@/lib/pagination";
 import { searchValue, toMatchPattern } from "@/lib/search";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { beritaCountQuery, beritaListQuery } from "@/lib/sanity/queries";
 import type { PostSummary } from "@/lib/sanity/types";
 
@@ -51,13 +51,13 @@ export default async function BeritaPage({
   const pattern = toMatchPattern(params.q);
   const query = searchValue(params.q);
 
-  const total = await client.fetch<number>(beritaCountQuery, { q: pattern });
+  const total = await sanityFetch<number>(beritaCountQuery, { q: pattern });
   const info = getPageInfo(page, total);
 
   // Deep-linking past the last page is a dead end, not an empty grid.
   if (page > info.totalPages) notFound();
 
-  const posts = await client.fetch<PostSummary[]>(beritaListQuery, {
+  const posts = await sanityFetch<PostSummary[]>(beritaListQuery, {
     start: info.start,
     end: info.end,
     q: pattern,

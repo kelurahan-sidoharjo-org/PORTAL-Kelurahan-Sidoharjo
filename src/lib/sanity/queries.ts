@@ -124,9 +124,18 @@ export const latestPostsQuery = groq`
  * Deliberately NOT filtered by category: /berita/[slug] is the shared article
  * route, and PrestasiCard links into it too. Filtering here would 404 every
  * Prestasi article.
+ *
+ * Matches `previousSlugs` as well, so an address the article held before its
+ * title was edited still finds it — the page then redirects to the current
+ * one. Without this, correcting a typo in a published headline would 404 every
+ * link already pasted into a village WhatsApp group. `defined()` is explicit
+ * because articles created before that field existed simply don't have it.
  */
 export const postBySlugQuery = groq`
-  *[_type == "post" && slug.current == $slug][0]{
+  *[_type == "post" && (
+    slug.current == $slug ||
+    (defined(previousSlugs) && $slug in previousSlugs)
+  )][0]{
     ${postCardFields},
     category,
     body,

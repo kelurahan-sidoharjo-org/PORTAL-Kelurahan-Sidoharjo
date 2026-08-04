@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import type { SiteSettings } from "@/lib/sanity/types";
 
@@ -11,7 +11,7 @@ import type { SiteSettings } from "@/lib/sanity/types";
  * emblem. See CLAUDE.md ("The header logo is static").
  */
 export async function Header() {
-  const settings = await client.fetch<SiteSettings | null>(siteSettingsQuery);
+  const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery);
 
   return (
     <header className="bg-white">

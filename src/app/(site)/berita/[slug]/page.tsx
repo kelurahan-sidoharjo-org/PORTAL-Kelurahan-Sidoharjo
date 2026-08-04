@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Calendar } from "lucide-react";
 import { PortableBody } from "@/components/berita/PortableBody";
 import { BackButton } from "@/components/layout/BackButton";
 import { formatDateLong } from "@/lib/format";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { imageProps, urlFor } from "@/lib/sanity/image";
 import { allPostSlugsQuery, postBySlugQuery } from "@/lib/sanity/queries";
 import type { PostDetail } from "@/lib/sanity/types";
@@ -19,12 +19,12 @@ type Params = { params: Promise<{ slug: string }> };
  * Filtering to `berita` here would leave every Prestasi card 404ing.
  */
 export async function generateStaticParams() {
-  const slugs = await client.fetch<string[]>(allPostSlugsQuery);
+  const slugs = await sanityFetch<string[]>(allPostSlugsQuery);
   return slugs.map((slug) => ({ slug }));
 }
 
 async function getPost(slug: string) {
-  return client.fetch<PostDetail | null>(postBySlugQuery, { slug });
+  return sanityFetch<PostDetail | null>(postBySlugQuery, { slug });
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -62,8 +62,17 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: Params) {
-  const post = await getPost((await params).slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
   if (!post) notFound();
+
+  /**
+   * Reached through an address this article used to have, before its title was
+   * edited — postBySlugQuery matches `previousSlugs` too. Redirect permanently
+   * to the address it carries now: the shared link keeps working, and Google
+   * folds the two together instead of indexing one article at two addresses.
+   */
+  if (post.slug !== slug) permanentRedirect(`/berita/${post.slug}`);
 
   const cover = imageProps(post.coverImage);
   // flatMap rather than map+filter so `props` narrows to non-null.

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { UmkmCard } from "@/components/umkm/UmkmCard";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { umkmListQuery } from "@/lib/sanity/queries";
 import type { Umkm } from "@/lib/sanity/types";
 
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function UmkmPage() {
-  const items = await client.fetch<Umkm[]>(umkmListQuery);
+  const items = await sanityFetch<Umkm[]>(umkmListQuery);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">

@@ -1,6 +1,12 @@
 import { useEffect, useRef } from "react";
 import { set, unset, useFormValue } from "sanity";
-import type { FieldProps, ObjectInputProps, SlugValue } from "sanity";
+import type {
+  FieldProps,
+  FormPatch,
+  ObjectInputProps,
+  SlugValue,
+} from "sanity";
+import { nextSlugState } from "./slugHistory";
 
 const PUBLISHED_AT_DESCRIPTIONS: Record<string, string> = {
   berita:
@@ -16,18 +22,6 @@ export function PublishedAtField(props: FieldProps) {
     ? PUBLISHED_AT_DESCRIPTIONS[category]
     : props.description;
   return props.renderDefault({ ...props, description });
-}
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .trim()
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 80);
 }
 
 /** Longest excerpt we'll store; longer first lines get cut at a word boundary. */
@@ -63,7 +57,9 @@ function truncate(text: string): string {
  * Document-level input that seeds/keeps two fields from the editor's other
  * input, so neither needs filling by hand:
  *
- *  - `slug`    — always mirrors title + creation date (hidden, fully derived)
+ *  - `slug`    — always mirrors title + creation date (hidden, fully derived),
+ *    with every address it has previously held banked in `previousSlugs` so
+ *    links already shared keep working. The rules live in slugHistory.ts.
  *  - `excerpt` — *defaults* to the first line of the body, but stays editable:
  *    once the editor types their own summary, we stop touching it.
  *
@@ -76,9 +72,13 @@ export function PostDocumentInput(props: ObjectInputProps) {
   const title = useFormValue(["title"]) as string | undefined;
   const createdAt = useFormValue(["_createdAt"]) as string | undefined;
   const currentSlug = (useFormValue(["slug"]) as SlugValue | undefined)?.current;
+  const previousSlugs = useFormValue(["previousSlugs"]) as string[] | undefined;
   const body = useFormValue(["body"]);
   const currentExcerpt = useFormValue(["excerpt"]) as string | undefined;
   const fallbackDateRef = useRef(new Date().toISOString());
+  // The last slug we wrote ourselves. It's what tells a throwaway mid-typing
+  // slug apart from an address the document arrived with — see slugHistory.ts.
+  const lastWrittenSlugRef = useRef<string | null>(null);
   // The last excerpt we auto-filled. While the field still holds this (or is
   // empty), the editor hasn't overridden it, so we keep it tracking the body.
   // The moment it differs, they've written their own — and we leave it alone.
@@ -88,12 +88,28 @@ export function PostDocumentInput(props: ObjectInputProps) {
     // When the form is read-only (viewing the Published version, an old
     // revision, or a release) Sanity rejects any patch, so don't attempt one.
     if (readOnly || !title) return;
-    const datePart = (createdAt ?? fallbackDateRef.current).slice(0, 10);
-    const next = `${slugify(title)}-${datePart}`;
-    if (currentSlug !== next) {
-      onChange(set({ _type: "slug", current: next }, ["slug"]));
+
+    const update = nextSlugState({
+      title,
+      datePart: (createdAt ?? fallbackDateRef.current).slice(0, 10),
+      currentSlug,
+      lastWritten: lastWrittenSlugRef.current,
+      previousSlugs,
+    });
+    if (!update) return;
+
+    // Both fields move in one change, so the article can never be left with a
+    // new address and no record of the old one.
+    const patches: FormPatch[] = [
+      set({ _type: "slug", current: update.slug }, ["slug"]),
+    ];
+    if (update.previousSlugs) {
+      patches.push(set(update.previousSlugs, ["previousSlugs"]));
     }
-  }, [title, createdAt, currentSlug, onChange, readOnly]);
+
+    lastWrittenSlugRef.current = update.slug;
+    onChange(patches);
+  }, [title, createdAt, currentSlug, previousSlugs, onChange, readOnly]);
 
   useEffect(() => {
     if (readOnly) return;

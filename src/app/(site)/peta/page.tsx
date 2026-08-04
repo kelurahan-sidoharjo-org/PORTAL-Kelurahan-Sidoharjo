@@ -3,7 +3,7 @@ import Image from "next/image";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { PlaceExplorer } from "@/components/peta/PlaceExplorer";
 import { imageProps } from "@/lib/sanity/image";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/client";
 import { placesQuery, siteSettingsQuery } from "@/lib/sanity/queries";
 import type { Place, SiteSettings } from "@/lib/sanity/types";
 
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 
 export default async function PetaPage() {
   const [settings, places] = await Promise.all([
-    client.fetch<SiteSettings | null>(siteSettingsQuery),
-    client.fetch<Place[]>(placesQuery),
+    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    sanityFetch<Place[]>(placesQuery),
   ]);
 
   const map = imageProps(settings?.kelurahanMapImage);
