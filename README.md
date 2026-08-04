@@ -4,6 +4,8 @@ Website resmi Kelurahan Sidoharjo. Tidak ada database, tidak ada formulir,
 tidak ada penulisan di sisi server. Situs publik hanya menyajikan konten
 statis/ISR dari Sanity.
 
+<br>
+
 ## Tech stack
 
 - **[Next.js](https://nextjs.org/docs)** (App Router) + **[TypeScript](https://www.typescriptlang.org/docs/)**
@@ -13,10 +15,14 @@ statis/ISR dari Sanity.
 - **[Vercel Hobby](https://vercel.com/docs)** untuk hosting, ISR (biaya tidak tergantung traffic)
 - **[Vitest](https://vitest.dev)** + **[React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)** untuk testing
 
+<br>
+
 ## Pengembangan
 
 Setup terdiri dari lima langkah berurutan, setiap langkah bergantung pada
 langkah sebelumnya.
+
+<br>
 
 ### 1. Dapatkan akses Sanity
 
@@ -24,6 +30,8 @@ Buat atau minta diundang ke proyek Sanity sebelum langkah lain bisa
 berjalan. Minta admin proyek untuk mengundang Anda sebagai Administrator
 (atau Viewer jika hanya perlu membaca). Setelah diundang, cari **project
 ID** dan **nama dataset** di [sanity.io/manage](https://sanity.io/manage) → proyek terkait → Settings → API. Keduanya dipakai di langkah berikutnya.
+
+<br>
 
 ### 2. Atur environment
 
@@ -38,6 +46,8 @@ cp .env.local.example .env.local
   untuk deployment.
 - `SANITY_WRITE_TOKEN` hanya jika Anda berencana mengisi (seed) konten
   (langkah 5).
+
+<br>
 
 ### 3. Login dan izinkan akses Studio lokal
 
@@ -55,6 +65,8 @@ npx sanity cors add http://localhost:3000 --credentials
   tersimpan di proyek Sanity, bukan di repo ini, jadi clone baru perlu
   mengulang langkah ini.
 
+<br>
+
 ### 4. Install dan jalankan
 
 ```bash
@@ -63,6 +75,8 @@ npm run dev
 ```
 
 Buka [http://localhost:3000](http://localhost:3000). Jika langkah 1–2 terlewat atau salah, aplikasi melempar error saat startup yang menyebutkan project ID Sanity yang hilang.
+
+<br>
 
 ### 5. Isi konten contoh (opsional, hanya jika halaman terlihat kosong)
 
@@ -75,6 +89,8 @@ node --env-file=.env.local scripts/seed.mjs --commit   # menulis; butuh SANITY_W
 
 `SANITY_WRITE_TOKEN` tidak ada di `.env.local` secara default — buat di sanity.io/manage → API → Tokens dengan izin Editor, dan jangan pernah tambahkan ke Vercel (lihat tabel environment variable di bawah untuk alasannya).
 
+<br>
+
 ### Perintah
 
 | Perintah               | Kegunaan                                                                                                                                               |
@@ -85,6 +101,8 @@ node --env-file=.env.local scripts/seed.mjs --commit   # menulis; butuh SANITY_W
 | `npm run test:watch` | Vitest, mode watch                                                                                                                                     |
 | `npm run build`      | Build produksi —**~60 detik**, sebagian besar untuk membundel Studio jadi satu chunk. Biaya tetap, tidak perlu dijalankan tiap perubahan kecil. |
 | `npm start`          | Menjalankan build produksi secara lokal                                                                                                                |
+
+<br>
 
 ## Struktur proyek
 
@@ -102,6 +120,8 @@ docs/            # panduan-staf.md, handover.md, domain-go-id.md — semua Bahas
 Konvensi yang lebih detail dan alasan di balik tiap keputusan ada di
 [CLAUDE.md](./CLAUDE.md) (Bahasa Inggris) — tidak diulang di sini.
 
+<br>
+
 ## Dokumentasi
 
 - **[docs/panduan-staf.md](./docs/panduan-staf.md)** — panduan staf. Cara login, publikasi berita, upload foto. **Juga disajikan di `/panduan`** (dirender langsung dari file ini, ditautkan di footer, `noindex` dan tidak dimasukkan ke sitemap).
@@ -109,9 +129,13 @@ Konvensi yang lebih detail dan alasan di balik tiap keputusan ada di
 - **[docs/domain-go-id.md](./docs/domain-go-id.md)** — daftar pertanyaan untuk PANDI / Dinas Kominfo sebelum mendaftarkan domain.
 - **[CLAUDE.md](./CLAUDE.md)** — arsitektur, model konten, dan alasan di balik tiap keputusan. Mulai dari sini kalau Anda baru mengambil alih proyek ini.
 
+<br>
+
 ## Deployment
 
 Next.js di Vercel Hobby, konten dari Sanity. Halaman bersifat ISR: dibangun satu kali, di-cache di edge, di-refresh tiap 1 jam *atau* langsung lewat webhook di bawah.
+
+<br>
 
 ### Environment variables
 
@@ -126,6 +150,8 @@ Next.js di Vercel Hobby, konten dari Sanity. Halaman bersifat ISR: dibangun satu
 
 **Vercel membaca environment variable saat build.** Menambah atau mengubah
 satu variabel tidak berefek apa pun ke situs yang sedang berjalan sampai di-redeploy.
+
+<br>
 
 ### Webhook revalidasi on-demand
 
@@ -145,6 +171,8 @@ muncul. Atur di sanity.io/manage → API → Webhooks:
 Route membandingkan header itu dengan environment variable secara exact
 match, jadi **nilainya tidak boleh diapit tanda kutip** dan harus identik di kedua tempat. Kalau tidak cocok, hasilnya 401 dan gagal secara diam-diam — situs terus menyajikan halaman lama. Cek delivery log Sanity untuk status `200` dengan `{ revalidated: true }`.
 
+<br>
+
 ### CORS
 
 Studio disematkan di `/admin`, jadi tidak ada yang perlu didaftarkan ke Sanity — hanya origin browser yang perlu di-allowlist:
@@ -155,10 +183,14 @@ npx sanity cors add https://<site> --credentials   # npx sanity cors list
 
 `--credentials` wajib: Studio mengirim sesi login, bukan sekadar akses baca publik. Tanpa itu, `/admin` menampilkan layar "Connect this Studio". Origin tersimpan di proyek Sanity, **bukan di version control**, jadi clone baru atau domain baru perlu mengulang langkah ini.
 
+<br>
+
 ## Kuota Penyimpanan gambar
 
 **Satu-satunya resource yang diukur dan terus bertambah seiring waktu.**
 Tier gratis Sanity mengizinkan **5 GB aset**, dan Sanity selalu menyimpan *file asli*. (menyajikan tampilan versi yang di-resize, tetapi tidak mengecilkan file yang tersimpan). Tidak ada hal lain di proyek ini yang menumpuk: situsnya statis, tidak ada database, dan traffic gratis.
+
+<br>
 
 ### Trade-off yang diambil
 
@@ -177,6 +209,8 @@ Studio punya asset source custom (`sanity/assetSources/`) yang men-downscale gam
 Galeri Dokumentasi mendominasi angka ini. Post dengan 2 foto alih-alih 8
 kira-kira membuat tiap angka di kolom kiri jadi tiga kali lebih kecil.
 
+<br>
+
 ### Yang harus dilakukan developer berikutnya
 
 Kegagalan yang realistis adalah upload mulai diam-diam gagal beberapa
@@ -187,6 +221,8 @@ Kalau Anda yang mengambil alih proyek ini:
    Jangan bertindak berdasarkan estimasi di atas; angka itu mengasumsikan
    frekuensi posting yang belum pernah diverifikasi.
 2. **Kalau penyimpanan naik lebih cepat dari perkiraan**, pertimbangkan tier berbayar setelah semua itu. 
+
+<br>
 
 ## Pengembangan ke depan
 
