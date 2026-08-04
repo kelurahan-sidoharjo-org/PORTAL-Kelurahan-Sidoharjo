@@ -1,5 +1,7 @@
 # Portal Kelurahan Sidoharjo
 
+test
+
 ## Rules for the assistant
 
 - **NO COMMITTING.** Never run `git commit`/`git push` unless asked in that
