@@ -1,6 +1,6 @@
 # Panduan Serah Terima
 
-* [ ] 
+* [ ]
 
 Panduan ini menganggap kelurahan baru punya satu alamat Gmail dan belum pernah
 memakai verifikasi dua langkah. Semua akun gratis; tidak ada yang meminta kartu
@@ -66,12 +66,11 @@ Hobby hanya untuk penggunaan non-komersial; website ini memenuhi syarat.
 
 ### 1d. Sanity
 
-- [ ] Masuk ke [sanity.io](https://www.sanity.io) lewat Continue with Google
-- [ ] Jangan membuat proyek baru. Proyek `b1xylg02` akan dipindahkan — ID-nya
+- [X] Masuk ke [sanity.io](https://www.sanity.io) lewat Continue with Google
+- [X] Jangan membuat proyek baru. Proyek `b1xylg02` akan dipindahkan — ID-nya
   tertanam di `.env.local`, di environment variables Vercel, dan di daftar CORS
 - [ ] Bila tersedia, buat Organization atas nama kelurahan
-
-### 1e. Buktikan
+- [ ] 1e. Buktikan
 
 - [ ] Keluar dari GitHub, masuk kembali memakai satu kode pemulihan dari kertas
 - [ ] Cetak ulang daftar kode setelahnya — kode bekas tidak berlaku lagi
@@ -96,8 +95,8 @@ Google pribadi. Jangan pakai login bersama.
 
 ## 3. GitHub — pindahkan repositori
 
-- [ ] Pindahkan repositori ke akun GitHub kelurahan
-- [ ] Tambahkan kembali pengembang sebagai collaborator
+- [X] Pindahkan repositori ke akun GitHub kelurahan
+- [X] Tambahkan kembali pengembang sebagai collaborator
 - [ ] Pastikan riwayat commit ikut berpindah utuh
 - [ ] Perbarui remote di komputer pengembang:
   `git remote set-url origin https://github.com/<akun-baru>/<nama-repo>.git`
