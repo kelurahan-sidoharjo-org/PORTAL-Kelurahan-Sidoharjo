@@ -1,7 +1,6 @@
 # Panduan Serah Terima
 
-Kelurahan memiliki seluruhnya; pengembang tetap dipertahankan sebagai akses
-cadangan sebatas kesediaan.
+* [ ] 
 
 Panduan ini menganggap kelurahan baru punya satu alamat Gmail dan belum pernah
 memakai verifikasi dua langkah. Semua akun gratis; tidak ada yang meminta kartu
@@ -50,8 +49,8 @@ Anggota kelurahan yang hanya mengisi konten tidak terlibat di bagian ini.
 
 ### 1b. GitHub
 
-- [ ] Daftar di [github.com](https://github.com) dengan email kelurahan
-- [ ] Pilih nama pengguna kelembagaan, misalnya `kelurahan-sidoharjo` — tampil
+- [X] Daftar di [github.com](https://github.com) dengan email kelurahan
+- [X] Pilih nama pengguna kelembagaan, misalnya `kelurahan-sidoharjo` — tampil
   publik dan merepotkan bila diganti nanti
 - [ ] Verifikasi dua langkah diwajibkan. Pindai dari dua HP yang sama
 - [ ] Cetak kode pemulihan GitHub, perlakukan sama seperti yang Google

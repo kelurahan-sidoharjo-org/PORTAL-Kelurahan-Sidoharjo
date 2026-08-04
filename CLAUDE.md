@@ -182,9 +182,12 @@ build/revalidation only, so load scales with content changes, not traffic.
 - `docs/` — `panduan-staf.md` (staff guide), `handover.md` (transfer runbook),
   `domain-go-id.md` (PANDI question list). **All three are in Bahasa
   Indonesia**; every one of them is read or acted on by the kelurahan, not only
-  by a developer. `CLAUDE.md` and `README.md` are the developer-facing pair and
-  stay English. Work from these, don't duplicate them — a translated copy
-  alongside an original would drift, and nobody maintains either after handover.
+  by a developer. **`README.md` was translated to Bahasa Indonesia in place on
+  2026-08-04** (at the maintainer's request) — `CLAUDE.md` is now the only
+  developer-facing doc left in English, kept that way as the deep
+  architecture/decision reference for whichever developer picks this project
+  up next. Work from these, don't duplicate them — a translated copy alongside
+  an original would drift, and nobody maintains either after handover.
 - `design-reference/` — design screenshots (gitignored).
 
 ## Roadmap & progress
