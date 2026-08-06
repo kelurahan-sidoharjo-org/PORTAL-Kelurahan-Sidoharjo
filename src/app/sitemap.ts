@@ -13,7 +13,7 @@ import { siteUrl } from "@/lib/site";
  */
 export const revalidate = 3600;
 
-/** Live routes only. /demografi is Phase 5 and would be a 404 in here. */
+/** Live routes only. /demografi is Phase 6 and would be a 404 in here. */
 const staticPaths = [
   "/",
   "/berita",

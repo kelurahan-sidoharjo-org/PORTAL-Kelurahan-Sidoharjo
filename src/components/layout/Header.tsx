@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { sanityFetch } from "@/lib/sanity/client";
-import { siteSettingsQuery } from "@/lib/sanity/queries";
-import type { SiteSettings } from "@/lib/sanity/types";
+import { getSiteSettings } from "@/lib/sanity/client";
 
 /**
  * Same on every page: seal + wordmark left, social links right.
@@ -11,7 +9,7 @@ import type { SiteSettings } from "@/lib/sanity/types";
  * emblem. See CLAUDE.md ("The header logo is static").
  */
 export async function Header() {
-  const settings = await sanityFetch<SiteSettings | null>(siteSettingsQuery);
+  const settings = await getSiteSettings();
 
   return (
     <header className="bg-white">

@@ -2,16 +2,16 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { BeritaCard } from "@/components/berita/BeritaCard";
 import { LayananNav } from "@/components/home/LayananNav";
-import { sanityFetch } from "@/lib/sanity/client";
-import { latestPostsQuery, siteSettingsQuery } from "@/lib/sanity/queries";
-import type { PostSummary, SiteSettings } from "@/lib/sanity/types";
+import { getSiteSettings, sanityFetch } from "@/lib/sanity/client";
+import { latestPostsQuery } from "@/lib/sanity/queries";
+import type { PostSummary } from "@/lib/sanity/types";
 import { toEmbedUrl } from "@/lib/youtube";
 
 export const revalidate = 3600;
 
 export default async function Home() {
   const [settings, posts] = await Promise.all([
-    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    getSiteSettings(),
     sanityFetch<PostSummary[]>(latestPostsQuery),
   ]);
 

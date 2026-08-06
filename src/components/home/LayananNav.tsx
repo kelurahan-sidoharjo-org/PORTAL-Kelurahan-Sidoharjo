@@ -4,9 +4,6 @@ import Link from "next/link";
 /**
  * Four static nav shortcuts — no previews, no fetching. The icons are bespoke
  * flat-vector exports, not emoji, despite reading like 🏛 🗺 🏪 🏆 at a glance.
- *
- * `/peta` doesn't exist until Phase 3 and will 404 until then; that's
- * deliberate, so there's no placeholder state to remember to remove.
  */
 const LAYANAN = [
   { href: "/pemerintah-kelurahan", icon: "ic-kantor-kelurahan", label: "Kantor Kelurahan" },

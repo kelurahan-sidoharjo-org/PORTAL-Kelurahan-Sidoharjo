@@ -32,9 +32,3 @@ export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
  * sanity.config.ts and sanity/assetSources/resizeUploadAssetSource.tsx.
  */
 export const apiVersion = process.env.SANITY_API_VERSION || "2024-01-01";
-
-/*
-process.env is a global variable in the environment the project is running
- ! suffix mean it promise there's a value in there, could be dangerous once it's copied to another repo
-
- */

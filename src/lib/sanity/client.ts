@@ -1,39 +1,49 @@
+import { cache } from "react";
 import { createClient } from "next-sanity";
 import type { QueryParams } from "next-sanity";
 import { apiVersion, dataset, projectId } from "./env";
+import { siteSettingsQuery } from "./queries";
+import type { SiteSettings } from "./types";
 
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
   /**
-   * Reads happen at build and revalidation rather than per visitor, so the CDN
-   * saves almost nothing here — while costing correctness. When the publish
-   * webhook fires, Sanity's CDN can still be holding the pre-publish answer, so
-   * the page rebuilds with the *old* content and then sits on it for the full
-   * hour. Nothing errors; staff just see their edit not appear.
+   * Pembacaan terjadi saat build dan revalidation, bukan per pengunjung, jadi
+   * CDN nyaris tidak menghemat apa pun di sini — sementara mengorbankan
+   * ketepatan data. Saat webhook publish menembak, CDN Sanity bisa saja masih
+   * menyimpan jawaban sebelum publish, sehingga halaman dibangun ulang dengan
+   * konten *lama* lalu diam selama satu jam penuh. Tidak ada yang error; staf
+   * hanya melihat perubahannya tidak muncul.
    *
-   * Going straight to the API removes that. `sanityFetch` below is what keeps
-   * the extra traffic off Sanity's rate limits.
+   * Langsung ke API menghilangkan masalah itu. `sanityFetch` di bawah ini yang
+   * menjaga trafik tambahannya tidak membebani rate limit Sanity.
    */
   useCdn: false,
   perspective: "published",
 });
 
-/** Kept in step with `export const revalidate` on the pages. */
+/** Sepadan dengan `export const revalidate` di setiap halaman. */
 const REVALIDATE_SECONDS = 3600;
 
 /**
- * Read Sanity through this, not through `client.fetch` directly.
+ * Baca Sanity lewat ini, bukan lewat `client.fetch` langsung.
  *
- * With the CDN off, every read hits Sanity's main API, which is rate-limited
- * far more tightly. Next's Data Cache absorbs it: the same query is fetched
- * once an hour no matter how often it's asked for. That matters most on
- * /berita, which reads `searchParams` and therefore can't be prerendered — it
- * renders per request, taking Header and Footer along with it.
+ * Dengan CDN mati, setiap pembacaan menembak API utama Sanity, yang rate
+ * limit-nya jauh lebih ketat. Data Cache milik Next menyerapnya: query yang
+ * sama hanya diambil sekali per jam berapa pun sering ia diminta. Ini paling
+ * berarti di `/berita`, yang membaca `searchParams` sehingga tidak bisa
+ * di-prerender — ia dirender per request, menyeret Header dan Footer ikut
+ * serta.
  */
 export function sanityFetch<T>(query: string, params: QueryParams = {}) {
   return client.fetch<T>(query, params, {
     next: { revalidate: REVALIDATE_SECONDS },
   });
 }
+
+/** Header, Footer, dan beberapa halaman sama-sama memintanya dalam render yang sama. */
+export const getSiteSettings = cache(() =>
+  sanityFetch<SiteSettings | null>(siteSettingsQuery),
+);

@@ -19,7 +19,7 @@ import remarkGfm from "remark-gfm";
  * GitHub-Flavored extension that plain Markdown doesn't include.
  */
 
-/** Screenshots that haven't been taken yet — see docs/handover.md step 6. */
+/** Screenshots still missing for some steps — see docs/handover.md step 6. */
 const PLACEHOLDER = /^!\[tangkapan layar:\s*(.+?)\]$/;
 
 /** Flattens a React children tree to plain text, for the placeholder check. */

@@ -3,10 +3,10 @@ import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { BackButton } from "@/components/layout/BackButton";
 import { StaffCard } from "@/components/pemerintah/StaffCard";
-import { sanityFetch } from "@/lib/sanity/client";
+import { getSiteSettings, sanityFetch } from "@/lib/sanity/client";
 import { imageFillProps, imageProps } from "@/lib/sanity/image";
-import { siteSettingsQuery, staffMembersQuery } from "@/lib/sanity/queries";
-import type { SiteSettings, StaffMember } from "@/lib/sanity/types";
+import { staffMembersQuery } from "@/lib/sanity/queries";
+import type { StaffMember } from "@/lib/sanity/types";
 
 export const revalidate = 3600;
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default async function PemerintahKelurahanPage() {
   const [settings, staff] = await Promise.all([
-    sanityFetch<SiteSettings | null>(siteSettingsQuery),
+    getSiteSettings(),
     sanityFetch<StaffMember[]>(staffMembersQuery),
   ]);
 
