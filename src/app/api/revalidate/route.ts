@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
+import { LAYOUT_SENTINEL, pathsFor, type WebhookBody } from "@/lib/revalidate";
 
 /**
  * Sanity webhook target: rebuilds affected pages the moment content is
@@ -11,44 +12,6 @@ import { NextResponse } from "next/server";
  * does more than bust a cache, but it's another dependency to keep alive past
  * handover and this route only triggers rebuilds.
  */
-interface WebhookBody {
-  _type?: string;
-  slug?: { current?: string } | string;
-}
-
-function slugOf(body: WebhookBody): string | null {
-  if (typeof body.slug === "string") return body.slug;
-  return body.slug?.current ?? null;
-}
-
-/** Which pages show a given document type. */
-function pathsFor(body: WebhookBody): string[] {
-  switch (body._type) {
-    case "post": {
-      const slug = slugOf(body);
-      // Both list pages: category may have changed, or this may be a prestasi
-      // post, and the homepage carries the three latest.
-      return [
-        ...(slug ? [`/berita/${slug}`] : []),
-        "/berita",
-        "/prestasi",
-        "/",
-      ];
-    }
-    case "staffMember":
-      return ["/pemerintah-kelurahan"];
-    case "umkm":
-      return ["/umkm"];
-    case "place":
-      return ["/peta"];
-    case "siteSettings":
-      // Header and Footer read siteSettings and appear on every page.
-      return ["__layout__"];
-    default:
-      return [];
-  }
-}
-
 export async function POST(request: Request) {
   const secret = process.env.SANITY_REVALIDATE_SECRET;
   if (!secret) {
@@ -79,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   for (const path of paths) {
-    if (path === "__layout__") revalidatePath("/", "layout");
+    if (path === LAYOUT_SENTINEL) revalidatePath("/", "layout");
     else revalidatePath(path);
   }
 
