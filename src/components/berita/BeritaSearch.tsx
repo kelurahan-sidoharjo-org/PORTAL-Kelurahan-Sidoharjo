@@ -4,33 +4,30 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderCircle, Search, X } from "lucide-react";
 
-/** How long to wait after the last keystroke before asking Sanity. */
+/** Lama menunggu setelah ketukan terakhir sebelum bertanya ke Sanity. */
 const DEBOUNCE_MS = 300;
 
 /**
- * The /berita search box — the same control as the one on PetaMap, doing a
- * different job underneath.
+ * Kotak pencarian /berita — sama seperti di PetaMap, tugas beda di
+ * baliknya. PetaMap sudah punya semua data di browser dan memfilter di
+ * memori; /berita cuma menyimpan satu halaman post, jadi pencariannya
+ * harus menjangkau Sanity.
  *
- * PetaMap already holds every place and UMKM in the browser, so it filters in
- * memory. /berita only ever holds one page of posts (CLAUDE.md: "never render
- * all posts"), so searching there has to reach Sanity, or it would search the
- * visible twelve and report "nothing found" for everything older.
- *
- * So typing updates the address (`/berita?q=…`) and the server re-queries. The
- * address, not this component, is the source of truth: results stay shareable,
- * survive a reload, and the Back button behaves.
+ * Mengetik memperbarui alamat (`/berita?q=…`) dan server query ulang.
+ * Alamatnya jadi sumber kebenaran: hasil tetap bisa dibagikan, bertahan
+ * setelah reload, dan tombol Back berperilaku benar.
  */
 export function BeritaSearch({ value }: { value: string }) {
   const router = useRouter();
-  // Local state so typing is instant no matter how slow the round-trip is.
+  // State lokal supaya mengetik terasa instan berapa pun lambatnya round-trip-nya.
   const [text, setText] = useState(value);
   const [isPending, startTransition] = useTransition();
 
   /**
-   * The address is authoritative, so it has to win when it changes for reasons
-   * this component didn't cause — the clear button on an empty result, a Back
-   * navigation, a shared link. Syncing on `value` alone would fight the user's
-   * typing; the ref tracks what we last *sent*, so only outside changes win.
+   * Alamatnya otoritatif, harus menang saat berubah dari luar (Back,
+   * tautan yang dibagikan). Sinkronisasi murni dari `value` akan
+   * berbenturan dengan ketikan; ref-nya melacak apa yang terakhir kita
+   * kirim, jadi cuma perubahan dari luar yang menang.
    */
   const lastSent = useRef(value);
   useEffect(() => {
@@ -47,14 +44,12 @@ export function BeritaSearch({ value }: { value: string }) {
       lastSent.current = text;
       const params = new URLSearchParams();
       if (text.trim()) params.set("q", text.trim());
-      // Deliberately no `page`: a new search starts at page 1. Carrying page 4
-      // across would land the reader on an empty grid.
+      // Sengaja tanpa `page`: pencarian baru mulai dari halaman 1.
       const query = params.toString();
 
       startTransition(() => {
-        // `replace`, not `push` — otherwise Back walks backwards through every
-        // keystroke instead of leaving the page. `scroll: false` keeps the
-        // reader's place instead of jumping to the top on each keystroke.
+        // `replace`, bukan `push` — Back tidak boleh mundur lewat tiap
+        // ketukan tuts. `scroll: false` menjaga posisi pembaca.
         router.replace(query ? `/berita?${query}` : "/berita", {
           scroll: false,
         });
@@ -66,10 +61,9 @@ export function BeritaSearch({ value }: { value: string }) {
 
   return (
     /*
-     * A real GET form, so the search still works with JavaScript disabled: the
-     * browser turns Enter into /berita?q=… by itself. With JavaScript the
-     * submit is redundant — the debounce has already navigated — so it's
-     * cancelled to avoid a duplicate trip. Same no-JS reasoning as Pagination.
+     * Form GET sungguhan, supaya pencarian tetap jalan tanpa JavaScript.
+     * Dengan JavaScript, submit-nya dibatalkan karena debounce sudah
+     * melakukan navigasi — sama seperti Pagination.
      */
     <form
       action="/berita"
@@ -97,8 +91,8 @@ export function BeritaSearch({ value }: { value: string }) {
           className="w-full bg-transparent text-sm outline-none sm:text-base"
         />
 
-        {/* Only offered once there's something to clear. A button, not a link:
-            clearing goes through the same debounced path as typing. */}
+        {/* Cuma muncul kalau ada yang bisa dihapus. Tombol, bukan link:
+            menghapus lewat jalur debounce yang sama seperti mengetik. */}
         {text && (
           <button
             type="button"

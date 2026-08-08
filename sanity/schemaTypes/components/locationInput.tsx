@@ -15,37 +15,34 @@ import {
 } from "./basemaps";
 
 /**
- * The "Titik Lokasi" field on `place` and `umkm`.
+ * Field "Titik Lokasi" pada `place` dan `umkm`.
  *
- * Sanity's stock geopoint input is two number boxes — usable for a developer,
- * hostile to the staff this Studio is built for: a mistyped digit drops the pin
- * in the sea with no feedback. This renders a small map instead: search by
- * name, then drag the pin until it sits on the right roof.
+ * Input geopoint bawaan Sanity berupa dua kotak angka — satu digit salah
+ * ketik menjatuhkan pin ke tengah laut tanpa tanda apa pun. Ini merender
+ * peta kecil sebagai gantinya: cari nama, lalu geser pin ke atap yang benar.
  *
- * No API key anywhere. Tiles come from OpenStreetMap and Esri (the same two
- * layers as /peta) and search from Nominatim, so this adds nothing to the
- * handover. The two plugins that
- * would have done this are both dead ends — sanity-plugin-leaflet-input stopped
- * at Sanity v2 (2022), and @sanity/google-maps-input drags back the Google
- * Cloud billing account this project deliberately avoids.
+ * Tanpa API key: tile dari OpenStreetMap dan Esri, pencarian dari
+ * Nominatim. Dua plugin siap pakai sama-sama jalan buntu —
+ * sanity-plugin-leaflet-input berhenti di Sanity v2 (2022), dan
+ * @sanity/google-maps-input menyeret kembali billing Google Cloud yang
+ * proyek ini sengaja hindari.
  */
 
-/** Centre of Kelurahan Sidoharjo — where the map opens before a pin exists.
- * Duplicated from SIDOHARJO_CENTER in src/lib/places.ts on purpose: sanity/ is
- * a separate build with no `@/` alias, and one constant is cheaper than wiring
- * one up. Keep the two in step. */
+/** Titik tengah Sidoharjo — tempat peta terbuka sebelum ada pin. Sengaja
+ * diduplikasi dari SIDOHARJO_CENTER di src/lib/places.ts: sanity/ tidak
+ * punya alias `@/`. Jaga keduanya tetap sama. */
 const FALLBACK_CENTER: [number, number] = [-7.8173, 111.0708];
 
-/** Nominatim asks for at most one request per second. Typing is debounced well
- * past that; the limit is never the binding constraint at Studio speed. */
+/** Nominatim meminta maksimal satu request per detik. Pengetikan sudah
+ * di-debounce jauh melebihi itu; batas itu tidak pernah jadi kendala pada
+ * kecepatan pemakaian Studio. */
 const SEARCH_DEBOUNCE_MS = 600;
 
 /**
- * Leaflet's default marker relies on image files (marker-icon.png etc.)
- * resolved relative to its own CSS — a path that breaks under Next's webpack
- * bundling and renders as a broken image with no error. A tiny inline
- * divIcon sidesteps that entirely; PetaMapCanvas on the public site takes the
- * same approach for the same reason.
+ * Marker bawaan Leaflet bergantung pada file gambar yang path-nya rusak
+ * kena bundling webpack Next — tampil sebagai gambar rusak tanpa error.
+ * divIcon inline ini menghindarinya; PetaMapCanvas di situs publik
+ * memakai trik yang sama.
  */
 function pinIcon(L: typeof import("leaflet")) {
   return L.divIcon({
@@ -90,9 +87,9 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
   const hasPoint = lat !== null && lng !== null;
 
   /**
-   * Held in a ref and read inside Leaflet's handlers, so the map is built once
-   * on mount instead of being torn down and rebuilt whenever `onChange`'s
-   * identity changes — which would drop the user's pan and zoom mid-edit.
+   * Disimpan di ref dan dibaca di handler Leaflet, supaya peta dibangun
+   * sekali saat mount, bukan dibongkar-pasang tiap `onChange` berubah
+   * identitas — yang akan menghapus pan/zoom pengguna di tengah edit.
    */
   const commit = useRef(onChange);
   useEffect(() => {
@@ -103,16 +100,17 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
     commit.current(
       set({
         _type: "geopoint",
-        // Six decimals is ~10 cm. Storing Leaflet's full float precision would
-        // write a dozen meaningless digits into every document.
+        // Enam desimal setara ~10 cm. Menyimpan presisi float penuh dari
+        // Leaflet akan menulis belasan digit yang tidak berarti apa-apa ke
+        // tiap dokumen.
         lat: Number(next.lat.toFixed(6)),
         lng: Number(next.lng.toFixed(6)),
       }),
     );
   }, []);
 
-  // Build the map once. Leaflet is imported dynamically because Studio renders
-  // on the server during `next build`, and Leaflet touches `window` at import.
+  // Bangun peta sekali saja. Leaflet diimpor dinamis karena Studio
+  // dirender di server saat `next build`, dan Leaflet menyentuh `window` saat diimpor.
   useEffect(() => {
     const container = containerRef.current;
     if (!container || mapRef.current) return;
@@ -125,18 +123,17 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
       const map = L.map(containerRef.current, {
         center: hasPoint ? [lat, lng] : FALLBACK_CENTER,
         zoom: hasPoint ? 17 : 14,
-        // Scroll-zoom is off on purpose: the field sits in a scrolling form, and
-        // a wheel that zooms the map instead of scrolling the page traps the
-        // editor. Buttons and pinch still zoom.
+        // Scroll-zoom sengaja dimatikan: field ini berada di dalam form
+        // yang bisa di-scroll, dan wheel yang malah men-zoom peta alih-alih
+        // men-scroll halaman akan menjebak si editor. Tombol dan pinch
+        // tetap bisa untuk zoom.
         scrollWheelZoom: false,
       });
 
       /*
-       * Two base layers. Street map is the default here (unlike the public
-       * map, which opens on satellite): the job in this field is to work out
-       * *where* a place is, and named roads answer that far faster than
-       * imagery. Switch to Satelit once you're on the right street and need
-       * the exact building.
+       * Dua basemap. Peta jalan jadi default (beda dari peta publik yang
+       * buka di satelit): tugas field ini mencari *di mana*, dan nama
+       * jalan menjawab itu lebih cepat dari citra satelit.
        */
       const streets = L.tileLayer(STREETS_URL, {
         attribution: OSM_ATTRIBUTION,
@@ -160,10 +157,9 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
         .addTo(map);
 
       /*
-       * The kelurahan boundary, purely as a reference: it tells the editor at a
-       * glance whether the pin they just dropped is even inside Sidoharjo.
-       * Fetched the same way the public map does it, and skipped silently if
-       * the file isn't there yet.
+       * Batas wilayah, sebagai acuan: memberi tahu editor sekilas apakah
+       * pin yang baru ditaruh benar-benar di dalam Sidoharjo. Dilewati
+       * diam-diam kalau filenya belum ada.
        */
       void fetch("/geojson/batas-kelurahan.geojson")
         .then((response) => (response.ok ? response.json() : null))
@@ -175,7 +171,7 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
           }).addTo(mapRef.current);
         })
         .catch(() => {
-          /* no boundary file yet — the picker works fine without it */
+          /* belum ada file batas — picker-nya tetap berfungsi tanpa itu */
         });
 
       if (hasPoint) {
@@ -196,9 +192,9 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
 
       mapRef.current = map;
 
-      // The field often mounts inside a collapsed section or a tab, where the
-      // container has no height yet. Leaflet caches the size it saw at init and
-      // would render a sliver of tiles forever; this re-measures once laid out.
+      // Field ini sering ter-mount di section yang collapsed atau di tab
+      // tanpa tinggi. Leaflet mengunci ukuran awal itu selamanya kalau
+      // tidak diukur ulang begitu layout-nya selesai.
       requestAnimationFrame(() => map.invalidateSize());
     });
 
@@ -208,13 +204,13 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
       mapRef.current = null;
       markerRef.current = null;
     };
-    // Deliberately mount-only: `lat`/`lng` seed the opening view, and the effect
-    // below is what keeps the marker in step afterwards.
+    // Sengaja hanya-saat-mount: `lat`/`lng` cuma mengisi tampilan awal;
+    // effect di bawah yang menjaga marker sinkron sesudahnya.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Keep the marker in step with the value, whichever way it changed — a click,
-  // a drag, a search result, the Clear button, or an undo from Sanity's history.
+  // Jaga marker tetap sinkron dengan value, apa pun sebabnya berubah — klik,
+  // drag, hasil pencarian, tombol Hapus, atau undo dari riwayat Sanity.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -245,12 +241,10 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
     });
   }, [hasPoint, lat, lng, readOnly, setPoint]);
 
-  // Search-as-you-type against Nominatim, biased to Indonesia so "Balai Desa"
-  // doesn't return a match in another hemisphere. The short-query case is
-  // handled in the input's onChange below, not here — synchronously clearing
-  // state at the top of an effect body is a footgun the effect itself should
-  // never need, and here it doesn't: the event that shrinks the query already
-  // knows to clear the stale results.
+  // Pencarian sambil mengetik ke Nominatim, dibiaskan ke Indonesia supaya
+  // "Balai Desa" tidak mengembalikan hasil dari belahan bumi lain. Query
+  // pendek ditangani di onChange input, bukan di sini — event yang
+  // memperpendek query sudah tahu harus membersihkan hasil yang basi.
   useEffect(() => {
     const text = query.trim();
     if (text.length < 3) return;
@@ -295,10 +289,9 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
   );
 
   /**
-   * The manual escape hatch: paste a coordinate pair (what Google Maps puts on
-   * the clipboard when you right-click a spot and click the numbers) or a Maps
-   * URL that carries one. Covers the case where searching by name finds
-   * nothing and clicking the map is too fiddly to hit exactly.
+   * Jalan keluar manual: tempel koordinat (dari klik-kanan Google Maps →
+   * klik angkanya) atau URL Maps yang membawanya. Untuk kasus pencarian
+   * nama tidak ketemu dan mengklik peta terlalu sulit tepat sasaran.
    */
   const applyManual = useCallback(() => {
     const parsed = parseCoordinates(manual);
@@ -331,9 +324,8 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
             onChange={(event) => {
               const next = event.currentTarget.value;
               setQuery(next);
-              // Below Nominatim's 3-character floor, no fetch will fire (see
-              // the search effect) — so nothing else clears results left over
-              // from a longer query the user just backspaced out of.
+              // Di bawah 3 karakter, effect pencarian tidak jalan — jadi
+              // sisa hasil dari query lama harus dibersihkan di sini.
               if (next.trim().length < 3) {
                 setResults([]);
                 setSearchError(null);
@@ -375,15 +367,13 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
         <Box
           ref={containerRef}
           style={{
-            // Roomy enough to actually recognise a building and still drag the
-            // pin without constantly re-panning. The old 280 made both fiddly.
+            // Cukup lega untuk mengenali bangunan sambil tetap bisa
+            // menggeser pin. Nilai lama 280 membuat keduanya merepotkan.
             height: 400,
-            // Studio's own overlays sit around z-index 100+; Leaflet's panes
-            // start at 400 and would otherwise punch through dialogs.
+            // Overlay Studio ada di sekitar z-index 100+; pane Leaflet
+            // mulai dari 400 dan bisa menembus dialog kalau tidak dijaga.
             zIndex: 0,
-            // A read-only form (published perspective, an old revision, a
-            // release) must not accept edits, and Leaflet has no readOnly of
-            // its own — the whole surface is made inert instead.
+            // Leaflet tidak punya readOnly sendiri — permukaannya dibuat inert.
             pointerEvents: readOnly ? "none" : undefined,
             opacity: readOnly ? 0.6 : undefined,
           }}
@@ -415,7 +405,7 @@ export function LocationInput(props: ObjectInputProps<GeoPointValue>) {
                   setManual(event.currentTarget.value);
                   if (manualError) setManualError(null);
                 }}
-                // Enter would otherwise submit the surrounding Studio form.
+                // Kalau tidak, Enter akan mengirim form Studio di sekitarnya.
                 onKeyDown={(event) => {
                   if (event.key !== "Enter") return;
                   event.preventDefault();

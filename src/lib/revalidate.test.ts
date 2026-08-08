@@ -27,9 +27,9 @@ describe("pathsFor", () => {
   });
 
   /**
-   * A post webhook can fire before the slug is written (a brand-new draft,
-   * say), and the missing entry must not leave a bare `/berita/undefined` in
-   * the revalidation list.
+   * Webhook post bisa terpicu sebelum slug-nya ditulis (draft yang baru
+   * dibuat, misalnya), dan entri yang hilang itu tidak boleh meninggalkan
+   * `/berita/undefined` telanjang di daftar revalidasi.
    */
   it("drops the article path when the post has no slug yet", () => {
     expect(pathsFor({ _type: "post" })).toEqual(["/berita", "/prestasi", "/"]);
@@ -41,8 +41,8 @@ describe("pathsFor", () => {
     ]);
   });
 
-  // /peta too: an umkm with a `location` renders as a map pin, so both pages
-  // show the same document and both have to be busted.
+  // /peta juga: umkm dengan `location` dirender sebagai pin peta, jadi
+  // kedua halaman menampilkan dokumen yang sama dan keduanya harus di-bust.
   it("revalidates /umkm and /peta for an umkm", () => {
     expect(pathsFor({ _type: "umkm" })).toEqual(["/umkm", "/peta"]);
   });
@@ -52,9 +52,10 @@ describe("pathsFor", () => {
   });
 
   /**
-   * Header and Footer read siteSettings and appear on every page, so a single
-   * page path isn't enough — this must come back as the layout sentinel, which
-   * the route maps to revalidatePath("/", "layout").
+   * Header dan Footer membaca siteSettings dan muncul di tiap halaman,
+   * jadi satu path halaman saja tidak cukup — ini harus kembali sebagai
+   * layout sentinel, yang oleh route dipetakan ke
+   * revalidatePath("/", "layout").
    */
   it("returns the layout sentinel for siteSettings, not a page path", () => {
     expect(pathsFor({ _type: "siteSettings" })).toEqual([LAYOUT_SENTINEL]);

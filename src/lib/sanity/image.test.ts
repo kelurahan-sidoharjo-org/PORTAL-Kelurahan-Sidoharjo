@@ -25,9 +25,9 @@ describe("imageLoader", () => {
   });
 
   /**
-   * The loader is global, so it also receives the static PNGs in
-   * public/images/. Those have no CDN behind them and must pass through
-   * untouched — rewriting them would produce a 404.
+   * Loader-nya bersifat global, jadi ia juga menerima PNG statis di
+   * public/images/. Yang itu tidak punya CDN di baliknya dan harus lewat
+   * tanpa disentuh — menulis ulang URL-nya akan menghasilkan 404.
    */
   it("returns local asset paths unchanged", () => {
     expect(imageLoader({ src: "/images/ic-trophy.png", width: 800 })).toBe(
@@ -36,8 +36,8 @@ describe("imageLoader", () => {
   });
 
   /**
-   * The whole point of the custom loader: image bytes must come from Sanity,
-   * not Vercel's optimizer, which is metered on the Hobby plan.
+   * Inilah inti dari loader kustom ini: byte gambar harus berasal dari
+   * Sanity, bukan dari optimizer Vercel, yang diukur kuotanya di paket Hobby.
    */
   it("never routes through Vercel's image optimizer", () => {
     expect(imageLoader({ src: BASE, width: 800 })).not.toContain("/_next/image");

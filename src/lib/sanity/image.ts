@@ -5,19 +5,20 @@ import type { SanityImage } from "./types";
 const builder = createImageUrlBuilder({ projectId, dataset });
 
 /**
- * Base CDN URL for a Sanity image, with no sizing params applied yet — the
- * resizing params are added by the global loader in imageLoader.ts.
+ * URL dasar CDN untuk sebuah gambar Sanity, belum ada parameter ukuran yang
+ * diterapkan — parameter resize-nya ditambahkan oleh loader global di
+ * imageLoader.ts.
  */
 export function urlFor(source: SanityImage) {
   return builder.image(source);
 }
 
 /**
- * Everything a component needs to render a Sanity image without layout shift.
- * Returns null when the field is empty so callers can branch on it.
+ * Semua yang dibutuhkan komponen untuk merender gambar Sanity tanpa
+ * layout shift. Mengembalikan null kalau field-nya kosong.
  *
- * Deliberately no `loader` here — it's configured globally in next.config.ts,
- * because a function prop can't cross the server/client component boundary.
+ * Sengaja tanpa `loader` di sini — dikonfigurasi global di next.config.ts,
+ * karena prop function tidak bisa melewati batas server/client.
  */
 export function imageProps(image: SanityImage | null | undefined) {
   if (!image?.asset) return null;
@@ -32,8 +33,8 @@ export function imageProps(image: SanityImage | null | undefined) {
 }
 
 /**
- * Same, minus width/height — for <Image fill>, where the image stretches to a
- * sized parent and Next rejects explicit dimensions.
+ * Sama, minus width/height — untuk <Image fill>, di mana gambar meregang
+ * mengisi parent yang sudah punya ukuran dan Next menolak dimensi eksplisit.
  */
 export function imageFillProps(image: SanityImage | null | undefined) {
   const props = imageProps(image);

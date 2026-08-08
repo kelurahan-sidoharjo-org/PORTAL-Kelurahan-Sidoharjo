@@ -2,14 +2,12 @@ import type { ReactNode } from "react";
 import { BackButton } from "./BackButton";
 
 /**
- * Back button + page title, shared by the list pages.
+ * Tombol kembali + judul halaman, dipakai bersama halaman daftar.
  *
- * Two different layouts, per the mockups: mobile stacks them left-aligned
- * (`*-mobile.png`), while from sm: up the title is centred in the row with the
- * back button pinned to the left edge (`*-desktop.png`).
+ * Dua layout sesuai mockup: mobile rata kiri, dari sm: ke atas judulnya
+ * dipusatkan dengan tombol kembali tertambat di tepi kiri.
  *
- * Extracted because all three list pages had this block copy-pasted, and every
- * styling tweak so far has had to be applied three times.
+ * Diekstrak karena tiga halaman daftar dulu punya blok ini tempel-salin.
  */
 export function PageHeading({
   children,

@@ -4,9 +4,9 @@ import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { getSiteSettings } from "@/lib/sanity/client";
 
 /**
- * NOTE: no footer appears in any of the design-reference mockups — this is a
- * judgement call, kept deliberately minimal so it's easy to delete if the
- * design is meant to end at the last section.
+ * CATATAN: footer tidak muncul di mockup design-reference mana pun — ini
+ * keputusan sendiri, sengaja dibuat minimal supaya mudah dihapus kalau
+ * desainnya memang dimaksudkan berakhir di section terakhir.
  */
 export async function Footer() {
   const settings = await getSiteSettings();
@@ -41,9 +41,10 @@ export async function Footer() {
             </a>
           )}
 
-          {/* For kelurahan staff, not warga — deliberately understated. It's
-              here so the guide survives the developer: staff can find it from
-              any page on any phone without being handed a link. */}
+          {/* Untuk staf kelurahan, bukan warga — sengaja dibuat tidak
+              mencolok. Ini ada di sini supaya panduannya bertahan lepas dari
+              developer: staf bisa menemukannya dari halaman mana pun di HP
+              mana pun tanpa perlu diberi tautan. */}
           <Link
             href="/panduan"
             className="inline-flex items-center gap-2 hover:text-brand"

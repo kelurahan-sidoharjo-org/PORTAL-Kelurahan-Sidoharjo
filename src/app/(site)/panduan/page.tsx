@@ -6,22 +6,19 @@ import { Markdown } from "@/components/panduan/Markdown";
 import { siteUrl } from "@/lib/site";
 
 /**
- * The staff guide, served from the same Markdown file the repo keeps at
- * docs/panduan-staf.md.
+ * Panduan staf, disajikan dari docs/panduan-staf.md.
  *
- * It exists as a page because kelurahan staff have no realistic way to read a
- * file in a GitHub repo, and the guide is worthless if they can't reach it. One
- * source of truth: edit the Markdown, the page follows.
+ * Ada sebagai halaman karena staf tidak punya cara realistis membaca
+ * file di repo GitHub. Satu sumber kebenaran: edit Markdown-nya, halaman
+ * mengikuti.
  *
- * Public but unlisted — no login, so staff can open it on their own phones, yet
- * `noindex` and absent from sitemap.ts because it's internal operating
- * instructions ("don't delete the dataset"), not content for warga.
+ * Publik tapi tidak terdaftar — tanpa login, tapi `noindex` dan tidak
+ * ada di sitemap.ts karena ini instruksi internal, bukan konten warga.
  */
 
-// Prerendered at build, so the file is read once during `next build` and baked
-// into static HTML — no filesystem access at request time on Vercel. If the
-// Markdown is ever moved or renamed the build fails loudly, which beats a page
-// that silently 500s in production.
+// Di-prerender saat build — dibaca sekali, dipanggang ke HTML statis,
+// tanpa akses filesystem saat request. File yang pindah/ganti nama
+// membuat build gagal jelas, lebih baik dari 500 diam-diam di produksi.
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
@@ -32,16 +29,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * The guide quotes the site's own address a few times — most importantly the
- * `/admin` link staff bookmark. Hardcoding it would make the guide wrong the
- * day the .go.id domain lands, in a document nobody would think to revisit.
- * Substituting from `siteUrl` means it says vercel.app today and the real
- * domain after the cutover, with no edit.
+ * Panduannya mengutip alamat situs sendiri — terutama tautan `/admin`
+ * yang di-bookmark staf. Menggantinya dari `siteUrl` berarti hari ini
+ * tertulis vercel.app dan domain sungguhan setelah cutover, tanpa diedit.
  *
- * An explicit token rather than a natural-looking placeholder: if someone
- * rewrites the surrounding sentence, `{{SITE_URL}}` still stands out as
- * something that must survive, and a missed one is obvious on the page rather
- * than quietly showing a fake address.
+ * Token eksplisit, bukan placeholder alami: kalau kalimatnya ditulis
+ * ulang, `{{SITE_URL}}` tetap menonjol, dan yang terlewat langsung
+ * terlihat di halaman.
  */
 const SITE_URL_TOKEN = /\{\{SITE_URL\}\}/g;
 

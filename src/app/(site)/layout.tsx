@@ -18,16 +18,16 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   /**
-   * Without metadataBase, Next emits Open Graph image paths as relative URLs.
-   * They resolve fine in a browser that already knows what site it's on, but
-   * WhatsApp and Google read the page from outside and simply drop them — so
-   * shared links lose their preview image.
+   * Tanpa metadataBase, path gambar Open Graph jadi URL relatif — bekerja
+   * di browser, tapi WhatsApp dan Google membacanya dari luar dan
+   * membuangnya, jadi tautan yang dibagikan kehilangan preview.
    */
   metadataBase: new URL(siteUrl),
   title: {
     default: siteName,
-    // Pages set a bare title ("Berita Kelurahan"); this appends the suffix, so
-    // it lives in one place instead of being retyped on every page.
+    // Halaman menyetel judul telanjang ("Berita Kelurahan"); ini menambahkan
+    // sufiksnya, jadi cukup berada di satu tempat alih-alih diketik ulang
+    // di tiap halaman.
     template: `%s — ${siteName}`,
   },
   description: siteDescription,
@@ -54,10 +54,9 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-transparent">
         {/*
-          Gradient is CSS, not the 227 KB background PNG in design-reference/.
-          Painted as a fixed layer rather than `bg-fixed` on <body>, because
-          background-attachment: fixed is unreliable on iOS Safari. A negative
-          z-index keeps it above the body background but behind all content.
+          Gradiennya CSS, bukan PNG 227 KB di design-reference/. Layer
+          tetap, bukan `bg-fixed`, karena background-attachment: fixed
+          tidak bisa diandalkan di iOS Safari.
         */}
         <div
           aria-hidden

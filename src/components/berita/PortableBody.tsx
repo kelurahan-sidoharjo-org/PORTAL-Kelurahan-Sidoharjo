@@ -4,9 +4,9 @@ import { imageProps } from "@/lib/sanity/image";
 import type { PortableTextBlock, SanityImage } from "@/lib/sanity/types";
 
 /**
- * Renderers for `post.body`. The image one matters most: without it, an image
- * dropped into the body renders as an unusable asset reference rather than a
- * picture.
+ * Renderer untuk `post.body`. Yang gambar paling penting: tanpa itu, gambar
+ * yang ditaruh di body akan dirender sebagai referensi asset yang tidak
+ * berguna, bukan sebagai foto.
  */
 const components: PortableTextComponents = {
   types: {
@@ -24,8 +24,8 @@ const components: PortableTextComponents = {
     },
   },
   block: {
-    // Subheadings inside the article body follow the page heading weight, so
-    // they can never end up heavier than the article's own <h1>.
+    // Subjudul di dalam body artikel mengikuti bobot heading halaman, jadi
+    // tidak akan pernah lebih tebal daripada <h1> artikelnya sendiri.
     h2: ({ children }) => (
       <h2 className="mt-8 text-lg sm:text-2xl">{children}</h2>
     ),

@@ -3,7 +3,7 @@ import { nextSlugState, slugify } from "./slugHistory";
 
 const DATE = "2026-07-01";
 
-/** Trims the noise out of each case: only the fields under test vary. */
+/** Merapikan tiap kasus: hanya field yang sedang diuji yang berubah-ubah. */
 function state(input: {
   title: string;
   currentSlug?: string;
@@ -55,17 +55,19 @@ describe("nextSlugState", () => {
   });
 
   /**
-   * The case that keeps the history honest. Typing a title into a new article
-   * fires this once per keystroke; every one of those slugs is ours and was
-   * never reachable, so none may be recorded. Without this the history would
-   * fill with "k-", "ke-", "ker-" and bury the address that matters.
+   * Kasus yang menjaga riwayat tetap jujur. Mengetik judul di artikel baru
+   * memicu ini setiap ketukan tuts; tiap slug itu adalah tulisan kita sendiri
+   * dan tidak pernah bisa diakses, jadi tidak satu pun boleh dicatat. Tanpa
+   * ini riwayatnya akan terisi "k-", "ke-", "ker-" dan mengubur alamat yang
+   * sebenarnya penting.
    */
   it("records nothing while the editor types a new article", () => {
-    // First keystroke: the field is still empty.
+    // Ketukan pertama: field masih kosong.
     let result = state({ title: "K" });
     expect(result).toEqual({ slug: `k-${DATE}` });
 
-    // Every keystroke after: the outgoing slug is the one we just wrote.
+    // Setiap ketukan sesudahnya: slug yang keluar adalah yang baru saja kita
+    // tulis.
     result = state({
       title: "Ker",
       currentSlug: `k-${DATE}`,
@@ -82,8 +84,8 @@ describe("nextSlugState", () => {
   });
 
   /**
-   * The bug this whole module exists for: a published article's address must
-   * survive its title being edited.
+   * Bug yang jadi alasan modul ini ada: alamat artikel yang sudah terbit
+   * harus tetap bertahan walau judulnya diedit.
    */
   it("keeps the old address when a saved article is retitled", () => {
     expect(
@@ -95,18 +97,21 @@ describe("nextSlugState", () => {
   });
 
   /**
-   * A slow document load leaves currentSlug undefined on the first render.
-   * Once the real slug arrives it still reads as "not ours", so it is kept —
-   * the module never has to guess whether the form finished loading.
+   * Loading dokumen yang lambat membuat currentSlug undefined pada render
+   * pertama. Begitu slug asli sampai, ia tetap terbaca sebagai "bukan
+   * tulisan kita", jadi tetap disimpan — modul ini tidak pernah perlu
+   * menebak apakah form-nya sudah selesai loading.
    */
   it("keeps the old address even if the form rendered before the document", () => {
-    // Render one: nothing loaded yet, so nothing worth keeping.
+    // Render pertama: belum ada yang termuat, jadi belum ada yang perlu
+    // disimpan.
     expect(state({ title: "Kerja Bakti" })).toEqual({
       slug: `kerja-bakti-${DATE}`,
     });
 
-    // Render two: the document arrived with its real slug, and the editor
-    // edits the title. lastWritten is still null, so the slug is preserved.
+    // Render kedua: dokumen sudah sampai dengan slug aslinya, dan editor
+    // mengedit judulnya. lastWritten masih null, jadi slug-nya tetap
+    // tersimpan.
     expect(
       state({ title: "Kerja Bakti RT 03", currentSlug: `kerja-bakti-${DATE}` }),
     ).toEqual({
@@ -116,7 +121,7 @@ describe("nextSlugState", () => {
   });
 
   it("records only the real address when a retitle continues", () => {
-    // The published slug has already been banked by the previous keystroke.
+    // Slug yang sudah terbit sudah tersimpan sejak ketukan sebelumnya.
     const result = state({
       title: "Kerja Bakti RT 03 Sidoharjo",
       currentSlug: `kerja-bakti-rt-03-${DATE}`,
@@ -124,7 +129,8 @@ describe("nextSlugState", () => {
       previousSlugs: [`kerja-bakti-${DATE}`],
     });
 
-    // Slug moves on, history untouched — so no redundant patch is sent.
+    // Slug berpindah, riwayat tidak tersentuh — jadi tidak ada patch yang
+    // berlebihan dikirim.
     expect(result).toEqual({ slug: `kerja-bakti-rt-03-sidoharjo-${DATE}` });
   });
 
@@ -139,8 +145,9 @@ describe("nextSlugState", () => {
   });
 
   /**
-   * An editor undoing a rename makes an old address live again. Leaving it in
-   * the history would have /berita/[slug] redirect that slug to itself.
+   * Editor yang membatalkan perubahan nama membuat alamat lama aktif lagi.
+   * Kalau dibiarkan di riwayat, /berita/[slug] akan mengarahkan slug itu ke
+   * dirinya sendiri.
    */
   it("takes the address back out of the history when it becomes live again", () => {
     expect(

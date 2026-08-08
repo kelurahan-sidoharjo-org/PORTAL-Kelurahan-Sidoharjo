@@ -4,25 +4,23 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 /**
- * Renders docs/panduan-staf.md as the /panduan page.
+ * Merender docs/panduan-staf.md sebagai halaman /panduan.
  *
- * A hand-written `components` map rather than @tailwindcss/typography: it costs
- * about the same number of lines, avoids a third dependency on a project that
- * has to survive without a maintainer, and lets the guide use the site's own
- * fonts and brand colours instead of a generic prose theme.
+ * Peta `components` ditulis tangan, bukan @tailwindcss/typography:
+ * jumlah barisnya mirip, menghindari dependensi ketiga, dan panduannya
+ * memakai font/warna brand sendiri, bukan tema generik.
  *
- * Tailwind's preflight strips default element styling, so every element the
- * guide actually uses has to appear here — a missing entry renders as unstyled
- * text rather than as an error.
+ * Preflight Tailwind menghapus styling elemen bawaan, jadi elemen yang
+ * belum ada di sini dirender tanpa style, bukan error.
  *
- * remark-gfm is not optional: the guide is mostly tables, and tables are a
- * GitHub-Flavored extension that plain Markdown doesn't include.
+ * remark-gfm wajib: panduannya kebanyakan tabel, ekstensi GitHub-Flavored
+ * yang tidak dimiliki Markdown polos.
  */
 
-/** Screenshots still missing for some steps — see docs/handover.md step 6. */
+/** Screenshot untuk beberapa langkah masih belum ada — lihat docs/handover.md langkah 6. */
 const PLACEHOLDER = /^!\[tangkapan layar:\s*(.+?)\]$/;
 
-/** Flattens a React children tree to plain text, for the placeholder check. */
+/** Meratakan tree children React jadi teks polos, untuk pengecekan placeholder. */
 function textOf(node: ReactNode): string {
   return Children.toArray(node)
     .map((child) =>
@@ -34,11 +32,10 @@ function textOf(node: ReactNode): string {
 }
 
 function Paragraph({ children }: ComponentProps<"p">) {
-  // `![alt]` with no `(url)` is not an image in Markdown — it's literal text,
-  // and would otherwise render as raw `![tangkapan layar: ...]` on the page.
-  // Drawing it as a labelled placeholder keeps the guide looking deliberate
-  // while the screenshots are outstanding, and costs nothing once they land:
-  // real image syntax stops matching and renders as a normal image.
+  // `![alt]` tanpa `(url)` bukan gambar di Markdown — teks literal, yang
+  // kalau dibiarkan dirender mentah. Placeholder berlabel membuatnya
+  // terlihat sengaja sampai screenshot-nya ada; tidak berbiaya sesudahnya
+  // karena sintaks gambar sungguhan berhenti cocok.
   const match = PLACEHOLDER.exec(textOf(children).trim());
   if (match) {
     return (
@@ -61,8 +58,8 @@ export function Markdown({ source }: { source: string }) {
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
-        // The page renders its own <h1> via PageHeading, so the file's title
-        // would be a duplicate — demote it to a lead paragraph.
+        // Halamannya merender <h1> sendiri lewat PageHeading, jadi judul
+        // file diturunkan jadi paragraf pembuka.
         h1: ({ children }) => (
           <p className="mt-2 text-sm text-muted-foreground sm:text-base">
             {children}
@@ -113,10 +110,9 @@ export function Markdown({ source }: { source: string }) {
           </a>
         ),
         hr: () => <hr className="my-8 border-black/10" />,
-        // Plain <img>: screenshots are local files of unknown dimensions
-        // dropped into public/images/panduan/ by staff, and next/image wants
-        // explicit width/height for each. The custom loader only rewrites
-        // cdn.sanity.io URLs anyway, so there is nothing to optimise here.
+        // <img> polos: screenshot lokal berukuran tak diketahui, dan
+        // next/image butuh width/height eksplisit. Loader kustomnya cuma
+        // menulis ulang URL cdn.sanity.io, tidak ada yang perlu dioptimasi.
         img: ({ src, alt }) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -125,9 +121,9 @@ export function Markdown({ source }: { source: string }) {
             className="my-5 h-auto w-full rounded-xl border border-black/10"
           />
         ),
-        // The guide's widest table has four columns and would push a phone
-        // sideways. Scrolling the table instead of the page keeps the rule that
-        // <body> never scrolls horizontally.
+        // Tabel terlebar punya empat kolom dan akan mendorong layar HP
+        // menyamping. Men-scroll tabelnya, bukan halamannya, menjaga
+        // <body> tidak pernah scroll menyamping.
         table: ({ children }) => (
           <div className="my-5 overflow-x-auto rounded-xl border border-black/10">
             <table className="w-full border-collapse text-left text-xs sm:text-sm">

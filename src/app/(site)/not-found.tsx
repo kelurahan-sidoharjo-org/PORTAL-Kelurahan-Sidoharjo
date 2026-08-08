@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * Catches every `notFound()` thrown inside the (site) group — an unknown
- * article slug, or a `/berita` page number past the end. Inherits Header,
- * Footer, and the page gradient from the layout automatically.
+ * Menangkap tiap `notFound()` yang dilempar di dalam grup (site) — slug
+ * artikel yang tidak dikenal, atau nomor halaman `/berita` yang melewati
+ * batas. Otomatis mewarisi Header, Footer, dan gradien halaman dari layout.
  */
 export default function NotFound() {
   return (

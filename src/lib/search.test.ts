@@ -3,9 +3,10 @@ import { searchValue, toMatchPattern } from "./search";
 
 describe("toMatchPattern", () => {
   /**
-   * null is the "no filter" signal the queries branch on (`!defined($q)`).
-   * If an empty box returned "" or "*" instead, /berita would either error or
-   * quietly stop showing posts — so every flavour of empty is pinned here.
+   * null adalah sinyal "tanpa filter" yang jadi cabang di query
+   * (`!defined($q)`). Kalau kotak kosong malah mengembalikan "" atau "*",
+   * /berita akan error atau diam-diam berhenti menampilkan post — jadi
+   * setiap variasi "kosong" dipastikan di sini.
    */
   it("returns null for anything that isn't a search", () => {
     expect(toMatchPattern(undefined)).toBeNull();
@@ -14,16 +15,16 @@ describe("toMatchPattern", () => {
   });
 
   /**
-   * The whole reason this function exists: GROQ's `match` works on whole
-   * words, so "kebersih" would find nothing in an article about "kebersihan".
-   * The trailing * is what restores the partial matching readers expect from
-   * the /peta search.
+   * Inilah alasan fungsi ini ada: `match` GROQ bekerja pada kata utuh,
+   * jadi "kebersih" tidak akan menemukan apa-apa di artikel tentang
+   * "kebersihan". Tanda * di belakang itulah yang mengembalikan
+   * pencocokan sebagian yang diharapkan pembaca dari pencarian /peta.
    */
   it("appends a wildcard so partial words still match", () => {
     expect(toMatchPattern("kebersih")).toBe("kebersih*");
   });
 
-  /** Words come back sorted — see the canonical-form tests further down. */
+  /** Kata dikembalikan sudah terurut — lihat tes canonical-form di bawah. */
   it("wildcards every word, not just the last", () => {
     expect(toMatchPattern("kerja bakti")).toBe("bakti* kerja*");
   });
@@ -33,8 +34,9 @@ describe("toMatchPattern", () => {
   });
 
   /**
-   * `*` is GROQ's own wildcard. Left in, a reader typing it would widen their
-   * search instead of narrowing it — the opposite of what a search box is for.
+   * `*` adalah wildcard milik GROQ sendiri. Kalau dibiarkan, pembaca yang
+   * mengetiknya justru melebarkan pencariannya alih-alih mempersempit —
+   * kebalikan dari fungsi kotak pencarian.
    */
   it("strips wildcards the reader typed", () => {
     expect(toMatchPattern("*kerja*")).toBe("kerja*");
@@ -42,8 +44,9 @@ describe("toMatchPattern", () => {
   });
 
   /**
-   * `?q=a&q=b` arrives as an array. Unlike a bad page number — which 404s —
-   * a malformed search should still show results rather than a dead end.
+   * `?q=a&q=b` datang sebagai array. Beda dengan nomor halaman yang
+   * salah — yang langsung 404 — pencarian yang salah bentuk tetap harus
+   * menampilkan hasil, bukan jalan buntu.
    */
   it("takes the first value when the param repeats", () => {
     expect(toMatchPattern(["kerja", "bakti"])).toBe("kerja*");
@@ -51,14 +54,16 @@ describe("toMatchPattern", () => {
 });
 
 /**
- * The pattern is a cache key as much as a filter: each distinct one costs two
- * live reads against Sanity's main API (the CDN is off — see client.ts). These
- * pin the two properties that keep that cost bounded.
+ * Pola ini adalah cache key sekaligus filter: tiap pola yang berbeda
+ * berbiaya dua pembacaan hidup ke API utama Sanity (CDN-nya mati — lihat
+ * client.ts). Tes-tes ini memastikan dua sifat yang menjaga biaya itu
+ * tetap terbatas.
  *
- * All three foldings are result-neutral — GROQ's `match` ignores case, word
- * order, and repeated words alike (verified against the production dataset,
- * 2026-08-08). So none of this narrows what a reader can find; it only stops
- * the same search from being paid for twice.
+ * Ketiga penyamarataan (folding) ini netral secara hasil — `match` GROQ
+ * mengabaikan huruf besar/kecil, urutan kata, dan kata berulang (sudah
+ * diverifikasi terhadap dataset produksi, 2026-08-08). Jadi tidak satu pun
+ * dari ini mempersempit apa yang bisa ditemukan pembaca; ini cuma
+ * menghentikan pencarian yang sama dibayar dua kali.
  */
 describe("toMatchPattern — canonical form", () => {
   it("folds case, so KERJA and kerja share one cache entry", () => {
@@ -78,8 +83,9 @@ describe("toMatchPattern — canonical form", () => {
 
 describe("toMatchPattern — cost guardrails", () => {
   /**
-   * Truncation is safe precisely because of the trailing wildcard: a word cut
-   * in half still matches as a prefix, so the reader gets the article anyway.
+   * Pemotongan aman justru karena wildcard di belakangnya: kata yang
+   * terpotong separuh tetap cocok sebagai awalan, jadi pembaca tetap
+   * mendapatkan artikelnya.
    */
   it("truncates past 60 characters instead of passing it all to Sanity", () => {
     expect(toMatchPattern("kebersihan".repeat(20))).toBe(
@@ -88,14 +94,14 @@ describe("toMatchPattern — cost guardrails", () => {
   });
 
   it("keeps at most six words, so a wall of terms can't build a huge pattern", () => {
-    // Sorted, so the six that survive are a…f rather than the six typed first.
+    // Terurut, jadi enam yang tersisa adalah a…f, bukan enam yang diketik pertama.
     expect(toMatchPattern("a b c d e f g h i j")).toBe("a* b* c* d* e* f*");
   });
 
   /**
-   * The shape of the actual abuse: a very long value, thrown at the endpoint
-   * over and over. It must degrade to an ordinary small pattern, never throw
-   * and never reach Sanity at full size.
+   * Bentuk penyalahgunaan yang sesungguhnya: nilai yang sangat panjang,
+   * dilempar ke endpoint berulang-ulang. Harus turun jadi pola kecil biasa,
+   * tidak pernah error, dan tidak pernah sampai ke Sanity dalam ukuran penuh.
    */
   it("survives a 10.000-character value", () => {
     const pattern = toMatchPattern("a".repeat(10_000));
@@ -104,7 +110,7 @@ describe("toMatchPattern — cost guardrails", () => {
 });
 
 describe("searchValue", () => {
-  /** Fed back into the input; without it the box empties itself on reload. */
+  /** Dikembalikan ke input; tanpa ini kotaknya jadi kosong sendiri saat reload. */
   it("hands back the raw text, untouched", () => {
     expect(searchValue("kerja bakti")).toBe("kerja bakti");
     expect(searchValue(["kerja", "bakti"])).toBe("kerja");

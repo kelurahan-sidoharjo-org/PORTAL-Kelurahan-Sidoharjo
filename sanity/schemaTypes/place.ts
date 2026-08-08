@@ -2,10 +2,10 @@ import { defineField, defineType } from "sanity";
 import { LocationInput } from "./components/locationInput";
 
 /**
- * Drives the map pin (emoji + colour) and the legend row on /peta. Kept in the
- * same order as `PLACE_CATEGORIES` in src/lib/places.ts, which owns how the
- * legend renders — the two lists must hold the same values or a place gets no
- * pin at all.
+ * Menentukan pin peta (emoji + warna) dan baris legenda di /peta. Urutannya
+ * dijaga sama dengan `PLACE_CATEGORIES` di src/lib/places.ts, yang mengatur
+ * cara legenda dirender — kedua daftar harus punya nilai yang sama atau
+ * sebuah tempat sama sekali tidak dapat pin.
  */
 const CATEGORIES = [
   { title: "Pemerintahan", value: "pemerintahan" },
@@ -66,9 +66,10 @@ export const place = defineType({
       lat: "location.lat",
     },
     /*
-     * Since /peta dropped its card list, a place without a point is invisible
-     * to visitors — and nothing in the default preview would have said so.
-     * Surfacing it in the document list is the only warning staff get.
+     * Sejak /peta membuang daftar kartunya, tempat tanpa titik lokasi tidak
+     * terlihat oleh pengunjung — dan preview bawaan tidak akan memberi tahu
+     * apa pun soal itu. Menampilkannya di daftar dokumen adalah satu-satunya
+     * peringatan yang didapat staf.
      */
     prepare({ title, category, lat }) {
       return {

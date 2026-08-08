@@ -1,18 +1,15 @@
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 
 /**
- * Overlay files in public/geojson/ arrive in one of two shapes, and the page
- * has to accept both.
+ * File overlay di public/geojson/ datang dalam dua bentuk.
  *
- * A QGIS "Save Features As… → GeoJSON" export is a real GeoJSON
- * FeatureCollection. But GIS data also circulates as **Esri JSON**, which
- * looks similar and carries the same coordinates under different keys —
- * `geometry.rings` for areas, `geometry.paths` for lines, and `attributes`
- * instead of `properties`. The reference project this map is modelled on
- * (patik-map-website) ships Esri files.
+ * Ekspor QGIS adalah FeatureCollection GeoJSON sungguhan. Tapi data GIS
+ * juga beredar sebagai **Esri JSON** — koordinat sama, key beda:
+ * `geometry.rings`/`paths`, `attributes` bukan `properties`. Proyek acuan
+ * peta ini mengirim file Esri.
  *
- * Leaflet only understands real GeoJSON, and it fails *quietly* on the other:
- * no error, just nothing drawn. So the format is detected rather than assumed.
+ * Leaflet cuma paham GeoJSON asli dan gagal diam-diam pada yang lain —
+ * tidak ada error, cuma tidak tergambar. Jadi bentuknya dideteksi.
  */
 
 interface EsriFeature {
@@ -33,13 +30,13 @@ function isFeatureCollection(data: unknown): data is FeatureCollection {
 }
 
 /**
- * Normalises either shape into a GeoJSON FeatureCollection. Real GeoJSON is
- * passed through untouched; Esri JSON is converted.
+ * Menormalkan kedua bentuk itu menjadi satu FeatureCollection GeoJSON.
+ * GeoJSON asli diteruskan apa adanya; Esri JSON dikonversi.
  *
- * A `rings` array is a Polygon (first ring outer, the rest holes). `paths` is
- * a LineString when there's one path and a MultiLineString when there are
- * several — collapsing that to LineString would silently drop every branch of
- * a river or road after the first.
+ * Array `rings` adalah sebuah Polygon (ring pertama luar, sisanya lubang).
+ * `paths` menjadi LineString kalau cuma ada satu path dan MultiLineString
+ * kalau ada beberapa — menyederhanakannya jadi LineString saja akan diam-
+ * diam membuang tiap cabang sungai atau jalan setelah yang pertama.
  */
 export function toFeatureCollection(data: unknown): FeatureCollection {
   if (isFeatureCollection(data)) return data;

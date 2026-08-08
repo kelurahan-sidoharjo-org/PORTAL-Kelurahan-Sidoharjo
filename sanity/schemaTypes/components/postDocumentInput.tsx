@@ -15,7 +15,7 @@ const PUBLISHED_AT_DESCRIPTIONS: Record<string, string> = {
     "Terisi otomatis dengan tanggal hari ini — juga dipakai untuk mengelompokkan prestasi per tahun",
 };
 
-/** Swaps the help text under Tanggal Publikasi depending on Berita vs Prestasi. */
+/** Menukar teks bantuan di bawah Tanggal Publikasi tergantung Berita vs Prestasi. */
 export function PublishedAtField(props: FieldProps) {
   const category = useFormValue(["category"]) as string | undefined;
   const description = category
@@ -24,13 +24,14 @@ export function PublishedAtField(props: FieldProps) {
   return props.renderDefault({ ...props, description });
 }
 
-/** Longest excerpt we'll store; longer first lines get cut at a word boundary. */
+/** Panjang excerpt maksimum; baris pertama yang lebih panjang dipotong di batas kata. */
 const MAX_EXCERPT = 200;
 
 /**
- * Portable Text is an array of blocks; a "paragraph" is a block whose children
- * are spans of text. This pulls the plain text out of the first block that
- * actually has any — skipping, e.g., a leading image the editor dropped in.
+ * Portable Text adalah array of blocks; sebuah "paragraf" adalah block yang
+ * children-nya berupa span teks. Fungsi ini mengambil teks polos dari block
+ * pertama yang benar-benar berisi teks — melewati, misalnya, gambar di awal
+ * yang ditaruh editor.
  */
 function firstLineOfBody(body: unknown): string {
   if (!Array.isArray(body)) return "";
@@ -45,7 +46,7 @@ function firstLineOfBody(body: unknown): string {
   return "";
 }
 
-/** Cuts to MAX_EXCERPT at the last whole word and appends an ellipsis. */
+/** Memotong ke MAX_EXCERPT pada batas kata utuh terakhir dan menambah elipsis. */
 function truncate(text: string): string {
   if (text.length <= MAX_EXCERPT) return text;
   const clipped = text.slice(0, MAX_EXCERPT);
@@ -54,18 +55,17 @@ function truncate(text: string): string {
 }
 
 /**
- * Document-level input that seeds/keeps two fields from the editor's other
- * input, so neither needs filling by hand:
+ * Input level dokumen yang mengisi/menjaga dua field otomatis:
  *
- *  - `slug`    — always mirrors title + creation date (hidden, fully derived),
- *    with every address it has previously held banked in `previousSlugs` so
- *    links already shared keep working. The rules live in slugHistory.ts.
- *  - `excerpt` — *defaults* to the first line of the body, but stays editable:
- *    once the editor types their own summary, we stop touching it.
+ *  - `slug` — selalu mencerminkan judul + tanggal dibuat (hidden,
+ *    turunan), dengan alamat lama tersimpan di `previousSlugs`. Aturannya
+ *    di slugHistory.ts.
+ *  - `excerpt` — default-nya baris pertama body, tapi tetap bisa diedit;
+ *    begitu editor menulis sendiri, kita berhenti menyentuhnya.
  *
- * Both have to live at the document level rather than on their own fields: a
- * `hidden` field unmounts its field-level input and stops it syncing, whereas a
- * document-level input stays mounted no matter which fields render.
+ * Harus di level dokumen: field `hidden` melepas mount input-nya dan
+ * menghentikan sinkronisasi, input level dokumen tetap ter-mount apa pun
+ * field yang dirender.
  */
 export function PostDocumentInput(props: ObjectInputProps) {
   const { onChange, readOnly } = props;
@@ -76,17 +76,17 @@ export function PostDocumentInput(props: ObjectInputProps) {
   const body = useFormValue(["body"]);
   const currentExcerpt = useFormValue(["excerpt"]) as string | undefined;
   const fallbackDateRef = useRef(new Date().toISOString());
-  // The last slug we wrote ourselves. It's what tells a throwaway mid-typing
-  // slug apart from an address the document arrived with — see slugHistory.ts.
+  // Slug terakhir yang kita tulis sendiri — membedakan slug sementara
+  // dari alamat yang sudah dibawa dokumen. Lihat slugHistory.ts.
   const lastWrittenSlugRef = useRef<string | null>(null);
-  // The last excerpt we auto-filled. While the field still holds this (or is
-  // empty), the editor hasn't overridden it, so we keep it tracking the body.
-  // The moment it differs, they've written their own — and we leave it alone.
+  // Excerpt terakhir yang kita isi otomatis. Selama field masih
+  // menyimpannya (atau kosong), kita terus mengikuti body; begitu
+  // berbeda, editor sudah menulis sendiri.
   const lastAutoExcerptRef = useRef("");
 
   useEffect(() => {
-    // When the form is read-only (viewing the Published version, an old
-    // revision, or a release) Sanity rejects any patch, so don't attempt one.
+    // Saat form read-only (melihat versi Published, revisi lama, atau
+    // release), Sanity menolak patch apa pun, jadi jangan dicoba.
     if (readOnly || !title) return;
 
     const update = nextSlugState({
@@ -98,8 +98,8 @@ export function PostDocumentInput(props: ObjectInputProps) {
     });
     if (!update) return;
 
-    // Both fields move in one change, so the article can never be left with a
-    // new address and no record of the old one.
+    // Kedua field berubah dalam satu perubahan, supaya artikel tidak pernah
+    // tertinggal dengan alamat baru tanpa catatan alamat lamanya.
     const patches: FormPatch[] = [
       set({ _type: "slug", current: update.slug }, ["slug"]),
     ];

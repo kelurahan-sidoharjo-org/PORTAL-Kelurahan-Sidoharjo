@@ -29,8 +29,9 @@ export default async function PemerintahKelurahanPage() {
 
   return (
     <>
-      {/* Hero + header together fill one screen. svh (not vh) so mobile
-          browser toolbars don't push the bottom out of view. */}
+      {/* Hero + header bersama-sama mengisi satu layar. svh (bukan vh)
+          supaya toolbar browser mobile tidak mendorong bagian bawah ke
+          luar tampilan. */}
       <section className="relative isolate flex min-h-[calc(100svh_-_var(--header-height))] items-center overflow-hidden bg-brand-navy">
         {office && (
           <Image
@@ -42,7 +43,7 @@ export default async function PemerintahKelurahanPage() {
             className="object-cover"
           />
         )}
-        {/* Keeps the white text legible whatever photo staff upload. */}
+        {/* Menjaga teks putih tetap terbaca apa pun foto yang diunggah staf. */}
         <div className="absolute inset-0 bg-brand-navy/50" />
 
         <div className="relative mx-auto w-full max-w-6xl px-4 py-10 text-white drop-shadow-2xl sm:px-6 sm:py-16">
@@ -51,8 +52,8 @@ export default async function PemerintahKelurahanPage() {
             Kantor Kelurahan {villageName}
           </h1>
 
-          {/* w-fit so the panel hugs the contact lines instead of stretching
-              the full width of the hero. */}
+          {/* w-fit supaya panelnya mepet ke baris kontak alih-alih
+              meregang selebar hero-nya. */}
           <div className="mt-4 w-fit space-y-1.5 rounded-lg bg-white/15 px-5 py-2.5 text-xs font-medium backdrop-blur-lg sm:text-base">
             {settings?.contactWhatsapp && (
               <p className="flex items-center gap-2">
@@ -88,8 +89,8 @@ export default async function PemerintahKelurahanPage() {
                 href={`https://wa.me/${settings.contactWhatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                // bg-brand/85, not solid: backdrop-blur only shows through a
-                // translucent background.
+                // bg-brand/85, bukan solid: backdrop-blur cuma terlihat lewat
+                // background yang translusen.
                 className="rounded-lg bg-brand/85 px-10 py-3 font-heading text-xs font-bold text-white backdrop-blur-md transition-opacity hover:bg-brand/100 sm:text-sm"
               >
                 Hubungi
@@ -116,9 +117,10 @@ export default async function PemerintahKelurahanPage() {
             Struktur Organisasi
           </h2>
           {orgChart ? (
-            /* Wrapper caps the width; the image fits inside both that and a
-               height budget, so the chart and its heading stay on one screen
-               however tall a bagan staff upload. */
+            /* Wrapper membatasi lebarnya; gambarnya menyesuaikan di dalam
+               batas itu maupun batas tinggi, jadi bagannya dan judulnya
+               tetap dalam satu layar setinggi apa pun bagan yang diunggah
+               staf. */
             <div className="mx-auto mt-6 flex max-w-3xl justify-center">
               <Image
                 {...orgChart}

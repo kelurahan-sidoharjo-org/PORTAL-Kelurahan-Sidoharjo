@@ -4,16 +4,17 @@ import { sitemapPostsQuery } from "@/lib/sanity/queries";
 import { siteUrl } from "@/lib/site";
 
 /**
- * Served at /sitemap.xml — the table of contents handed to search engines so
- * they don't have to discover pages by crawling links. Matters most for berita:
- * without it a new post can go unnoticed for days.
+ * Disajikan di /sitemap.xml — daftar isi yang diberikan ke mesin pencari
+ * supaya mereka tidak perlu menemukan halaman dengan meng-crawl tautan.
+ * Paling penting untuk berita: tanpa ini post baru bisa tidak terlihat
+ * selama berhari-hari.
  *
- * Matched to the pages' own ISR window so a new article shows up here on the
- * same schedule it shows up on /berita.
+ * Disamakan dengan jendela ISR milik halamannya sendiri, supaya artikel
+ * baru muncul di sini dengan jadwal yang sama dengan munculnya di /berita.
  */
 export const revalidate = 3600;
 
-/** Live routes only. /demografi is Phase 6 and would be a 404 in here. */
+/** Cuma route yang sudah hidup. /demografi adalah Phase 6 dan akan jadi 404 di sini. */
 const staticPaths = [
   "/",
   "/berita",
@@ -36,12 +37,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPaths.map((path) => ({
       url: `${siteUrl}${path}`,
       lastModified: now,
-      // The homepage is the entry point; the rest are equal peers below it.
+      // Beranda adalah titik masuk; sisanya jadi peer setara di bawahnya.
       priority: path === "/" ? 1 : 0.8,
     })),
-    // Both categories: /berita/[slug] is the shared article route, so Prestasi
-    // articles live under /berita/ too. Filtering by category here would leave
-    // every Prestasi article out of the sitemap.
+    // Kedua kategori: /berita/[slug] adalah route artikel bersama, jadi
+    // artikel Prestasi juga berada di bawah /berita/. Memfilter berdasarkan
+    // category di sini akan membuang setiap artikel Prestasi dari sitemap.
     ...posts.map((post) => ({
       url: `${siteUrl}/berita/${post.slug}`,
       lastModified: new Date(post._updatedAt),

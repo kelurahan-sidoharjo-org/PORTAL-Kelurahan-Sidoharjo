@@ -31,16 +31,15 @@ import {
 } from "@/lib/places";
 import type { Place, Umkm } from "@/lib/sanity/types";
 
-/** How long to wait after the last keystroke before moving the camera — see
- * BeritaSearch, which uses the same value for the same reason: a camera that
- * moves on every keystroke reads as jittery, not responsive. */
+/** Lama menunggu setelah ketukan terakhir sebelum kamera bergerak —
+ * kamera yang bergerak tiap ketukan terasa gugup, bukan responsif. */
 const CAMERA_DEBOUNCE_MS = 300;
 
 /**
- * `pointer`, not `any-pointer`: a touch-screen laptop driven with a mouse
- * still has `fine` as its *primary* pointer, so it keeps the desktop
- * one-click-opens behaviour. This module only loads client-side — PetaMap.tsx
- * imports it with `ssr: false` — so `window` is always available here.
+ * `pointer`, bukan `any-pointer`: laptop layar sentuh yang dipakai mouse
+ * tetap punya `fine` sebagai pointer utamanya, jadi tetap klik-sekali-buka
+ * ala desktop. Module ini cuma dimuat client-side (`ssr: false`), jadi
+ * `window` selalu tersedia.
  */
 const isCoarsePointer =
   typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
@@ -55,8 +54,8 @@ function markerIcon(category: MarkerCategory) {
   });
 }
 
-// Built once at module scope, not per render — there are only thirteen
-// categories plus umkm, and divIcon() does real work constructing each.
+// Dibangun sekali di module scope, bukan per render — divIcon() melakukan
+// pekerjaan nyata tiap dipanggil.
 const markerIcons = Object.fromEntries(
   MARKER_CATEGORIES.map((category) => [category, markerIcon(category)]),
 ) as Record<MarkerCategory, ReturnType<typeof divIcon>>;
@@ -68,9 +67,8 @@ interface OverlayLayer {
 }
 
 /**
- * Files staff produce by following the QGIS steps in the project plan. Each is
- * requested independently and a missing one is silently skipped — the map
- * must still work with zero, one, or all three present.
+ * File yang dihasilkan staf lewat langkah QGIS di rencana proyek. Tiap
+ * file diminta independen dan yang belum ada dilewati diam-diam.
  */
 const OVERLAY_SOURCES = [
   {
@@ -90,9 +88,9 @@ const OVERLAY_SOURCES = [
   },
 ];
 
-/** Every Leaflet handler a visitor could use to move or zoom the map by
- * hand, locked and released as one unit — see `CameraController`. Excludes
- * `tap` (mobile Safari's synthetic-click workaround, unrelated to movement). */
+/** Handler Leaflet untuk gerak/zoom manual, dikunci-lepas sebagai satu
+ * kesatuan — lihat `CameraController`. Tidak termasuk `tap` (workaround
+ * mobile Safari, tidak terkait pergerakan). */
 const INTERACTIVE_HANDLERS = [
   "dragging",
   "scrollWheelZoom",
@@ -107,28 +105,25 @@ function setMapInteractive(map: LeafletMap, interactive: boolean) {
     if (interactive) map[name].enable();
     else map[name].disable();
   }
-  // The zoom control's +/- buttons call map.zoomIn()/zoomOut() directly, so
-  // disabling the handlers above doesn't touch them — they have to be pulled
-  // off the map separately, hence remove()/addTo() rather than a handler.
+  // Tombol +/- zoom memanggil map.zoomIn()/zoomOut() langsung, tidak
+  // tersentuh handler di atas — jadi dilepas terpisah lewat remove()/addTo().
   if (interactive) map.zoomControl.addTo(map);
   else map.zoomControl.remove();
 }
 
-/** Fits the map once real data is available, and again whenever the debounced
- * search narrows or clears. Split out from the main component because
- * react-leaflet's `useMap` only works inside a `MapContainer`.
+/** Menyesuaikan peta begitu data tersedia, dan lagi tiap kali pencarian
+ * yang di-debounce berubah. Dipisah dari komponen utama karena `useMap`
+ * cuma bekerja di dalam `MapContainer`.
  *
- * One effect, not two: `homeBounds`/`searchBounds` must already be memoized by
- * the caller (identity-stable across renders that don't actually change the
- * data), or this refits on every render instead of only when the target
- * changes — the bug this component used to have.
+ * Satu effect, bukan dua: `homeBounds`/`searchBounds` harus sudah
+ * di-memoize pemanggilnya, atau ini menyesuaikan ulang tiap render —
+ * termasuk tiap ketukan tuts selama batas wilayah belum termuat. Bug yang
+ * dulu ada di komponen ini.
  *
- * Also locks every pan/zoom handler until that first fit lands. Without the
- * lock, a visitor who moves the map during the half-second the boundary file
- * takes to load gets overridden the instant homeBounds resolves — the map
- * visibly fights back. `overlaysReady` unlocks it anyway once the load
- * attempt has finished even with nothing to fit (an empty dataset), so the
- * map can't freeze permanently waiting for a fit that will never come. */
+ * Juga mengunci pan/zoom sampai penyesuaian pertama selesai — tanpa itu,
+ * pengunjung yang menggerakkan peta saat loading langsung dibatalkan
+ * begitu homeBounds resolve. `overlaysReady` tetap membuka kunci walau
+ * tidak ada yang perlu disesuaikan, supaya peta tidak membeku selamanya. */
 function CameraController({
   homeBounds,
   searchBounds,
@@ -158,10 +153,9 @@ function CameraController({
   return null;
 }
 
-/** Tapping open water lets a touch user back out of an armed pin (see
- * `armedPinRef` below) without having to hit that exact pin again. Marker taps
- * never reach this: Leaflet's marker layer doesn't bubble its click to the
- * map. */
+/** Mengetuk area terbuka membatalkan pin yang "armed" (lihat
+ * `armedPinRef`) tanpa harus mengenainya lagi. Ketukan marker tidak
+ * pernah sampai sini — layer marker Leaflet tidak meneruskan klik ke peta. */
 function MapClickReset({ onReset }: { onReset: () => void }) {
   useMapEvents({ click: onReset });
   return null;
@@ -239,14 +233,13 @@ export default function PetaMapCanvas({
   const [hidden, setHidden] = useState<Set<MarkerCategory>>(new Set());
   const [cameraQuery, setCameraQuery] = useState("");
 
-  // Which pin is "armed" on a touch device: the first tap opens its tooltip,
-  // a second tap on that same pin opens Google Maps. A ref, not state — this
-  // never needs to cause a render, so there's no reason to make it one.
+  // Pin yang sedang "armed" di perangkat touch: ketukan pertama membuka
+  // tooltip, ketukan kedua di pin sama membuka Google Maps. Ref, bukan
+  // state — tidak pernah perlu memicu render.
   const armedPinRef = useRef<string | null>(null);
 
-  // Each overlay is fetched independently and failures are swallowed — a
-  // layer staff haven't produced yet (see the QGIS steps in the plan) must not
-  // block the other two, or the pins, from rendering.
+  // Tiap overlay diambil independen, kegagalannya ditelan — layer yang
+  // belum dibuat staf tidak boleh menghalangi layer lain atau pin dirender.
   useEffect(() => {
     let cancelled = false;
 
@@ -270,9 +263,8 @@ export default function PetaMapCanvas({
     };
   }, []);
 
-  // The camera follows a debounced copy of the query — see CAMERA_DEBOUNCE_MS
-  // — while pins below react to `query` directly, so hiding a pin always feels
-  // instant even though the map settles a beat later.
+  // Kamera mengikuti query yang di-debounce, pin bereaksi ke `query`
+  // langsung — jadi menyembunyikan pin selalu terasa instan.
   useEffect(() => {
     const timer = setTimeout(() => setCameraQuery(query), CAMERA_DEBOUNCE_MS);
     return () => clearTimeout(timer);
@@ -293,9 +285,8 @@ export default function PetaMapCanvas({
     let combined: LatLngBounds | null = null;
     for (const layer of overlays) {
       const layerBounds = latLngBounds(
-        // react-leaflet re-derives this identically when it renders the layer;
-        // computing it here too is what lets the camera fit *before* the user
-        // has to wait for that render.
+        // react-leaflet menurunkan ini identik saat merender layer;
+        // dihitung di sini juga supaya kamera bisa menyesuaikan lebih dulu.
         geoJsonCoordinatesToLatLngs(layer.data),
       );
       if (!layerBounds.isValid()) continue;
@@ -310,14 +301,12 @@ export default function PetaMapCanvas({
     ];
   }, [overlays]);
 
-  // Memoized, not recomputed inline: boundsOf() returns a fresh array every
-  // call, and CameraController's effect keys off these by identity. Without
-  // useMemo here, the camera would refit on every render — including every
-  // keystroke whenever the boundary file (which stabilises geoBounds) is
-  // missing — rather than only when the target actually changes.
+  // Di-memoize: boundsOf() mengembalikan array baru tiap dipanggil, dan
+  // effect CameraController mengunci identitasnya. Tanpa ini kamera
+  // menyesuaikan ulang tiap render.
   //
-  // Only meaningful once the overlay fetches have settled (see the effect
-  // above) — before that, `overlays` is null and homeBounds stays null.
+  // Baru berarti setelah fetch overlay selesai — sebelum itu `overlays`
+  // null dan homeBounds tetap null.
   const homeBounds = useMemo<Bounds | null>(
     () => (overlays === null ? null : (geoBounds ?? boundsOf(allPins))),
     [overlays, geoBounds, allPins],
@@ -343,15 +332,12 @@ export default function PetaMapCanvas({
         center={SIDOHARJO_CENTER}
         zoom={14}
         minZoom={1}
-        // Leaflet's default zoomSnap of 1 rounds every fitBounds() down to a
-        // whole zoom level, and whole levels are 2x apart. The kelurahan
-        // boundary wants zoom ~15.4 here, so it was being drawn at 15 and
-        // filling only about three quarters of the canvas height — and any
-        // change to the canvas smaller than a full level (which is nearly all
-        // of them) produced no visible refit at all. Quarter steps track the
-        // container closely enough to look fitted. Not 0: a fractional zoom
-        // scales the Esri raster tiles, and the softness that causes is worth
-        // trading a few percent of slack to keep small.
+        // zoomSnap bawaan 1 membulatkan fitBounds() ke level zoom bulat,
+        // yang berjarak 2x. Batas wilayah di sini ingin zoom ~15.4, jadi
+        // dulu digambar di 15 dan cuma mengisi tiga perempat canvas.
+        // Langkah seperempat mengikuti kontainer cukup dekat. Bukan 0:
+        // zoom pecahan membuat tile Esri sedikit lembek, tapi itu trade-off
+        // yang layak diambil.
         zoomSnap={0.25}
         scrollWheelZoom
         className="size-full"
@@ -380,11 +366,10 @@ export default function PetaMapCanvas({
             alt={pin.name}
             eventHandlers={{
               click: (event) => {
-                // Desktop: hover already showed the tooltip, so one click can
-                // go straight to Google Maps. Touch has no hover — a tap that
-                // opens a new tab immediately means the visitor never learns
-                // which pin they hit. First tap arms this pin and shows its
-                // tooltip; the second (on the same pin) opens the link.
+                // Desktop: hover sudah menampilkan tooltip, satu klik ke
+                // Google Maps. Touch tidak punya hover — ketukan pertama
+                // meng-arm pin dan menampilkan tooltip; ketukan kedua
+                // (pin sama) membuka tautannya.
                 if (!isCoarsePointer || armedPinRef.current === pin.id) {
                   window.open(pin.googleMapsUrl, "_blank", "noopener,noreferrer");
                   return;
@@ -420,9 +405,8 @@ export default function PetaMapCanvas({
   );
 }
 
-/** Every coordinate in a FeatureCollection, flattened to [lat, lng] pairs —
- * enough for latLngBounds() to compute an extent from, regardless of whether
- * the geometry underneath is a Polygon, LineString or MultiLineString. */
+/** Tiap koordinat di FeatureCollection, diratakan jadi [lat, lng] — cukup
+ * untuk latLngBounds() menghitung extent, apa pun geometrinya. */
 function geoJsonCoordinatesToLatLngs(collection: FeatureCollection): [number, number][] {
   const points: [number, number][] = [];
 

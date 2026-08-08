@@ -2,19 +2,20 @@ import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/site";
 
 /**
- * Served at /robots.txt — instructions for search engine crawlers, and how they
- * discover the sitemap.
+ * Disajikan di /robots.txt — instruksi untuk crawler mesin pencari, dan
+ * bagaimana mereka menemukan sitemap-nya.
  *
- * A sign, not a lock: well-behaved crawlers obey it, nothing enforces it. The
- * Studio's actual protection is the Sanity login, plus the `noindex` in
- * src/app/admin/layout.tsx. This just keeps /admin out of search results.
+ * Ini rambu, bukan gembok: crawler yang berperilaku baik mematuhinya,
+ * tidak ada yang memaksakannya. Perlindungan sesungguhnya untuk Studio
+ * adalah login Sanity, plus `noindex` di src/app/admin/layout.tsx. Ini
+ * cuma menjaga /admin tetap keluar dari hasil pencarian.
  */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      // /api is the revalidation webhook — not a page, nothing to index.
+      // /api adalah webhook revalidasi — bukan halaman, tidak ada yang diindeks.
       disallow: ["/admin", "/api"],
     },
     sitemap: `${siteUrl}/sitemap.xml`,

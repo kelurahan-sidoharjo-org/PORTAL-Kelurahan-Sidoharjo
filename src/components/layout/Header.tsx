@@ -3,17 +3,17 @@ import Link from "next/link";
 import { getSiteSettings } from "@/lib/sanity/client";
 
 /**
- * Same on every page: seal + wordmark left, social links right.
+ * Sama di tiap halaman: lambang + wordmark di kiri, tautan sosial di kanan.
  *
- * The seal is a static asset, not a Sanity field — it's a fixed government
- * emblem. See CLAUDE.md ("The header logo is static").
+ * Lambangnya adalah aset statis, bukan field Sanity — itu emblem
+ * pemerintah yang tetap. Lihat CLAUDE.md ("The header logo is static").
  */
 export async function Header() {
   const settings = await getSiteSettings();
 
   return (
     <header className="bg-white">
-      {/* Fixed height so full-screen heroes can subtract it exactly. */}
+      {/* Tinggi tetap supaya hero layar-penuh bisa menguranginya dengan tepat. */}
       <div className="mx-auto flex h-[var(--header-height)] max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -22,8 +22,8 @@ export async function Header() {
             width={96}
             height={96}
             priority
-            // A fixed, pre-sized PNG — skip the Sanity loader (it only resizes
-            // cdn.sanity.io URLs) and Next's optimizer.
+            // PNG tetap yang sudah pas ukurannya — melewati loader Sanity
+            // (itu cuma meresize URL cdn.sanity.io) dan optimizer Next.
             unoptimized
             className="h-11 w-auto object-contain sm:h-12"
           />

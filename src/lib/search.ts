@@ -1,68 +1,65 @@
 /**
- * Cost guardrails, not usability ones.
+ * Pagar biaya, bukan pagar kegunaan.
  *
- * Every distinct `?q=` value is its own Next Data Cache key, and every new key
- * means two live reads against Sanity's main API — the CDN is deliberately off
- * (see client.ts). Unbounded, a trivial script can drain the Sanity quota until
- * revalidation stops, and the only symptom staff ever see is that a published
- * berita never appears. No error, nothing to report.
+ * Tiap nilai `?q=` yang berbeda adalah cache key Data Cache Next
+ * tersendiri, dan tiap key baru berarti dua pembacaan hidup ke API utama
+ * Sanity (CDN-nya mati — lihat client.ts). Tanpa batas, satu skrip sepele
+ * bisa menguras kuota Sanity sampai revalidasi berhenti — gejalanya cuma
+ * berita yang sudah dipublikasikan tidak pernah muncul, tanpa error.
  *
- * 60 characters / 6 words sits far above any real search (readers type one to
- * three words). Cutting mid-word costs nothing: the trailing wildcard still
- * matches it as a prefix, so "kebersihan" truncated to "kebersih" finds the
- * same article.
+ * 60 karakter / 6 kata jauh di atas pencarian sungguhan. Memotong di
+ * tengah kata aman: wildcard di belakang tetap membuatnya cocok sebagai
+ * awalan.
  */
 const MAX_LENGTH = 60;
 const MAX_WORDS = 6;
 
 /**
- * Turns a raw `?q=` value into a GROQ `match` pattern.
+ * Mengubah nilai `?q=` mentah menjadi pola `match` GROQ.
  *
- * Unlike /peta — where every place is already in the browser and `filterPlaces`
- * can do a plain substring match — /berita only ever holds one page of posts,
- * so the search has to happen in Sanity. GROQ's `match` works on whole words,
- * which would make "kebersih" find nothing; a trailing `*` on each word turns
- * it back into the "starts typing and it narrows" behaviour readers expect.
+ * Beda dari /peta — semua place sudah di browser dan bisa dicocokkan
+ * langsung — /berita cuma menyimpan satu halaman post, jadi pencariannya
+ * harus di Sanity. `match` GROQ bekerja pada kata utuh, jadi "kebersih"
+ * tidak menemukan apa-apa; wildcard `*` di belakang mengembalikan
+ * perilaku "mengetik dan hasilnya menyempit" yang diharapkan pembaca.
  *
- * The output is also a *canonical* form, so searches that differ only in
- * spelling-of-the-same-thing share one cache entry instead of each paying for
- * its own pair of Sanity reads. All three normalisations below were verified
- * result-neutral against the production dataset on 2026-08-08: `match` ignores
- * case, ignores word order, and ignores repeated words, so none of them can
- * change which articles come back.
+ * Hasilnya juga bentuk *baku* (canonical): pencarian yang cuma beda ejaan
+ * berbagi satu entri cache, bukan masing-masing membayar sepasang
+ * pembacaan Sanity sendiri. Ketiga normalisasi di bawah sudah
+ * diverifikasi netral secara hasil (2026-08-08): `match` mengabaikan
+ * huruf besar/kecil, urutan kata, dan kata berulang.
  *
- * Returns null when there's nothing to search for, which the queries read as
- * "no filter" — see `!defined($q)` in queries.ts.
+ * Mengembalikan null kalau tidak ada yang dicari — dibaca query sebagai
+ * "tanpa filter", lihat `!defined($q)` di queries.ts.
  */
 export function toMatchPattern(
   raw: string | string[] | undefined,
 ): string | null {
-  // `?q=a&q=b` arrives as an array. Take the first rather than 404ing: a
-  // malformed search should still show results, unlike a malformed page number.
+  // `?q=a&q=b` datang sebagai array. Ambil yang pertama, jangan 404 —
+  // beda dengan nomor halaman yang salah bentuk.
   const value = Array.isArray(raw) ? raw[0] : raw;
 
   const words = (value ?? "")
     .slice(0, MAX_LENGTH)
-    // `match` is already case-insensitive, so this changes no result — it only
-    // folds "Kerja", "kerja" and "KERJA" onto one cache key.
+    // `match` sudah case-insensitive, jadi ini tidak mengubah hasil apa pun —
+    // cuma menyatukan "Kerja", "kerja", dan "KERJA" ke satu cache key.
     .toLowerCase()
-    // `*` is GROQ's own wildcard. Stripping it stops a stray asterisk from
-    // widening the search instead of narrowing it.
+    // `*` adalah wildcard milik GROQ sendiri. Membuangnya mencegah tanda
+    // bintang nyasar melebarkan pencarian alih-alih mempersempitnya.
     .replace(/\*/g, " ")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
 
-  // Unique words, sorted: `match` requires every term to be present regardless
-  // of the order they were typed in, so every permutation of a search collapses
-  // to the same pattern — and therefore the same cache entry.
+  // Kata unik, diurutkan: `match` tidak peduli urutan kata, jadi tiap
+  // permutasi pencarian menyatu ke pola — dan cache key — yang sama.
   const canonical = [...new Set(words)].sort().slice(0, MAX_WORDS);
 
   if (canonical.length === 0) return null;
   return canonical.map((word) => `${word}*`).join(" ");
 }
 
-/** The raw text to put back in the search box, so the query stays visible. */
+/** Teks mentah untuk ditaruh kembali di kotak pencarian, supaya query-nya tetap terlihat. */
 export function searchValue(raw: string | string[] | undefined): string {
   const value = Array.isArray(raw) ? raw[0] : raw;
   return value ?? "";

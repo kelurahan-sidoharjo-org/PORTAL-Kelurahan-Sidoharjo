@@ -28,22 +28,24 @@ export default async function PetaPage() {
       <PageHeading>Peta &amp; Tempat Publik</PageHeading>
 
       {/*
-       * The map replaces the old static image + card list entirely — it's tall
-       * enough to actually be useful to explore, but still sits inside the
-       * page's normal max-w-6xl container like /berita, /umkm and /prestasi.
+       * Peta ini sepenuhnya menggantikan gambar statis + daftar kartu yang
+       * lama — cukup tinggi untuk benar-benar berguna dijelajahi, tapi
+       * tetap berada di dalam kontainer max-w-6xl normal milik halaman,
+       * sama seperti /berita, /umkm, dan /prestasi.
        */}
       <div className="mt-8">
         <PetaMap places={places} umkm={umkm} />
       </div>
 
       {/*
-       * Rendered here, not inside PetaMap/PetaMapCanvas, because the map is
-       * `dynamic(..., { ssr: false })` — Leaflet touches `window` at import.
-       * A list that lived inside it would be just as client-only as the map
-       * itself, defeating the point: a screen reader that hasn't finished
-       * loading JS, or a crawler, would see nothing here either. This server
-       * component has the same `places`/`umkm` data already, so the list
-       * costs nothing extra to compute and always ships in the initial HTML.
+       * Dirender di sini, bukan di dalam PetaMap/PetaMapCanvas, karena
+       * petanya `dynamic(..., { ssr: false })` — Leaflet menyentuh
+       * `window` saat diimpor. Daftar yang berada di dalamnya akan
+       * sama-sama client-only seperti petanya sendiri, menggagalkan
+       * tujuannya: screen reader yang belum selesai memuat JS, atau
+       * crawler, juga tidak akan melihat apa pun di sini. Server component
+       * ini sudah punya data `places`/`umkm` yang sama, jadi daftarnya
+       * tidak menambah biaya komputasi dan selalu terkirim di HTML awal.
        */}
       <ul className="sr-only">
         {pins.map((pin) => (

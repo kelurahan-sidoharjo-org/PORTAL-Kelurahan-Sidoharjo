@@ -11,8 +11,9 @@ describe("parsePageParam", () => {
   });
 
   /**
-   * These arrive straight from the URL, so they're untrusted. Returning null
-   * lets the page 404 rather than quietly serving page 1 for a bad link.
+   * Ini datang langsung dari URL, jadi tidak bisa dipercaya. Mengembalikan
+   * null membuat halaman 404 alih-alih diam-diam menyajikan halaman 1 untuk
+   * tautan yang salah.
    */
   it.each([
     ["zero", "0"],

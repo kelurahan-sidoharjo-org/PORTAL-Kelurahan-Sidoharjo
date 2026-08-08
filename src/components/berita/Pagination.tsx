@@ -4,16 +4,17 @@ import type { PageInfo } from "@/lib/pagination";
 import { cn } from "@/lib/utils";
 
 /**
- * Plain links, no client-side state — so paging works without JavaScript and
- * each page stays independently cacheable and crawlable.
+ * Link biasa, tanpa state di sisi client — supaya paging tetap berfungsi
+ * tanpa JavaScript dan tiap halaman tetap bisa di-cache dan di-crawl
+ * secara independen.
  */
 export function Pagination({
   info,
   query,
 }: {
   info: PageInfo;
-  /** The active `?q=` search, carried into every page link so that paging
-   *  through results doesn't silently drop back to all posts. */
+  /** Pencarian `?q=` yang aktif, dibawa ke tiap link halaman supaya paging
+   *  lewat hasil pencarian tidak diam-diam kembali ke semua post. */
   query?: string;
 }) {
   const { page, totalPages, hasPrev, hasNext } = info;
@@ -22,8 +23,8 @@ export function Pagination({
   const href = (n: number) => {
     const params = new URLSearchParams();
     if (query?.trim()) params.set("q", query.trim());
-    // Page 1 is the bare address, so /berita and /berita?page=1 don't become
-    // two addresses for the same thing.
+    // Halaman 1 adalah alamat telanjang, supaya /berita dan
+    // /berita?page=1 tidak jadi dua alamat untuk hal yang sama.
     if (n > 1) params.set("page", String(n));
     const search = params.toString();
     return search ? `/berita?${search}` : "/berita";
@@ -70,8 +71,9 @@ export function Pagination({
 }
 
 /**
- * Rendered as a non-interactive span when disabled — a link to nowhere is
- * still focusable and announced as a link, which misleads screen readers.
+ * Dirender sebagai span non-interaktif saat dimatikan — link yang tidak
+ * mengarah ke mana pun tetap bisa di-focus dan tetap diumumkan sebagai
+ * link, yang menyesatkan screen reader.
  */
 function Step({
   href,

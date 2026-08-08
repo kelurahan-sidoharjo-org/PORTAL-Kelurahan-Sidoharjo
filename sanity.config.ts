@@ -38,12 +38,12 @@ export default defineConfig({
   plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
   form: {
     image: {
-      // The resize source stays available (and is what the field descriptions
-      // point staff at), but drag-and-drop is deliberately left ON: forcing
-      // every upload through the custom source made Sanity render a greyed-out
-      // "Can't upload files here", which reads as a fault to non-technical
-      // staff. Usability won over the storage guarantee — see the storage
-      // budget note in README.md.
+      // Sumber resize tetap tersedia (dan itulah yang ditunjuk deskripsi
+      // field ke staf), tapi drag-and-drop sengaja dibiarkan MENYALA:
+      // memaksa tiap upload lewat sumber kustom membuat Sanity merender
+      // "Can't upload files here" yang abu-abu, yang terbaca sebagai
+      // kerusakan bagi staf non-teknis. Usability menang atas jaminan
+      // penyimpanan — lihat catatan anggaran penyimpanan di README.md.
       assetSources: () => [resizeUploadAssetSource],
       directUploads: true,
     },

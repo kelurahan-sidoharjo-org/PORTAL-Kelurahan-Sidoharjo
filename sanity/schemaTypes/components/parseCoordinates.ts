@@ -1,15 +1,16 @@
 /**
- * Turns whatever a staff member pastes into the "Titik Lokasi" box into a
- * coordinate pair, or null if it can't be read.
+ * Mengubah apa pun yang ditempel staf ke kotak "Titik Lokasi" menjadi
+ * pasangan koordinat, atau null kalau tidak terbaca.
  *
- * Lives beside locationInput.tsx rather than in src/lib/ because sanity/ is
- * built without the `@/` alias — keeping it local avoids wiring one up for a
- * single import.
+ * Ditaruh di sebelah locationInput.tsx, bukan di src/lib/, karena sanity/
+ * dibangun tanpa alias `@/` — menaruhnya lokal menghindari perlu memasang
+ * alias hanya untuk satu import.
  *
- * Deliberately returns null rather than guessing. A parser that quietly
- * produces a *nearly* right coordinate is worse than one that refuses, because
- * a pin 40 km off looks just as plausible as a correct one to whoever pasted
- * it — the caller shows an error instead.
+ * Sengaja mengembalikan null daripada menebak. Parser yang diam-diam
+ * menghasilkan koordinat yang *nyaris* benar lebih buruk daripada yang
+ * langsung menolak, karena pin yang meleset 40 km tetap terlihat masuk akal
+ * bagi siapa pun yang menempelkannya — pemanggil menampilkan error sebagai
+ * gantinya.
  */
 
 export interface Coordinates {
@@ -18,16 +19,18 @@ export interface Coordinates {
 }
 
 /**
- * Google Maps encodes the same point several ways, and staff will paste
- * whichever their screen produced. Ordered by trustworthiness:
+ * Google Maps mengkodekan titik yang sama dengan beberapa cara, dan staf
+ * akan menempel apa pun yang muncul di layar mereka. Diurutkan dari yang
+ * paling bisa dipercaya:
  *
- * 1. `!3d<lat>!4d<lng>` inside a /place/ URL's `data=` blob — the actual pin.
- * 2. `?q=<lat>,<lng>` — an explicit coordinate query.
- * 3. `@<lat>,<lng>,<zoom>z` — the *viewport centre*, which is only near the
- *    pin. Last resort precisely because it's the one that can be off.
+ * 1. `!3d<lat>!4d<lng>` di dalam blob `data=` URL /place/ — pin sesungguhnya.
+ * 2. `?q=<lat>,<lng>` — query koordinat eksplisit.
+ * 3. `@<lat>,<lng>,<zoom>z` — *titik tengah viewport*, yang cuma dekat
+ *    dengan pin. Pilihan terakhir justru karena inilah yang bisa meleset.
  *
- * Not handled: `maps.app.goo.gl` short links, which contain no coordinates at
- * all and would need a network request to resolve. They fall through to null.
+ * Tidak ditangani: short link `maps.app.goo.gl`, yang sama sekali tidak
+ * mengandung koordinat dan butuh request jaringan untuk di-resolve. Ini
+ * jatuh ke null.
  */
 const URL_PATTERNS = [
   /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
@@ -35,14 +38,16 @@ const URL_PATTERNS = [
   /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
 ];
 
-/** A bare pair: "-7.8179, 111.0704", "-7.8179,111.0704", "-7.8179 111.0704".
- * Anchored so trailing junk is rejected rather than half-read. */
+/** Pasangan telanjang: "-7.8179, 111.0704", "-7.8179,111.0704",
+ * "-7.8179 111.0704". Di-anchor supaya sisa teks di belakang ditolak,
+ * bukan terbaca separuh. */
 const PAIR = /^(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)$/;
 
 function valid(lat: number, lng: number): Coordinates | null {
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-  // Also the swap guard: a transposed pair for Indonesia puts longitude
-  // (~111) in the latitude slot, which is out of range and caught here.
+  // Ini juga jadi penjaga pertukaran: pasangan yang tertukar untuk
+  // Indonesia menaruh bujur (~111) di slot lintang, yang di luar jangkauan
+  // dan tertangkap di sini.
   if (lat < -90 || lat > 90) return null;
   if (lng < -180 || lng > 180) return null;
   return { lat, lng };

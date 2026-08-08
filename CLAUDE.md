@@ -239,11 +239,21 @@ build/revalidation only, so load scales with content changes, not traffic.
   `domain-go-id.md` (PANDI question list). **All three are in Bahasa
   Indonesia**; every one of them is read or acted on by the kelurahan, not only
   by a developer. **`README.md` was translated to Bahasa Indonesia in place on
-  2026-08-04** (at the maintainer's request) — `CLAUDE.md` is now the only
-  developer-facing doc left in English, kept that way as the deep
-  architecture/decision reference for whichever developer picks this project
-  up next. Work from these, don't duplicate them — a translated copy alongside
-  an original would drift, and nobody maintains either after handover.
+  2026-08-04** (at the maintainer's request). Work from these, don't duplicate
+  them — a translated copy alongside an original would drift, and nobody
+  maintains either after handover.
+- **Inline code comments (`src/`, `sanity/`, `scripts/`) were translated to
+  Bahasa Indonesia on 2026-08-09**, at the maintainer's request — common
+  technical terms (component, hook, cache, wildcard, fetch, render, debounce,
+  etc.) were kept in English rather than forced into an Indonesian equivalent
+  nobody uses. `CLAUDE.md` itself is the one exception, **still in English on
+  purpose**: it's the deep architecture/decision reference for whichever
+  developer picks this project up next, and that developer isn't guaranteed
+  to read Indonesian the way a comment inside `src/` — written for whoever is
+  actually maintaining this specific kelurahan's site — reasonably can assume.
+  Don't translate new comments back to English, and don't translate
+  `CLAUDE.md` to Indonesian without asking first — both were deliberate,
+  separate calls.
 - `design-reference/` — design screenshots (gitignored).
 
 ## Roadmap & progress

@@ -1,15 +1,16 @@
 /**
- * Hand-written result types for the queries in queries.ts.
+ * Tipe hasil yang ditulis tangan untuk query di queries.ts.
  *
- * Not generated: TypeGen would add a codegen step to every schema edit, which
- * is a poor trade at this size. If the content model grows a lot, revisit.
+ * Tidak digenerate: TypeGen akan menambah langkah codegen di tiap edit
+ * skema, yang jadi pertukaran buruk pada skala sebesar ini. Kalau model
+ * kontennya berkembang jauh lebih besar, tinjau ulang keputusan ini.
  */
 
 export interface SanityImageAsset {
   _id: string;
   metadata: {
     dimensions: { width: number; height: number };
-    /** Tiny base64 preview Sanity generates for us — used as a blur placeholder. */
+    /** Preview base64 kecil yang digenerate Sanity untuk kita — dipakai sebagai blur placeholder. */
     lqip: string;
   };
 }
@@ -32,8 +33,9 @@ export interface SiteSettings {
 }
 
 /**
- * A `geopoint` as /peta needs it. Sanity stores an optional `alt` (altitude)
- * too; nothing here reads it, so the queries never ask for it.
+ * `geopoint` sebagaimana dibutuhkan /peta. Sanity juga menyimpan `alt`
+ * (altitude) opsional; tidak ada yang membacanya di sini, jadi query tidak
+ * pernah memintanya.
  */
 export interface GeoPoint {
   lat: number;
@@ -41,9 +43,9 @@ export interface GeoPoint {
 }
 
 /**
- * The `place.category` enum — drives the map marker (emoji + colour) and the
- * legend row. Order here is only documentation; `PLACE_CATEGORIES` in
- * src/lib/places.ts owns the order things render in.
+ * Enum `place.category` — menentukan marker peta (emoji + warna) dan baris
+ * legenda. Urutan di sini cuma dokumentasi; `PLACE_CATEGORIES` di
+ * src/lib/places.ts yang mengatur urutan tampilnya.
  */
 export type PlaceCategory =
   | "pemerintahan"
@@ -65,7 +67,7 @@ export interface Place {
   name: string;
   category: PlaceCategory;
   googleMapsUrl: string;
-  /** Optional: a place with no point simply gets no pin. */
+  /** Opsional: tempat tanpa titik lokasi sederhananya tidak punya pin. */
   location: GeoPoint | null;
 }
 
@@ -83,7 +85,7 @@ export interface Umkm {
   photo: SanityImage | null;
   contactUrl: string | null;
   googleMapsUrl: string | null;
-  /** Optional, same as Place — UMKM with a point also appear on /peta. */
+  /** Opsional, sama seperti Place — UMKM dengan titik lokasi juga muncul di /peta. */
   location: GeoPoint | null;
 }
 
@@ -97,17 +99,17 @@ export interface PostSummary {
 }
 
 /**
- * A full article. Serves both categories — /berita/[slug] is the shared
- * article route, linked to from Prestasi cards as well as Berita ones.
+ * Artikel lengkap. Melayani kedua kategori — /berita/[slug] adalah route
+ * artikel bersama, ditautkan dari kartu Prestasi maupun Berita.
  */
 export interface PostDetail extends PostSummary {
   category: "berita" | "prestasi";
-  /** Portable Text; shape is owned by @portabletext/react, not us. */
+  /** Portable Text; bentuknya dimiliki @portabletext/react, bukan kita. */
   body: PortableTextBlock[] | null;
   images: SanityImage[] | null;
 }
 
-/** Minimal structural type — avoids a dependency just for a block shape. */
+/** Tipe struktural minimal — menghindari dependensi baru hanya untuk bentuk satu block. */
 export interface PortableTextBlock {
   _type: string;
   _key: string;

@@ -13,7 +13,7 @@ import {
 } from "./places";
 import type { Place, Umkm } from "@/lib/sanity/types";
 
-/** Minimal place factory — only the fields the map logic touches. */
+/** Factory place minimal — hanya field yang disentuh logika peta. */
 function place(
   name: string,
   category: Place["category"],
@@ -50,8 +50,8 @@ describe("PLACE_CATEGORY_MARKERS", () => {
     for (const category of MARKER_CATEGORIES) {
       expect(PLACE_CATEGORY_MARKERS[category]).toBeDefined();
     }
-    // A category present in the schema but missing here would fail silently
-    // at render time — Leaflet just draws no pin — so this is the guard.
+    // Kategori yang ada di skema tapi tidak ada di sini akan gagal diam-diam
+    // saat render — Leaflet cuma tidak menggambar pin — jadi ini penjaganya.
     expect(MARKER_CATEGORIES).toEqual([...PLACE_CATEGORIES, "umkm"]);
   });
 });
@@ -117,7 +117,7 @@ describe("toMapPins", () => {
 describe("presentCategories", () => {
   it("returns only categories that appear, in fixed order", () => {
     const pins = toMapPins(places);
-    // sekolah + ibadah come before pemerintahan per PLACE_CATEGORIES.
+    // sekolah + ibadah muncul sebelum pemerintahan sesuai PLACE_CATEGORIES.
     expect(presentCategories(pins)).toEqual(["pemerintahan", "ibadah", "sekolah"]);
   });
 

@@ -6,16 +6,16 @@ import { imageProps } from "@/lib/sanity/image";
 import type { PostSummary } from "@/lib/sanity/types";
 
 /**
- * Two shapes: with a cover photo it's image-on-top; without one it falls back
- * to a trophy tile beside the title.
+ * Dua bentuk: dengan foto cover, gambarnya di atas; tanpa foto, jatuh balik
+ * ke ubin trophy di sebelah judul.
  *
- * The stand-in is ic-trophy (white glyph on dark green), NOT the indigo-on-
- * lavender trophy in the Figma frame — that third asset was deliberately
- * dropped. See CLAUDE.md.
+ * Pengganti yang dipakai adalah ic-trophy (glyph putih di hijau tua),
+ * BUKAN trophy indigo-di-atas-lavender di frame Figma — aset ketiga itu
+ * sengaja dibuang. Lihat CLAUDE.md.
  */
 export function PrestasiCard({ post }: { post: PostSummary }) {
   const cover = imageProps(post.coverImage);
-  // The year is already the timeline heading, so the card shows day + month.
+  // Tahunnya sudah jadi judul timeline, jadi kartunya menampilkan hari + bulan.
   const date = formatDayMonth(post.publishedAt);
   const href = `/berita/${post.slug}`;
 

@@ -1,43 +1,40 @@
 /**
- * The site's own absolute URL — needed by anything that produces a link a
- * *different* machine will follow: `metadataBase`, Open Graph images,
- * sitemap.xml, robots.txt. Relative paths are fine inside the browser but
- * useless to WhatsApp or Googlebot, which read the page from outside.
+ * URL absolut situs ini — dibutuhkan apa pun yang menghasilkan tautan
+ * yang diikuti mesin *lain*: `metadataBase`, Open Graph, sitemap.xml,
+ * robots.txt. Path relatif tidak berguna bagi WhatsApp atau Googlebot,
+ * yang membaca halaman dari luar.
  *
- * Resolved here once so the .go.id cutover is a single env-var edit rather than
- * a find-and-replace.
+ * Di-resolve di sini sekali, supaya cutover ke .go.id cukup satu env var.
  *
- * Three rungs, each covering a case the one above can't:
- *   1. NEXT_PUBLIC_SITE_URL — set by hand; always wins. This is what changes
- *      when the real domain lands.
- *   2. VERCEL_PROJECT_PRODUCTION_URL — set by *Vercel*, not by us, on every
- *      build, so a deploy that forgot rung 1 still advertises a real address
- *      instead of localhost. It's the *production* URL even on preview
- *      deploys, which is what canonical/OG links want; VERCEL_URL is
- *      per-deployment and would churn. **Never set this one by hand.**
- *   3. Local `npm run dev`, where neither of the above exists.
+ * Tiga tingkat:
+ *   1. NEXT_PUBLIC_SITE_URL — disetel manual; selalu menang. Berubah saat
+ *      domain asli aktif.
+ *   2. VERCEL_PROJECT_PRODUCTION_URL — disetel Vercel sendiri tiap build,
+ *      jadi deploy yang lupa tingkat 1 tetap mengiklankan alamat
+ *      sungguhan. Ini URL *produksi* walau di preview deploy; VERCEL_URL
+ *      beda per deployment dan terus berubah. **Jangan disetel manual.**
+ *   3. `npm run dev` lokal, tidak satu pun di atas ada.
  *
- * `||` rather than `??`, matching env.ts: a variable saved with an empty value
- * in the Vercel dashboard should fall through to the next rung, not win it and
- * hand `new URL("")` an empty string to throw on.
+ * Pakai `||`, bukan `??` (sama seperti env.ts): nilai kosong di dashboard
+ * Vercel harus jatuh ke tingkat berikutnya, bukan memberi `new URL("")`
+ * yang error.
  *
- * Rung 2 has no NEXT_PUBLIC_ prefix, so it exists only on the server. That's
- * fine — every consumer is server-side metadata generation. Don't reach for
- * `siteUrl` from a client component; there it would silently be localhost.
+ * Tingkat 2 tanpa prefix NEXT_PUBLIC_, jadi hanya di server — semua
+ * pemakainya metadata generation server-side. Jangan ambil `siteUrl` dari
+ * client component; di situ diam-diam jadi localhost.
  */
 
 /**
- * Vercel supplies rung 2 as a bare hostname, so the protocol has to be added —
- * but someone setting it by hand naturally writes `https://…`, which used to
- * produce `https://https://…` and quietly corrupted every URL in sitemap.xml.
- * The page still rendered, so nothing failed; the links were just all invalid.
+ * Vercel menyediakan tingkat 2 sebagai hostname telanjang, jadi
+ * protokolnya harus ditambahkan — tapi orang yang menyetelnya manual
+ * biasanya sudah menulis `https://…`, yang dulu menghasilkan
+ * `https://https://…` dan diam-diam merusak tiap URL di sitemap.xml.
+ * Menerima kedua bentuk menghilangkan jebakan itu; trailing slash
+ * dibuang dengan alasan yang sama — `siteUrl` selalu digabung path yang
+ * diawali `/`.
  *
- * Accepting either form removes the trap. The trailing-slash strip matters for
- * the same reason: `siteUrl` is always concatenated with a path that starts
- * with `/`, so a stored trailing slash yields `https://site//berita`.
- *
- * Exported for its unit test — the bug above was invisible in the UI, which is
- * exactly the kind that deserves a test rather than another comment.
+ * Diekspor untuk unit test — bug di atas tidak terlihat di UI, jenis bug
+ * yang layak diberi tes, bukan sekadar komentar.
  */
 export function normalizeSiteUrl(value: string): string {
   const trimmed = value.trim();
@@ -55,7 +52,7 @@ export const siteUrl = configured
   ? normalizeSiteUrl(configured)
   : "http://localhost:3000";
 
-/** Open Graph `siteName`, and the suffix in the page-title template. */
+/** `siteName` Open Graph, dan sufiks di template judul halaman. */
 export const siteName = "Portal Kelurahan Sidoharjo";
 
 export const siteDescription =

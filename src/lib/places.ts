@@ -1,12 +1,12 @@
 import type { GeoPoint, Place, PlaceCategory, Umkm } from "@/lib/sanity/types";
 
 /**
- * What a marker looks like on /peta. Every kind of pin — the thirteen
- * `place.category` values plus UMKM — resolves through this one table, so the
- * legend swatch, the map pin and the tooltip can never disagree.
+ * Bentuk marker di /peta. Tiap jenis pin — 13 nilai `place.category` plus
+ * UMKM — melewati satu tabel ini, supaya swatch legenda, pin peta, dan
+ * tooltip tidak pernah saling bertentangan.
  *
- * Emoji carry the meaning; colour is only reinforcement. Most values come
- * straight from `patik-map-website`, which this map is modelled on.
+ * Emoji membawa makna; warna cuma penguat. Sebagian besar nilai dari
+ * `patik-map-website`, acuan peta ini.
  */
 export type MarkerCategory = PlaceCategory | "umkm";
 
@@ -21,8 +21,8 @@ export const PLACE_CATEGORY_MARKERS: Record<
   toko: { emoji: "🛒", color: "#8b5cf6" },
   pertanian: { emoji: "🌾", color: "#16a34a" },
   perkebunan: { emoji: "🌳", color: "#15803d" },
-  // Patik gives kandang the same #ea580c as landmark, which makes the two
-  // indistinguishable on the map. Moved off it deliberately.
+  // Patik memberi kandang warna yang sama dengan landmark, jadi keduanya
+  // tidak bisa dibedakan di peta. Sengaja dipindah.
   kandang: { emoji: "🐔", color: "#a16207" },
   industri: { emoji: "🔧", color: "#64748b" },
   jasa: { emoji: "📋", color: "#d946ef" },
@@ -33,12 +33,10 @@ export const PLACE_CATEGORY_MARKERS: Record<
 };
 
 /**
- * The categories in the order their legend rows should appear. Roughly
- * "civic → commerce → land → landmarks", with the catch-all last so it never
- * sits between two real categories.
- *
- * `umkm` is absent on purpose: it is not a `place.category`, it comes from the
- * separate `umkm` document type. `MARKER_CATEGORIES` below is the full list.
+ * Kategori dalam urutan tampil legenda: "pemerintahan → perdagangan →
+ * lahan → landmark", kategori serba-guna di akhir. `umkm` sengaja tidak
+ * di sini — ia document type terpisah, bukan `place.category`.
+ * `MARKER_CATEGORIES` di bawah daftar lengkapnya.
  */
 export const PLACE_CATEGORIES: readonly PlaceCategory[] = [
   "pemerintahan",
@@ -56,20 +54,19 @@ export const PLACE_CATEGORIES: readonly PlaceCategory[] = [
   "lainnya",
 ];
 
-/** Every kind of pin, legend order: places first, then UMKM. */
+/** Setiap jenis pin, urutan legenda: tempat dulu, baru UMKM. */
 export const MARKER_CATEGORIES: readonly MarkerCategory[] = [
   ...PLACE_CATEGORIES,
   "umkm",
 ];
 
-/** Centre of Kelurahan Sidoharjo, Wonogiri — the midpoint of the boundary in
- * public/geojson/batas-kelurahan.geojson, not a guess from a place search.
- * Only used as a last resort: with any boundary or any pin loaded, the map
- * fits to that instead. */
+/** Titik tengah Sidoharjo, dari batas wilayah di
+ * public/geojson/batas-kelurahan.geojson, bukan tebakan. Cuma jalan
+ * terakhir — begitu ada batas wilayah atau pin, peta fit ke situ. */
 export const SIDOHARJO_CENTER: GeoPoint = { lat: -7.8173, lng: 111.0708 };
 
-/** "pemerintahan" → "Pemerintahan". All thirteen capitalise cleanly, so no
- * lookup table is needed. */
+/** "pemerintahan" → "Pemerintahan". Semuanya kapitalisasi bersih, tidak
+ * perlu tabel lookup. */
 export function categoryLabel(category: MarkerCategory): string {
   return category === "umkm"
     ? "UMKM"
@@ -77,9 +74,8 @@ export function categoryLabel(category: MarkerCategory): string {
 }
 
 /**
- * One thing to draw on the map. `place` and `umkm` are different documents
- * with different field names; everything downstream of `toMapPins` works on
- * this shape alone and never has to care which it came from.
+ * Satu hal untuk digambar di peta. `place` dan `umkm` punya field beda;
+ * semua yang mengalir dari `toMapPins` bekerja di atas satu bentuk ini saja.
  */
 export interface MapPin {
   id: string;
@@ -89,16 +85,16 @@ export interface MapPin {
   googleMapsUrl: string;
 }
 
-/** Google Maps has a documented URL for a bare coordinate — used when an UMKM
- * has a point but no link of its own, so clicking its pin always leads
- * somewhere. `place.googleMapsUrl` is required, so only UMKM need this. */
+/** Fallback URL Google Maps dari koordinat — dipakai saat UMKM punya
+ * titik tapi tidak punya tautan sendiri. `place.googleMapsUrl` wajib
+ * diisi, jadi cuma UMKM yang butuh ini. */
 function mapsUrlForPoint({ lat, lng }: GeoPoint): string {
   return `https://www.google.com/maps?q=${lat},${lng}`;
 }
 
-/** Narrow a geopoint that may be absent or half-filled down to a usable point.
- * Sanity can hold `{lat: 5}` with no `lng` if a patch was interrupted, and one
- * NaN coordinate is enough to make Leaflet throw while fitting bounds. */
+/** Menyempitkan geopoint yang kosong/terisi separuh jadi titik yang bisa
+ * dipakai. Sanity bisa menyimpan `{lat: 5}` tanpa `lng` kalau patch
+ * terputus, dan satu NaN cukup membuat Leaflet error saat fit bounds. */
 function usablePoint(location: GeoPoint | null | undefined): GeoPoint | null {
   if (!location) return null;
   const { lat, lng } = location;
@@ -106,9 +102,9 @@ function usablePoint(location: GeoPoint | null | undefined): GeoPoint | null {
 }
 
 /**
- * Both document types, flattened into the single list the map draws. Anything
- * without a usable point is dropped here rather than guarded at every later
- * step — a document with no location simply has no pin.
+ * Kedua document type, diratakan jadi satu daftar yang digambar peta.
+ * Yang tidak punya titik dibuang di sini, bukan dijaga di tiap langkah
+ * berikutnya.
  */
 export function toMapPins(places: Place[], umkm: Umkm[] = []): MapPin[] {
   const pins: MapPin[] = [];
@@ -141,9 +137,9 @@ export function toMapPins(places: Place[], umkm: Umkm[] = []): MapPin[] {
 }
 
 /**
- * Which legend rows to show: only categories that actually have a pin, kept in
- * MARKER_CATEGORIES order so the legend is stable regardless of data order.
- * Without this the legend would open as fourteen rows, most of them zero.
+ * Baris legenda mana yang ditampilkan: cuma kategori yang punya pin,
+ * urutan MARKER_CATEGORIES supaya stabil. Tanpa ini legenda terbuka
+ * dengan 14 baris, kebanyakan nol.
  */
 export function presentCategories(pins: MapPin[]): MarkerCategory[] {
   return MARKER_CATEGORIES.filter((category) =>
@@ -151,7 +147,7 @@ export function presentCategories(pins: MapPin[]): MarkerCategory[] {
   );
 }
 
-/** How many pins per category, for the count beside each legend row. */
+/** Berapa banyak pin per kategori, untuk angka di sebelah tiap baris legenda. */
 export function countByCategory(pins: MapPin[]): Map<MarkerCategory, number> {
   const counts = new Map<MarkerCategory, number>();
   for (const pin of pins) {
@@ -161,10 +157,9 @@ export function countByCategory(pins: MapPin[]): Map<MarkerCategory, number> {
 }
 
 /**
- * Narrows the pins by the legend toggles and the name search. `hidden` holds
- * the categories switched *off* — an empty set means everything shows, which
- * is the state the page opens in. The search is a case-insensitive substring
- * match on the name. Both conditions combine with AND.
+ * Menyempitkan pin berdasarkan toggle legenda dan pencarian nama. `hidden`
+ * menyimpan kategori yang dimatikan — set kosong berarti semua tampil.
+ * Substring case-insensitive pada nama; kedua kondisi digabung AND.
  */
 export function filterPins(
   pins: MapPin[],
@@ -178,14 +173,14 @@ export function filterPins(
   );
 }
 
-/** Leaflet's bounds order: [[south, west], [north, east]]. */
+/** Urutan bounds Leaflet: [[south, west], [north, east]]. */
 export type Bounds = [[number, number], [number, number]];
 
 /**
- * The smallest box containing every pin, or null for an empty list — the
- * caller then falls back to the boundary layer, or to SIDOHARJO_CENTER.
- * A single pin yields a zero-area box, which Leaflet handles by centring on it
- * at maxZoom, so no special case is needed here.
+ * Kotak terkecil yang memuat tiap pin, null untuk daftar kosong —
+ * pemanggilnya jatuh balik ke batas wilayah, lalu SIDOHARJO_CENTER. Satu
+ * pin menghasilkan kotak berluas nol; Leaflet menanganinya sendiri
+ * dengan memusatkan di maxZoom.
  */
 export function boundsOf(pins: MapPin[]): Bounds | null {
   if (pins.length === 0) return null;

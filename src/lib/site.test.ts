@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 import { normalizeSiteUrl } from "./site";
 
 /**
- * These cases are not hypothetical. `VERCEL_PROJECT_PRODUCTION_URL` was once
- * set by hand *with* the protocol, which produced `https://https://…` in every
- * <loc> in sitemap.xml. Nothing threw and every page still rendered — the links
- * were simply all invalid. A silent failure like that is worth a test.
+ * Kasus-kasus ini bukan andaian. `VERCEL_PROJECT_PRODUCTION_URL` pernah
+ * disetel manual *dengan* protokolnya, yang menghasilkan `https://https://…`
+ * di setiap <loc> di sitemap.xml. Tidak ada yang error dan tiap halaman
+ * tetap render — tautannya cuma semuanya tidak valid. Kegagalan diam-diam
+ * seperti itu layak diberi tes.
  */
 describe("normalizeSiteUrl", () => {
   it("adds a protocol to the bare hostname Vercel supplies", () => {
@@ -32,8 +33,8 @@ describe("normalizeSiteUrl", () => {
     );
   });
 
-  // siteUrl is always joined to a path beginning with "/", so a stored trailing
-  // slash would yield https://site//berita.
+  // siteUrl selalu digabung dengan path yang diawali "/", jadi trailing
+  // slash yang tersimpan akan menghasilkan https://site//berita.
   it("strips trailing slashes", () => {
     expect(normalizeSiteUrl("https://sidoharjo.go.id/")).toBe(
       "https://sidoharjo.go.id",

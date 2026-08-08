@@ -2,14 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Every image is resized by Sanity's CDN rather than Vercel's optimizer,
-    // which is metered on the Hobby plan. Configured globally because
-    // next/image is a Client Component and a `loader` function prop can't be
-    // passed to one from a server component.
+    // Tiap gambar diresize CDN Sanity, bukan optimizer Vercel yang diukur
+    // kuotanya di paket Hobby. Dikonfigurasi global karena next/image adalah
+    // Client Component dan prop function `loader` tidak bisa dilewatkan
+    // dari server component.
     //
-    // No `remotePatterns` needed: a custom loader bypasses /_next/image
-    // entirely, so Next never fetches remote images itself and has nothing to
-    // validate the host against.
+    // Tidak butuh `remotePatterns`: loader kustom melewati /_next/image
+    // sepenuhnya, jadi Next tidak pernah mengambil gambar remote sendiri
+    // dan tidak ada host yang perlu divalidasi.
     loader: "custom",
     loaderFile: "./src/lib/sanity/imageLoader.ts",
   },

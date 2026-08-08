@@ -2,23 +2,21 @@ import { ImageResponse } from "next/og";
 import { siteName } from "@/lib/site";
 
 /**
- * The default link-preview card, for pages with no cover photo of their own —
- * the homepage, /peta, /umkm and friends. Berita and Prestasi articles override
- * it with their own coverImage in generateMetadata.
+ * Kartu preview-tautan bawaan untuk halaman tanpa cover sendiri — beranda,
+ * /peta, /umkm. Artikel Berita/Prestasi menimpanya di generateMetadata.
  *
- * Generated at build time by next/og (built into Next, no extra dependency)
- * rather than exported from Figma, so it stays in sync with the brand colours
- * in globals.css and adds no asset for staff to maintain after handover.
+ * Digenerate saat build oleh next/og (bawaan Next) alih-alih diekspor
+ * dari Figma, supaya selaras dengan warna brand dan tidak menambah aset
+ * yang harus dipelihara staf.
  *
- * ImageResponse supports only a subset of CSS — flexbox only, and no webfonts
- * unless you load them explicitly. Kept deliberately plain: this renders once
- * per build and never appears on the site itself.
+ * ImageResponse cuma mendukung flexbox, tanpa webfont eksplisit. Sengaja
+ * sederhana: dirender sekali per build, tidak pernah muncul di situsnya sendiri.
  */
 export const alt = siteName;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Mirrors --page-top / --page-bottom in globals.css.
+// Mencerminkan --page-top / --page-bottom di globals.css.
 const PAGE_TOP = "#f8f6f0";
 const PAGE_BOT = "#e9f6eb";
 
@@ -33,10 +31,9 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          // The `0%` is load-bearing: a bare `%` is not a valid colour stop, so
-          // the whole declaration used to be discarded and the card rendered on
-          // an empty background — invisible locally, only wrong in the preview
-          // WhatsApp and Google draw from the deployed page.
+          // `0%` bukan hiasan: `%` telanjang bukan color stop valid, dulu
+          // seluruh deklarasi dibuang dan kartunya render di background
+          // kosong — cuma salah di preview WhatsApp/Google, tidak lokal.
           background: `linear-gradient(160deg, ${PAGE_TOP} 0%, ${PAGE_BOT} 100%)`,
         }}
       >

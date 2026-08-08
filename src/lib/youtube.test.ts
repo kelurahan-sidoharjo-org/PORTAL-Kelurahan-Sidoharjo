@@ -31,8 +31,9 @@ describe("toEmbedUrl", () => {
   });
 
   /**
-   * Staff paste whatever they have; anything unusable must return null so the
-   * homepage skips the section instead of embedding a broken player.
+   * Staf menempel apa pun yang mereka punya; apa pun yang tidak bisa dipakai
+   * harus mengembalikan null supaya beranda melewati bagian itu, bukan
+   * menyematkan pemutar yang rusak.
    */
   it.each([
     ["empty", ""],

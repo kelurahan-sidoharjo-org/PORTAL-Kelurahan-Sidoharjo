@@ -2,7 +2,7 @@ import Image from "next/image";
 import { imageProps } from "@/lib/sanity/image";
 import type { StaffMember } from "@/lib/sanity/types";
 
-/** Photo, then jabatan above nama — the order the mockup uses. */
+/** Foto, lalu jabatan di atas nama — urutan yang dipakai mockup. */
 export function StaffCard({ member }: { member: StaffMember }) {
   const photo = imageProps(member.photo);
 

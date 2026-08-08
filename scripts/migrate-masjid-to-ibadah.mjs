@@ -1,21 +1,19 @@
 /**
- * One-time migration: `place.category` value "masjid" → "ibadah".
+ * Migrasi sekali jalan: `place.category` "masjid" → "ibadah".
  *
- * The /peta rebuild widened that category so it can also hold a church,
- * temple, or vihara — but any place published before this migration still
- * carries the old string, and the moment the schema's enum drops "masjid" it
- * becomes an invalid value in Studio and the place quietly loses its pin.
+ * Rebuild /peta memperluas kategori itu supaya juga menampung gereja,
+ * kelenteng, atau vihara — place lama masih membawa string "masjid", yang
+ * begitu dibuang dari enum jadi nilai tidak valid dan diam-diam
+ * kehilangan pin.
  *
- * Patches BOTH the published document and its draft (`drafts.<id>`) if one
- * exists — a place mid-edit has two copies, and fixing only the published one
- * would leave the draft holding the stale value, ready to overwrite the fix on
- * the next Publish.
+ * Menambal dokumen terbit MAUPUN draft-nya — kalau cuma yang terbit,
+ * draft dengan nilai lama akan menimpanya lagi di Publish berikutnya.
  *
- * Usage (from the project root):
+ * Pemakaian (dari root proyek):
  *   node --env-file=.env.local scripts/migrate-masjid-to-ibadah.mjs            # dry run
- *   node --env-file=.env.local scripts/migrate-masjid-to-ibadah.mjs --commit   # apply
+ *   node --env-file=.env.local scripts/migrate-masjid-to-ibadah.mjs --commit   # terapkan
  *
- * Needs SANITY_WRITE_TOKEN in .env.local, same token as scripts/seed.mjs.
+ * Butuh SANITY_WRITE_TOKEN di .env.local, sama seperti scripts/seed.mjs.
  */
 
 const commit = process.argv.includes("--commit");
@@ -39,9 +37,8 @@ async function main() {
     useCdn: false,
   });
 
-  // `drafts.**` matches a draft whether or not it also has a published
-  // counterpart — perspective: "raw" so the query sees both instead of Sanity
-  // collapsing them to one.
+  // `drafts.**` cocok dengan draft, baik punya pasangan terbit atau tidak
+  // — perspective: "raw" supaya query melihat keduanya alih-alih Sanity meleburnya jadi satu.
   const docs = await client.fetch(
     '*[_type == "place" && category == "masjid"]{ _id }',
     {},

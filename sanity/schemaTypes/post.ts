@@ -39,11 +39,11 @@ export const post = defineType({
       type: "datetime",
       initialValue: () => new Date().toISOString(),
       components: { field: PublishedAtField },
-      // Stays visible and editable on purpose, so old announcements can be
-      // backdated. Required only so it can't be left *empty*: the pages format
-      // it unguarded, so a blank date prints a literal "Invalid Date" on every
-      // card, and drops the article out of /prestasi entirely (groupByYear
-      // skips undated items).
+      // Sengaja tetap terlihat dan bisa diedit, supaya pengumuman lama bisa
+      // dimundurkan tanggalnya. Wajib diisi hanya supaya tidak *kosong*:
+      // halamannya memformat tanpa penjagaan, jadi tanggal kosong mencetak
+      // "Invalid Date" secara harfiah di tiap kartu, dan membuang artikel itu
+      // sepenuhnya dari /prestasi (groupByYear melewati item tanpa tanggal).
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -77,9 +77,9 @@ export const post = defineType({
       type: "array",
       of: [{ type: "image", options: { hotspot: true } }],
     }),
-    // Auto-derived by PostDocumentInput; last in the list so that even if a
-    // future Studio version starts rendering hidden fields, they land at the
-    // bottom of the form instead of splitting the visible fields apart.
+    // Diturunkan otomatis oleh PostDocumentInput; ditaruh terakhir di daftar
+    // supaya kalaupun versi Studio nanti mulai merender field hidden, ia
+    // mendarat di bagian bawah form, bukan memisah-misah field yang terlihat.
     defineField({
       name: "slug",
       title: "Slug",
@@ -88,16 +88,16 @@ export const post = defineType({
       validation: (Rule) => Rule.required(),
     }),
     /**
-     * Every address this article has ever had. Editing the title rewrites
-     * `slug`, which would otherwise 404 every link already pasted into a
-     * village WhatsApp group and every URL Google has indexed. Keeping the old
-     * ones lets /berita/[slug] find the article and redirect to its current
-     * address instead.
+     * Setiap alamat yang pernah dipakai artikel ini. Mengedit judul mengubah
+     * `slug`, yang tanpa ini akan membuat 404 setiap tautan yang sudah
+     * ditempel di grup WhatsApp warga dan setiap URL yang sudah terindeks
+     * Google. Menyimpan yang lama membuat /berita/[slug] tetap bisa
+     * menemukan artikelnya dan mengarahkan ke alamat terbarunya.
      *
-     * `hidden` but NOT `readOnly`, matching `slug` above: PostDocumentInput
-     * writes this with a patch, and a read-only field can reject one. The
-     * `readOnly` on `category` is safe only because that field is filled by an
-     * initial-value template rather than by patching.
+     * `hidden` tapi TIDAK `readOnly`, sama seperti `slug` di atas:
+     * PostDocumentInput menulis ini lewat patch, dan field read-only bisa
+     * menolak patch. `readOnly` pada `category` aman hanya karena field itu
+     * diisi lewat template initial-value, bukan lewat patching.
      */
     defineField({
       name: "previousSlugs",

@@ -6,14 +6,12 @@ import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * The "← Kembali" back control at the top-left of every inner page. Plain text
- * on mobile, a white pill from `sm:` up — per the mockups.
+ * Kontrol "← Kembali" di kiri atas tiap halaman internal. Teks polos di
+ * mobile, pil putih dari `sm:` ke atas.
  *
- * Goes back through browser history when there is any, so a reader who opened
- * an article from the homepage returns to the homepage rather than being sent
- * to /berita. `href` stays as the real destination: it is what renders in the
- * markup, so the button still works with JavaScript disabled, and it is where
- * someone arriving from a shared link or search result is sent.
+ * Kembali lewat riwayat browser kalau ada, supaya pembaca yang membuka
+ * artikel dari beranda kembali ke beranda, bukan ke /berita. `href` tetap
+ * jadi tujuan sesungguhnya di markup — tombol tetap jalan tanpa JavaScript.
  */
 export function BackButton({
   href = "/",
@@ -28,7 +26,8 @@ export function BackButton({
     <Link
       href={href}
       onClick={(event) => {
-        // Modified clicks (new tab, etc.) must keep their default behaviour.
+        // Klik yang dimodifikasi (buka tab baru, dll.) harus tetap
+        // menjalankan perilaku bawaannya.
         if (event.metaKey || event.ctrlKey || event.shiftKey) return;
         if (window.history.length > 1) {
           event.preventDefault();

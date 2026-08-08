@@ -1,19 +1,20 @@
 /**
- * The slug rules behind PostDocumentInput, kept out of the component so they
- * can be unit-tested without rendering a Sanity form — the same split as
- * src/lib/places.ts, where the helpers carry the logic and the component only
- * does state and render.
+ * Aturan slug di balik PostDocumentInput, dipisah dari komponennya supaya bisa
+ * diuji unit tanpa merender form Sanity — pembagian yang sama seperti
+ * src/lib/places.ts, di mana helper memegang logikanya dan komponen cuma
+ * mengurus state dan render.
  */
 
-/** Longest slug we derive from a title. */
+/** Panjang slug maksimum yang diturunkan dari judul. */
 const MAX_SLUG = 80;
 
 export function slugify(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    // Splits accented letters into base + combining mark, so the next replace
-    // can drop the marks and leave "é" as "e" rather than deleting it.
+    // Memecah huruf beraksen jadi huruf dasar + tanda gabung, supaya replace
+    // berikutnya bisa membuang tandanya dan menyisakan "é" jadi "e", bukan
+    // menghapusnya sama sekali.
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9\s-]/g, "")
@@ -23,37 +24,37 @@ export function slugify(text: string): string {
 }
 
 export interface SlugUpdate {
-  /** The address the article should carry from now on. */
+  /** Alamat yang mulai sekarang dipakai artikel ini. */
   slug: string;
   /**
-   * The rewritten history. Present only when it actually changed, so the
-   * caller doesn't send a patch that sets it to what it already was.
+   * Riwayat yang sudah diperbarui. Hanya muncul kalau memang berubah, supaya
+   * pemanggil tidak mengirim patch yang menyetel ke nilai yang sudah sama.
    */
   previousSlugs?: string[];
 }
 
 /**
- * Works out the article's next address, and which old addresses have to keep
- * working.
+ * Menentukan alamat berikutnya untuk artikel, dan alamat lama mana yang
+ * harus tetap berfungsi.
  *
- * Editing a title rewrites the slug. On a published article that silently
- * moves the URL, so every link already pasted into a village WhatsApp group,
- * and every URL Google has indexed, 404s. Keeping the old addresses lets
- * /berita/[slug] still find the article and redirect to its current one.
+ * Mengedit judul mengubah slug. Pada artikel terbit, itu diam-diam
+ * memindahkan URL-nya — tautan di WhatsApp warga dan URL terindeks Google
+ * jadi 404. Menyimpan alamat lama membuat /berita/[slug] tetap menemukan
+ * artikelnya dan mengarahkan ke alamat terbaru.
  *
- * The hard part is telling a *public* address from a throwaway one. Typing
- * "Kerja Bakti" into a brand-new article walks the slug through "k-…", "ke-…",
- * "ker-…" — our own writes, one per keystroke, none of which was ever
- * reachable. Recording those would bury the one address that matters under a
- * dozen decoys. `lastWritten` is the slug this module wrote last: anything
- * else in the field came from the document itself and may already be public.
+ * Bagian sulitnya: membedakan alamat *publik* dari yang sekadar sementara.
+ * Mengetik "Kerja Bakti" di artikel baru membuat slug lewat "k-…", "ke-…",
+ * "ker-…" — tulisan kita sendiri per ketukan tuts, tidak pernah bisa
+ * diakses. Kalau ikut dicatat, satu alamat penting terkubur di bawah
+ * selusin alamat palsu. `lastWritten` adalah slug terakhir yang ditulis
+ * modul ini: selain itu berarti berasal dari dokumen dan mungkin publik.
  *
- * That test also survives a slow load. If the form renders before the document
- * arrives, `currentSlug` is undefined and `lastWritten` is null; once the real
- * slug lands it still reads as "not ours", so it is preserved correctly. No
- * assumption about mount timing is needed.
+ * Ini juga tetap benar walau loading lambat: form yang merender sebelum
+ * dokumen sampai punya `currentSlug` undefined dan `lastWritten` null;
+ * begitu slug asli tiba, tetap terbaca "bukan tulisan kita" dan tersimpan
+ * benar — tanpa asumsi soal waktu mount.
  *
- * Returns null when nothing needs to change.
+ * Mengembalikan null kalau tidak ada yang perlu diubah.
  */
 export function nextSlugState({
   title,
@@ -63,15 +64,16 @@ export function nextSlugState({
   previousSlugs,
 }: {
   title: string;
-  /** The YYYY-MM-DD the slug is suffixed with, from `_createdAt`. */
+  /** Tanggal YYYY-MM-DD yang jadi akhiran slug, diambil dari `_createdAt`. */
   datePart: string;
   currentSlug: string | undefined;
-  /** The slug this module wrote last, or null if it hasn't written one. */
+  /** Slug terakhir yang ditulis modul ini, atau null kalau belum pernah menulis. */
   lastWritten: string | null;
   previousSlugs: string[] | undefined;
 }): SlugUpdate | null {
-  // An empty title would derive a bare "-2026-08-04". The caller guards this
-  // too; checked here as well so the helper is correct on its own terms.
+  // Judul kosong akan menghasilkan slug telanjang "-2026-08-04". Pemanggil
+  // juga sudah menjaga ini; dicek lagi di sini supaya helper-nya tetap benar
+  // berdiri sendiri.
   if (!title.trim()) return null;
 
   const slug = `${slugify(title)}-${datePart}`;
@@ -85,9 +87,10 @@ export function nextSlugState({
       ? [...history, currentSlug]
       : history;
 
-  // The incoming slug may be an address this article used to have — an editor
-  // undoing a title change, say. It is the live address now, so it must not
-  // also sit in the history, or /berita/[slug] would redirect it to itself.
+  // Slug yang masuk mungkin alamat lama yang pernah dipakai artikel ini —
+  // misalnya editor membatalkan perubahan judul. Alamat itu jadi alamat aktif
+  // sekarang, jadi tidak boleh ikut nangkring di riwayat, atau
+  // /berita/[slug] akan mengarahkannya ke dirinya sendiri.
   const cleaned = grown.filter((entry) => entry !== slug);
 
   const changed =

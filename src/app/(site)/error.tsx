@@ -1,10 +1,11 @@
 "use client";
 
 /**
- * Catches render errors anywhere inside the (site) group. Does NOT catch
- * errors thrown by (site)/layout.tsx itself — Header and Footer are async
- * and both fetch siteSettings, so a layout-level failure needs
- * src/app/global-error.tsx instead, which renders its own <html>/<body>.
+ * Menangkap error render di mana pun di dalam grup (site). TIDAK
+ * menangkap error yang dilempar oleh (site)/layout.tsx sendiri — Header
+ * dan Footer bersifat async dan keduanya mengambil siteSettings, jadi
+ * kegagalan level layout perlu src/app/global-error.tsx sebagai
+ * gantinya, yang merender <html>/<body> sendiri.
  */
 export default function Error({ reset }: { error: Error; reset: () => void }) {
   return (

@@ -3,7 +3,7 @@ export const POSTS_PER_PAGE = 12;
 export interface PageInfo {
   page: number;
   totalPages: number;
-  /** GROQ slice bounds: [$start...$end] */
+  /** Batas slice GROQ: [$start...$end] */
   start: number;
   end: number;
   hasPrev: boolean;
@@ -11,9 +11,10 @@ export interface PageInfo {
 }
 
 /**
- * Parses a `?page=` value that arrives as an untrusted string (or array, or
- * nothing) and returns null for anything that isn't a whole number >= 1, so
- * the page can 404 rather than silently showing page 1.
+ * Mem-parsing nilai `?page=` yang datang sebagai string (atau array, atau
+ * kosong) yang tidak bisa dipercaya, dan mengembalikan null untuk apa pun
+ * yang bukan bilangan bulat >= 1, supaya halamannya bisa 404 alih-alih diam-
+ * diam menampilkan halaman 1.
  */
 export function parsePageParam(raw: string | string[] | undefined): number | null {
   if (raw === undefined) return 1;
@@ -28,7 +29,8 @@ export function getPageInfo(
   total: number,
   perPage = POSTS_PER_PAGE,
 ): PageInfo {
-  // An empty list still has one (empty) page, so the UI has something to show.
+  // Daftar kosong tetap punya satu halaman (kosong), supaya UI-nya tetap
+  // punya sesuatu untuk ditampilkan.
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const start = (page - 1) * perPage;
   return {

@@ -41,36 +41,39 @@ export default async function Home() {
           </div>
 
           {posts.length > 0 ? (
-            /* A swipeable row with the next card peeking in, becoming the
-               mockup's three-across grid at lg:. Pure CSS scroll-snap — no
-               carousel library and no client component.
+            /* Baris yang bisa di-swipe dengan kartu berikutnya mengintip,
+               berubah jadi grid tiga-berjajar seperti mockup di lg:.
+               Scroll-snap CSS murni — tanpa library carousel dan tanpa
+               client component.
 
-               The grid waits for lg: because the homepage always shows exactly
-               three posts, and three never divides evenly into two columns: a
-               two-column step would strand the third card beside an empty
-               cell at every width from 640px to 1023px — tablets, and any
-               un-maximised laptop window. Neither mockup has a two-column
-               state; they go straight from carousel to three-across, and the
-               carousel is what covers the widths in between. */
+               Grid-nya menunggu sampai lg: karena beranda selalu
+               menampilkan tepat tiga post, dan tiga tidak pernah terbagi
+               rata jadi dua kolom: langkah dua-kolom akan menyisakan kartu
+               ketiga di sebelah sel kosong di tiap lebar dari 640px sampai
+               1023px — tablet, dan jendela laptop mana pun yang belum
+               dimaksimalkan. Tidak ada mockup yang punya kondisi dua-kolom;
+               keduanya langsung dari carousel ke tiga-berjajar, dan
+               carousel itulah yang menutup lebar-lebar di antaranya. */
             <ul className="-mx-5 mt-6 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto scroll-pl-5 px-5 pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0">
               {posts.map((post) => (
                 <BeritaCard
                   key={post._id}
                   post={post}
                   /*
-                   * Explicit height while it's a carousel: the card's 3/5-image
-                   * split is a percentage, and a percentage of a content-derived
-                   * height is circular — the browser gives up and each image
-                   * falls back to its own natural size, so cards end up uneven.
-                   * The grid at lg: gets a definite height from the row, so
-                   * h-full is enough there.
+                   * Tinggi eksplisit selama masih carousel: pembagian gambar
+                   * 3/5 pada kartu adalah persentase, dan persentase dari
+                   * tinggi yang diturunkan dari konten bersifat sirkular —
+                   * browser menyerah dan tiap gambar jatuh balik ke ukuran
+                   * aslinya, jadi kartu-kartunya jadi tidak rata. Grid di
+                   * lg: mendapat tinggi pasti dari barisnya, jadi h-full
+                   * sudah cukup di situ.
                    *
-                   * Width has three jobs. `w-[72%]` sets the phone peek;
-                   * `sm:w-80` caps it once the viewport is wide enough that 72%
-                   * would be a 470px slab showing barely one card. `lg:min-w-0`
-                   * releases the floor for the grid — at 1024px a column is
-                   * ~283px, so a 320px minimum would push the cards out of
-                   * their own cells.
+                   * Width punya tiga tugas. `w-[72%]` mengatur intipan di
+                   * HP; `sm:w-80` membatasinya begitu viewport cukup lebar
+                   * sehingga 72% akan jadi slab 470px yang cuma menampilkan
+                   * hampir satu kartu. `lg:min-w-0` melepas batas bawahnya
+                   * untuk grid — di 1024px satu kolom sekitar 283px, jadi
+                   * minimum 320px akan mendorong kartu-kartunya keluar dari selnya sendiri.
                    */
                   className="h-[22rem] w-[72%] min-w-[20rem] shrink-0 snap-start sm:w-80 lg:h-full lg:w-auto lg:min-w-0"
                 />
@@ -84,8 +87,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Only rendered when heroVideoUrl parses — a bad paste shows nothing
-          rather than a broken player. */}
+      {/* Cuma dirender saat heroVideoUrl berhasil di-parse — tempelan yang
+          salah tidak menampilkan apa pun, bukan pemutar yang rusak. */}
       {embedUrl && (
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
           <h2 className="text-lg sm:text-center sm:text-2xl">Video Profil</h2>

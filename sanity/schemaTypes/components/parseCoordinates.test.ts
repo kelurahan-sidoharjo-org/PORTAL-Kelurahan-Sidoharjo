@@ -40,8 +40,9 @@ describe("parseCoordinates", () => {
     });
 
     it("prefers the !3d/!4d pin over the @ viewport centre", () => {
-      // The @ pair is where the camera sat; !3d/!4d is the place itself. A URL
-      // carrying both must resolve to the place, not the camera.
+      // Pasangan @ adalah tempat kamera berada; !3d/!4d adalah lokasi
+      // sebenarnya. URL yang membawa keduanya harus mengarah ke lokasinya,
+      // bukan ke kameranya.
       const url =
         "https://www.google.com/maps/place/Kantor/@-7.9000,111.9000,17z/data=!3m1!4b1!4m5!3m4!8m2!3d-7.8179!4d111.0704";
       expect(parseCoordinates(url)).toEqual(SIDOHARJO);
@@ -61,13 +62,14 @@ describe("parseCoordinates", () => {
     });
 
     it("returns null for a maps.app.goo.gl short link", () => {
-      // Contains no coordinates at all — resolving it would need a network
-      // request, which this deliberately does not make.
+      // Sama sekali tidak mengandung koordinat — meng-resolve-nya butuh
+      // request jaringan, yang sengaja tidak dilakukan di sini.
       expect(parseCoordinates("https://maps.app.goo.gl/AbCdEf123")).toBeNull();
     });
 
     it("returns null for a transposed pair (longitude in the latitude slot)", () => {
-      // 111 is not a valid latitude — this is the commonest paste mistake.
+      // 111 bukan lintang yang valid — ini kesalahan tempel yang paling
+      // sering terjadi.
       expect(parseCoordinates("111.0704, -7.8179")).toBeNull();
     });
 

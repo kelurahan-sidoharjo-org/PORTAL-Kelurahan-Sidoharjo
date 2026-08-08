@@ -1,15 +1,13 @@
 import { notFound } from "next/navigation";
 
 /**
- * Pulls unmatched addresses into the (site) group so they get the styled 404
- * in not-found.tsx instead of Next's bare black-and-white one.
+ * Menarik alamat yang tidak cocok ke grup (site) supaya dapat 404
+ * bergaya di not-found.tsx, bukan 404 polos bawaan Next.
  *
- * Needed because there is no root layout at src/app/ — (site) and admin are
- * separate root layouts, so an unmatched URL belongs to no group and never
- * reaches a not-found.tsx on its own.
+ * Dibutuhkan karena tidak ada root layout di src/app/ — (site) dan admin
+ * terpisah, jadi URL yang tidak cocok tidak pernah sampai not-found.tsx sendiri.
  *
- * Lowest routing priority, so every real route still wins: /berita/[slug],
- * /admin/[[...tool]], /api/revalidate, and the metadata files all match first.
+ * Prioritas routing paling rendah — tiap route sungguhan tetap menang lebih dulu.
  */
 export default function CatchAll() {
   notFound();

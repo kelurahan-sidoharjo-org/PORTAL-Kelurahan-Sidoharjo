@@ -1,15 +1,13 @@
 /**
- * Plain config constants, deliberately free of side effects.
- *
- * Kept separate from client.ts so importing the image helpers doesn't
- * construct a Sanity client — which would otherwise make anything that touches
- * an image unusable in tests, and would drag the client into bundles that only
- * need to build a URL.
+ * Konstanta konfigurasi, sengaja bebas efek samping. Dipisah dari
+ * client.ts supaya mengimpor helper gambar tidak ikut membangun Sanity
+ * client — kalau tidak, apa pun yang menyentuh gambar tidak bisa dipakai
+ * di test.
  */
 /**
- * Checked rather than asserted with `!`. A bare `!` promises the compiler a
- * value that nothing actually verifies, so a fresh clone with no `.env.local`
- * fails later with a broken CDN URL instead of here, with a fixable message.
+ * Dicek, bukan dipaksa `!`. `!` menjanjikan nilai yang tidak diverifikasi
+ * apa pun, jadi clone baru tanpa `.env.local` gagal belakangan dengan
+ * URL CDN rusak, bukan di sini dengan pesan yang bisa diperbaiki.
  */
 function requireEnv(name: string, value: string | undefined): string {
   if (!value) {
@@ -28,7 +26,8 @@ export const projectId = requireEnv(
 export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
 
 /**
- * Pinned so Sanity API changes can't silently alter query results. Must match
- * sanity.config.ts and sanity/assetSources/resizeUploadAssetSource.tsx.
+ * Dikunci supaya perubahan API Sanity tidak diam-diam mengubah hasil
+ * query. Harus sama dengan sanity.config.ts dan
+ * sanity/assetSources/resizeUploadAssetSource.tsx.
  */
 export const apiVersion = process.env.SANITY_API_VERSION || "2024-01-01";

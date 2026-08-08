@@ -3,19 +3,18 @@ import { NextResponse } from "next/server";
 import { LAYOUT_SENTINEL, pathsFor, type WebhookBody } from "@/lib/revalidate";
 
 /**
- * Sanity webhook target: rebuilds affected pages the moment content is
- * published, instead of waiting out the hour-long ISR window.
+ * Target webhook Sanity: membangun ulang halaman begitu konten
+ * dipublikasikan, alih-alih menunggu jendela ISR satu jam.
  *
- * Auth is a shared secret sent as a header. The stricter option is Sanity's
- * signed webhooks (`@sanity/webhook` + `isValidSignature`), which also proves
- * the body wasn't tampered with — worth upgrading to if this endpoint ever
- * does more than bust a cache, but it's another dependency to keep alive past
- * handover and this route only triggers rebuilds.
+ * Autentikasinya shared secret lewat header. Opsi lebih ketat adalah
+ * webhook bertanda tangan Sanity (`isValidSignature`), layak di-upgrade
+ * kalau endpoint ini suatu saat lebih dari sekadar membersihkan cache —
+ * tapi itu satu dependensi lagi yang harus dijaga lepas serah terima.
  */
 export async function POST(request: Request) {
   const secret = process.env.SANITY_REVALIDATE_SECRET;
   if (!secret) {
-    // Misconfiguration, not a client error — say so plainly in the log.
+    // Kesalahan konfigurasi, bukan kesalahan client — katakan itu dengan jelas di log.
     return NextResponse.json(
       { message: "SANITY_REVALIDATE_SECRET is not set" },
       { status: 500 },
@@ -46,6 +45,6 @@ export async function POST(request: Request) {
     else revalidatePath(path);
   }
 
-  // Echoed back so a failing webhook is diagnosable from Sanity's delivery log.
+  // Digemakan kembali supaya webhook yang gagal bisa didiagnosis dari log pengiriman Sanity.
   return NextResponse.json({ revalidated: true, paths, now: Date.now() });
 }

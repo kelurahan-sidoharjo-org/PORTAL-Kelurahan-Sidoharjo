@@ -3,7 +3,7 @@ export interface WebhookBody {
   slug?: { current?: string } | string;
 }
 
-/** Passed to revalidatePath("/", "layout") instead of a real path. */
+/** Dilewatkan ke revalidatePath("/", "layout") menggantikan path sungguhan. */
 export const LAYOUT_SENTINEL = "__layout__";
 
 export function slugOf(body: WebhookBody): string | null {
@@ -11,13 +11,13 @@ export function slugOf(body: WebhookBody): string | null {
   return body.slug?.current ?? null;
 }
 
-/** Which pages show a given document type. */
+/** Halaman mana saja yang menampilkan document type tertentu. */
 export function pathsFor(body: WebhookBody): string[] {
   switch (body._type) {
     case "post": {
       const slug = slugOf(body);
-      // Both list pages: category may have changed, or this may be a prestasi
-      // post, and the homepage carries the three latest.
+      // Kedua halaman daftar: kategorinya mungkin berubah, atau ini bisa
+      // jadi post prestasi, dan beranda membawa tiga yang terbaru.
       return [
         ...(slug ? [`/berita/${slug}`] : []),
         "/berita",
@@ -28,14 +28,14 @@ export function pathsFor(body: WebhookBody): string[] {
     case "staffMember":
       return ["/pemerintah-kelurahan"];
     case "umkm":
-      // Also /peta: an umkm with a `location` is a pin on the map, so editing
-      // one has to refresh both pages or the map keeps the old point for the
-      // rest of the ISR hour.
+      // /peta juga: umkm dengan `location` adalah pin di peta, jadi
+      // mengedit satu berarti harus menyegarkan kedua halaman atau peta
+      // tetap menyimpan titik lama untuk sisa jam ISR itu.
       return ["/umkm", "/peta"];
     case "place":
       return ["/peta"];
     case "siteSettings":
-      // Header and Footer read siteSettings and appear on every page.
+      // Header dan Footer membaca siteSettings dan muncul di tiap halaman.
       return [LAYOUT_SENTINEL];
     default:
       return [];

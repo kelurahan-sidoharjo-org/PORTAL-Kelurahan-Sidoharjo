@@ -34,10 +34,11 @@ export const siteSettings = defineType({
       description: withUploadHint(),
       type: "image",
     }),
-    // No `kelurahanMapImage`: /peta draws a real interactive map now, so the
-    // uploaded picture had no effect on anything. Dropped rather than left in
-    // place for the same reason `logo` was — a Studio control that changes
-    // nothing misleads staff after handover.
+    // Tidak ada `kelurahanMapImage`: /peta sekarang menggambar peta
+    // interaktif sungguhan, jadi gambar yang diunggah tidak berpengaruh apa
+    // pun. Dihapus, bukan dibiarkan — alasan yang sama seperti `logo`: kontrol
+    // Studio yang tidak mengubah apa pun menyesatkan staf setelah serah
+    // terima.
     defineField({
       name: "contactEmail",
       title: "Email Kontak",

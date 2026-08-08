@@ -1,33 +1,24 @@
 /**
- * Developer seed script — fills the Sanity dataset with realistic dummy content
- * (places, UMKM, staff, and berita/prestasi articles) so the pages have
- * something to show before real content exists. No photos.
+ * Script seed developer — mengisi dataset Sanity dengan konten dummy
+ * (place, UMKM, staf, artikel) supaya halaman punya isi sebelum konten
+ * asli ada. Tanpa foto.
  *
- * The content lives in scripts/seed-data/*.csv (edit those to change what gets
- * seeded); this file is just the logic that reads them and writes to Sanity.
- * Kept in the repo as a utility (handy for a fresh clone or a new dataset). It
- * lives outside src/app and is imported by nothing, so Next never bundles it —
- * the write token stays terminal-only.
+ * Isinya di scripts/seed-data/*.csv; file ini cuma membaca CSV dan
+ * menulis ke Sanity. Di luar src/app dan tidak diimpor apa pun, jadi
+ * Next tidak membundelnya — token tulis tetap cuma di terminal.
  *
- * Every document uses a `seed-*` id (hyphens, NOT dots) and is written with
- * createOrReplace, so:
- *   - re-running is safe (it overwrites, never duplicates), and
- *   - `--delete` can find and remove exactly what this script created.
+ * Id pakai `seed-*` (strip, bukan titik) dan createOrReplace, jadi aman
+ * dijalankan ulang dan `--delete` bisa menemukan persis yang dibuatnya.
+ * Titik dihindari karena Sanity menganggapnya namespace terlarang (mis.
+ * `drafts.`) dan API publik tanpa token menolak menyajikan dokumen
+ * ber-titik.
  *
- * Why hyphens and not dots: Sanity treats a `.` in a document id as a reserved
- * namespace (e.g. `drafts.`), and the PUBLIC (tokenless) API refuses to serve
- * any document whose id contains a dot — it's considered private/system. An
- * earlier version used `seed.place.1` etc.; those documents existed and were
- * readable WITH a token, but the live website (which reads without a token)
- * never saw them. Dotless ids like `seed-place-1` are ordinary public docs.
+ * Pemakaian (dari root proyek):
+ *   node scripts/seed.mjs                                  # dry run
+ *   node --env-file=.env.local scripts/seed.mjs --commit   # tulis sungguhan
+ *   node --env-file=.env.local scripts/seed.mjs --delete   # hapus semua seed
  *
- * Usage (from the project root):
- *   node scripts/seed.mjs                                  # dry run: prints, writes nothing
- *   node --env-file=.env.local scripts/seed.mjs --commit   # actually inserts
- *   node --env-file=.env.local scripts/seed.mjs --delete   # removes all seeded docs
- *
- * --commit and --delete need SANITY_WRITE_TOKEN in .env.local (an Editor token
- * from sanity.io/manage → API → Tokens). The dry run needs nothing.
+ * --commit dan --delete butuh SANITY_WRITE_TOKEN di .env.local.
  */
 
 import { readFileSync } from "node:fs";
@@ -38,13 +29,13 @@ const mode = process.argv.includes("--delete")
     ? "commit"
     : "dry";
 
-// --- CSV reading -----------------------------------------------------------
+// --- Baca CSV -----------------------------------------------------------
 
 /**
- * Minimal CSV parser — enough for our own well-formed files, with no
- * dependency. Handles quoted fields (so a value can contain commas, e.g.
- * "Siti Aminah, S.E."), doubled "" as an escaped quote, and CRLF endings.
- * Returns an array of objects keyed by the header row.
+ * Parser CSV minimal — cukup untuk file kita sendiri, tanpa dependensi.
+ * Menangani field berkutip (nilai bisa mengandung koma, mis. "Siti
+ * Aminah, S.E."), `""` sebagai kutip yang di-escape, dan akhiran CRLF.
+ * Mengembalikan array of objects yang key-nya dari baris header.
  */
 function parseCsv(text) {
   const rows = [];
@@ -56,7 +47,7 @@ function parseCsv(text) {
     const c = text[i];
     if (quoted) {
       if (c === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++; } // escaped quote
+        if (text[i + 1] === '"') { field += '"'; i++; } // kutip yang di-escape
         else quoted = false;
       } else field += c;
     } else if (c === '"') {
@@ -73,7 +64,7 @@ function parseCsv(text) {
 
   const header = rows.shift().map((h) => h.trim());
   return rows
-    .filter((r) => r.some((v) => v.trim() !== "")) // drop blank lines
+    .filter((r) => r.some((v) => v.trim() !== "")) // buang baris kosong
     .map((r) => Object.fromEntries(header.map((h, i) => [h, (r[i] ?? "").trim()])));
 }
 
@@ -82,13 +73,13 @@ function readCsv(name) {
   return parseCsv(readFileSync(path, "utf8"));
 }
 
-// --- helpers ---------------------------------------------------------------
+// --- helper ---------------------------------------------------------------
 
 let keyCounter = 0;
 const key = () => `k${(keyCounter++).toString(36)}`;
 const pad = (n) => String(n).padStart(2, "0");
 
-/** Builds a Portable Text body from paragraphs (CSV stores them "|"-separated). */
+/** Membangun Portable Text body dari paragraf (CSV menyimpannya dipisah "|"). */
 function body(text) {
   return text
     .split("|")
@@ -103,7 +94,7 @@ function body(text) {
     }));
 }
 
-// Mirrors slugify() in sanity/schemaTypes/components/postDocumentInput.tsx.
+// Mencerminkan slugify() di sanity/schemaTypes/components/postDocumentInput.tsx.
 function slugify(text) {
   return text
     .toLowerCase()
@@ -116,11 +107,11 @@ function slugify(text) {
     .slice(0, 80);
 }
 
-// --- build the documents from the CSVs -------------------------------------
+// --- membangun dokumen dari CSV -------------------------------------
 
-// Both `location` fields below are optional (a place/UMKM with no point just
-// gets no map pin), so they're only attached when the CSV cell has a value —
-// same "only set when filled" pattern as `googleMapsUrl` on umkm.
+// Kedua field `location` di bawah opsional (place/umkm tanpa titik cuma
+// tidak dapat pin), jadi cuma dipasang kalau sel CSV-nya terisi — pola
+// "isi cuma kalau terisi" yang sama seperti `googleMapsUrl` di umkm.
 function geopoint(r) {
   if (!r.lat || !r.lng) return {};
   return { location: { _type: "geopoint", lat: Number(r.lat), lng: Number(r.lng) } };
@@ -141,8 +132,8 @@ const umkm = readCsv("umkm.csv").map((r, i) => ({
   businessName: r.businessName,
   description: r.description,
   contactUrl: r.contactUrl,
-  // Optional field — only set it when the CSV cell is filled, so the empty
-  // rows exercise the "lihat peta" button's hide-when-absent behaviour.
+  // Field opsional — cuma diisi kalau sel CSV-nya terisi, supaya baris
+  // kosong tetap menguji perilaku "lihat peta" yang tersembunyi saat kosong.
   ...(r.googleMapsUrl ? { googleMapsUrl: r.googleMapsUrl } : {}),
   ...geopoint(r),
 }));
@@ -155,7 +146,7 @@ const staff = readCsv("staff.csv").map((r, i) => ({
   order: Number(r.order),
 }));
 
-// Per-category counter so ids read seed-post-berita-1, seed-post-prestasi-1, …
+// Counter per kategori supaya id-nya jadi seed-post-berita-1, seed-post-prestasi-1, …
 const postCounts = {};
 const posts = readCsv("posts.csv").map((r) => {
   const n = (postCounts[r.category] = (postCounts[r.category] ?? 0) + 1);
@@ -178,12 +169,12 @@ const posts = readCsv("posts.csv").map((r) => {
 const docs = [...places, ...umkm, ...staff, ...posts];
 
 /**
- * Cheap sanity checks that catch a mangled CSV (e.g. a quoted comma parsed
- * wrong, shifting columns) before anything is written to Sanity.
+ * Pengecekan murah yang menangkap CSV yang rusak (mis. koma berkutip
+ * ter-parse salah, kolom bergeser) sebelum apa pun ditulis ke Sanity.
  */
 function validate() {
-  // Mirrors PLACE_CATEGORIES in src/lib/places.ts — kept as a literal list
-  // rather than imported, since this script runs standalone with plain node.
+  // Mencerminkan PLACE_CATEGORIES di src/lib/places.ts — dijaga sebagai
+  // daftar literal, bukan diimpor, karena script ini jalan sendiri dengan node polos.
   const CATEGORIES = [
     "pemerintahan", "ibadah", "sekolah", "kesehatan", "toko", "pertanian",
     "perkebunan", "kandang", "industri", "jasa", "wisata", "landmark", "lainnya",
@@ -213,7 +204,7 @@ function validate() {
   }
 }
 
-// --- run -------------------------------------------------------------------
+// --- jalankan -------------------------------------------------------------------
 
 function summarize() {
   const counts = docs.reduce((acc, d) => {
@@ -250,8 +241,8 @@ async function main() {
   if (mode === "dry") {
     console.log("DRY RUN — nothing will be written.\n");
     summarize();
-    // One sample per type, so a bad CSV parse (quoted commas, |-split bodies)
-    // is visible here before anything is written.
+    // Satu contoh per tipe, supaya CSV yang salah parse (koma berkutip,
+    // body dipisah "|") langsung terlihat di sini sebelum apa pun ditulis.
     const seen = new Set();
     console.log("\nSample of each type:");
     for (const doc of docs) {
@@ -269,8 +260,8 @@ async function main() {
   const client = await makeClient();
 
   if (mode === "delete") {
-    // Match new hyphen ids (`seed-…`) plus any legacy dotted ones
-    // (`seed.…` and their `drafts.seed.…` versions) so old seeds get cleaned up.
+    // Cocokkan id strip baru (`seed-…`) plus id titik lama
+    // (`seed.…` dan versi `drafts.seed.…`-nya) supaya seed lama ikut terbersihkan.
     const ids = await client.fetch(
       '*[string::startsWith(_id, "seed-") || string::startsWith(_id, "seed.") || string::startsWith(_id, "drafts.seed.")]._id',
     );

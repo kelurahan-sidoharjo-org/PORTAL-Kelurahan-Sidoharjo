@@ -1,6 +1,6 @@
-/** Indonesian date/grouping helpers shared by the content pages. */
+/** Helper tanggal/pengelompokan bahasa Indonesia, dipakai bersama oleh halaman konten. */
 
-/** e.g. "15 Juni 2025" */
+/** contoh: "15 Juni 2025" */
 export function formatDateLong(iso: string): string {
   return new Date(iso).toLocaleDateString("id-ID", {
     day: "numeric",
@@ -10,8 +10,8 @@ export function formatDateLong(iso: string): string {
 }
 
 /**
- * e.g. "15 Juni" — used on Prestasi cards, where the year is already the
- * timeline heading and repeating it on every card is noise.
+ * contoh: "15 Juni" — dipakai di kartu Prestasi, di mana tahunnya sudah
+ * jadi judul timeline dan mengulanginya di tiap kartu cuma jadi noise.
  */
 export function formatDayMonth(iso: string): string {
   return new Date(iso).toLocaleDateString("id-ID", {
@@ -26,8 +26,9 @@ export interface YearGroup<T> {
 }
 
 /**
- * Groups items by the year of a date field, newest year first, preserving the
- * incoming order within each year (queries already sort by publishedAt desc).
+ * Mengelompokkan item berdasarkan tahun dari field tanggal, tahun terbaru
+ * lebih dulu, menjaga urutan aslinya di dalam tiap tahun (query sudah
+ * mengurutkan berdasarkan publishedAt desc).
  */
 export function groupByYear<T>(
   items: readonly T[],

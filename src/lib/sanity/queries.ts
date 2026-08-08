@@ -1,9 +1,9 @@
 import { groq } from "next-sanity";
 
 /**
- * Every image needs real pixel dimensions (so <Image> can reserve space and
- * avoid layout shift) and the LQIP blur placeholder. Defined once and
- * interpolated into each query rather than retyped per field.
+ * Tiap gambar butuh dimensi piksel asli (untuk <Image>, hindari layout
+ * shift) dan placeholder blur LQIP. Didefinisikan sekali, diinterpolasi
+ * ke tiap query.
  */
 const imageFields = groq`{
   ...,
@@ -25,11 +25,9 @@ export const siteSettingsQuery = groq`
 `;
 
 /**
- * Public places for /peta — no images, just what a map pin needs.
- *
- * `location` is projected flat (lat/lng only) so the shape matches `GeoPoint`
- * exactly; asking for the whole geopoint would drag in `_type` and `alt` that
- * nothing renders.
+ * Place publik untuk /peta — tanpa gambar, cuma yang dibutuhkan pin peta.
+ * `location` diproyeksikan datar (lat/lng saja) supaya cocok dengan
+ * `GeoPoint`; geopoint utuh akan ikut menyeret `_type`/`alt` yang tidak dipakai.
  */
 export const placesQuery = groq`
   *[_type == "place"] | order(name asc){
@@ -63,9 +61,9 @@ export const umkmListQuery = groq`
 `;
 
 /**
- * Prestasi and Berita are the same `post` type split by `category`.
- * `publishedAt` drives both the card date and the year grouping — there is
- * deliberately no separate `date` field.
+ * Prestasi dan Berita adalah `post` type sama, dipisah lewat `category`.
+ * `publishedAt` mengatur tanggal kartu dan pengelompokan tahun — sengaja
+ * tidak ada field `date` terpisah.
  */
 export const prestasiListQuery = groq`
   *[_type == "post" && category == "prestasi"] | order(publishedAt desc){
@@ -78,7 +76,7 @@ export const prestasiListQuery = groq`
   }
 `;
 
-/** Fields every post card needs, shared by the list, homepage and prestasi. */
+/** Field kartu post, dipakai bersama daftar, beranda, dan prestasi. */
 const postCardFields = groq`
   _id,
   title,
@@ -89,16 +87,15 @@ const postCardFields = groq`
 `;
 
 /**
- * The Berita filter, shared by the list and its count so the two can never
- * disagree about how many results exist — a mismatch there would show page
- * links that lead to empty grids.
+ * Filter Berita, dipakai bersama daftar dan hitungannya supaya keduanya
+ * tidak pernah berbeda jumlah hasil — kalau beda, tautan halaman bisa
+ * mengarah ke grid kosong.
  *
- * `$q` is a match pattern from `toMatchPattern` in src/lib/search.ts, or null
- * when the reader isn't searching: `!defined($q)` then short-circuits the rest
- * away, so one query serves both cases instead of two that drift apart.
+ * `$q` adalah pola match dari `toMatchPattern`, atau null saat tidak
+ * sedang mencari — `!defined($q)` lalu short-circuit sisanya.
  *
- * Title *and* excerpt, because someone searching "kebersihan" expects to find
- * "Kerja Bakti", where the word only appears in the summary.
+ * Judul *dan* excerpt, karena pencarian "kebersihan" harus menemukan
+ * "Kerja Bakti" walau kata itu cuma ada di ringkasan.
  */
 const beritaFilter = groq`
   _type == "post" && category == "berita" &&
@@ -106,9 +103,8 @@ const beritaFilter = groq`
 `;
 
 /**
- * One page of Berita. $start/$end come from the ?page= param, $q from ?q=.
- * Both are parameters, never interpolated — nothing a reader types can alter
- * the shape of the query.
+ * Satu halaman Berita. $start/$end dari ?page=, $q dari ?q=. Keduanya
+ * parameter, tidak pernah diinterpolasi.
  */
 export const beritaListQuery = groq`
   *[${beritaFilter}] | order(publishedAt desc) [$start...$end]{
@@ -120,7 +116,7 @@ export const beritaCountQuery = groq`
   count(*[${beritaFilter}])
 `;
 
-/** The three newest Berita, for the homepage. */
+/** Tiga Berita terbaru untuk beranda. */
 export const latestPostsQuery = groq`
   *[_type == "post" && category == "berita"] | order(publishedAt desc) [0...3]{
     ${postCardFields}
@@ -128,15 +124,14 @@ export const latestPostsQuery = groq`
 `;
 
 /**
- * Deliberately NOT filtered by category: /berita/[slug] is the shared article
- * route, and PrestasiCard links into it too. Filtering here would 404 every
- * Prestasi article.
+ * Sengaja TIDAK difilter category: /berita/[slug] adalah route artikel
+ * bersama, PrestasiCard juga menautkan ke situ. Memfilter akan 404 setiap
+ * artikel Prestasi.
  *
- * Matches `previousSlugs` as well, so an address the article held before its
- * title was edited still finds it — the page then redirects to the current
- * one. Without this, correcting a typo in a published headline would 404 every
- * link already pasted into a village WhatsApp group. `defined()` is explicit
- * because articles created before that field existed simply don't have it.
+ * Juga mencocokkan `previousSlugs`, supaya alamat lama tetap menemukan
+ * artikelnya — halamannya lalu redirect ke alamat terbaru. Tanpa ini,
+ * memperbaiki typo judul akan 404-kan tautan yang sudah dibagikan.
+ * `defined()` eksplisit karena artikel lama tidak punya field ini.
  */
 export const postBySlugQuery = groq`
   *[_type == "post" && (
@@ -150,15 +145,15 @@ export const postBySlugQuery = groq`
   }
 `;
 
-/** Every slug, both categories — drives generateStaticParams. */
+/** Setiap slug, kedua kategori — untuk generateStaticParams. */
 export const allPostSlugsQuery = groq`
   *[_type == "post" && defined(slug.current)].slug.current
 `;
 
 /**
- * Same documents as allPostSlugsQuery, but sitemap.xml also wants a
- * `lastModified` per entry — hence `_updatedAt` (last edit) rather than
- * `publishedAt` (the editable display date, which can be backdated).
+ * Sama dengan allPostSlugsQuery, tapi sitemap.xml juga butuh
+ * `lastModified` — karena itu `_updatedAt` (edit terakhir), bukan
+ * `publishedAt` (tanggal tampil yang bisa dimundurkan).
  */
 export const sitemapPostsQuery = groq`
   *[_type == "post" && defined(slug.current)]{

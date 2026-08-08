@@ -15,8 +15,8 @@ export const revalidate = 3600;
 type Params = { params: Promise<{ slug: string }> };
 
 /**
- * Every post, both categories — Prestasi articles live at this route too.
- * Filtering to `berita` here would leave every Prestasi card 404ing.
+ * Setiap post, kedua kategori — artikel Prestasi juga berada di route
+ * ini. Memfilter ke `berita` di sini akan membuat 404 setiap kartu Prestasi.
  */
 export async function generateStaticParams() {
   const slugs = await sanityFetch<string[]>(allPostSlugsQuery);
@@ -33,11 +33,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!post) return { title: "Tidak ditemukan" };
 
   /**
-   * Articles are what actually gets shared — pasted into village WhatsApp
-   * groups, mostly — and a link with no preview image reads as broken or
-   * suspicious. The cover photo is already in Sanity, so this asks its CDN for
-   * a 1200x630 crop (the size every platform expects) rather than shipping a
-   * separate asset.
+   * Artikel adalah yang sebenarnya dibagikan — kebanyakan ditempel ke grup
+   * WhatsApp desa — dan tautan tanpa gambar preview terbaca rusak atau
+   * mencurigakan. Foto cover-nya sudah ada di Sanity, jadi ini meminta CDN-
+   * nya untuk crop 1200x630 (ukuran yang diharapkan tiap platform), alih-
+   * alih mengirim aset terpisah.
    */
   const ogImage = post.coverImage
     ? urlFor(post.coverImage).width(1200).height(630).fit("crop").url()
@@ -67,21 +67,22 @@ export default async function ArticlePage({ params }: Params) {
   if (!post) notFound();
 
   /**
-   * Reached through an address this article used to have, before its title was
-   * edited — postBySlugQuery matches `previousSlugs` too. Redirect permanently
-   * to the address it carries now: the shared link keeps working, and Google
-   * folds the two together instead of indexing one article at two addresses.
+   * Dijangkau lewat alamat yang pernah dipakai artikel ini, sebelum
+   * judulnya diedit — postBySlugQuery juga mencocokkan `previousSlugs`.
+   * Redirect permanen ke alamat yang dibawanya sekarang: tautan yang
+   * dibagikan tetap berfungsi, dan Google menggabungkan keduanya alih-alih
+   * mengindeks satu artikel di dua alamat.
    */
   if (post.slug !== slug) permanentRedirect(`/berita/${post.slug}`);
 
   const cover = imageProps(post.coverImage);
-  // flatMap rather than map+filter so `props` narrows to non-null.
+  // flatMap alih-alih map+filter supaya `props` menyempit jadi non-null.
   const gallery = (post.images ?? []).flatMap((image) => {
     const props = imageProps(image);
     return props ? [props] : [];
   });
 
-  // Prestasi articles are reached from /prestasi, so send readers back there.
+  // Artikel Prestasi dijangkau dari /prestasi, jadi kirim pembaca kembali ke sana.
   const backHref = post.category === "prestasi" ? "/prestasi" : "/berita";
 
   return (
@@ -90,8 +91,8 @@ export default async function ArticlePage({ params }: Params) {
         <BackButton href={backHref} />
       </div>
 
-      {/* Same max-w and padding as the BackButton above, so both share a
-          left edge. Change one, change the other. */}
+      {/* max-w dan padding yang sama dengan BackButton di atas, supaya
+          keduanya berbagi tepi kiri. Ubah salah satu, ubah juga yang lain. */}
       <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
         <p className="flex items-center gap-2 font-heading text-xs sm:text-sm font-bold">
           <Calendar className="size-4" aria-hidden />
@@ -104,8 +105,8 @@ export default async function ArticlePage({ params }: Params) {
       {cover && (
         <Image
           {...cover}
-          // Empty alt: the headline sits directly above, so naming the photo
-          // again would only repeat it to screen readers.
+          // Alt kosong: judulnya sudah ada tepat di atas, jadi menamai
+          // fotonya lagi cuma akan mengulanginya ke screen reader.
           alt=""
           priority
           sizes="100vw"

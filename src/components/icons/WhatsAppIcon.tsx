@@ -1,9 +1,9 @@
 import type { SVGProps } from "react";
 
 /**
- * lucide-react dropped brand marks, so the WhatsApp glyph is inlined here
- * rather than pulled from an icon set or exported from Figma.
- * Path from Simple Icons (CC0).
+ * lucide-react membuang brand mark, jadi glyph WhatsApp ditaruh inline di
+ * sini alih-alih diambil dari icon set atau diekspor dari Figma.
+ * Path dari Simple Icons (CC0).
  */
 export function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
   return (

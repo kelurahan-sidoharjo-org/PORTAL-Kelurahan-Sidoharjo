@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * Four static nav shortcuts — no previews, no fetching. The icons are bespoke
- * flat-vector exports, not emoji, despite reading like 🏛 🗺 🏪 🏆 at a glance.
+ * Empat shortcut navigasi statis — tanpa preview, tanpa fetching. Ikonnya
+ * adalah ekspor flat-vector khusus, bukan emoji, walau sekilas terbaca
+ * seperti 🏛 🗺 🏪 🏆.
  */
 const LAYANAN = [
   { href: "/pemerintah-kelurahan", icon: "ic-kantor-kelurahan", label: "Kantor Kelurahan" },
@@ -15,7 +16,7 @@ const LAYANAN = [
 export function LayananNav() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      {/* Left-aligned on mobile, centred from sm: up — matches both frames. */}
+      {/* Rata kiri di mobile, dipusatkan dari sm: ke atas — cocok dengan kedua frame. */}
       <h2 className="text-lg sm:text-center sm:text-2xl">Layanan</h2>
 
       <ul className="mt-6 grid grid-cols-3 gap-4 sm:mt-8 sm:grid-cols-4">
@@ -31,8 +32,8 @@ export function LayananNav() {
                 width={96}
                 height={96}
                 unoptimized
-                // drop-shadow (not shadow) so the glow follows the icon's
-                // shape rather than boxing its transparent PNG bounds.
+                // drop-shadow (bukan shadow) supaya glow-nya mengikuti
+                // bentuk ikon, bukan membentuk kotak dari batas PNG transparannya.
                 className="size-10 object-contain transition-[filter] duration-200 group-hover:drop-shadow-lg sm:size-16"
               />
               <span className="text-xs sm:text-base">{label}</span>

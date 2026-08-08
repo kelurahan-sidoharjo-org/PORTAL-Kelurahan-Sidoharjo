@@ -1,9 +1,11 @@
 /**
- * Turns whatever YouTube URL staff paste into an embeddable one.
+ * Mengubah URL YouTube apa pun yang ditempel staf menjadi URL yang bisa
+ * disematkan (embed).
  *
- * They'll copy from the address bar, the Share button, or the mobile app, and
- * those give three different shapes. Anything unrecognisable returns null so
- * callers can skip rendering rather than showing a broken player.
+ * Mereka akan menyalin dari address bar, tombol Share, atau aplikasi mobile,
+ * dan ketiganya menghasilkan tiga bentuk berbeda. Apa pun yang tidak
+ * dikenali mengembalikan null supaya pemanggilnya bisa melewati render
+ * daripada menampilkan pemutar yang rusak.
  */
 export function toEmbedUrl(input: string | null | undefined): string | null {
   if (!input) return null;
@@ -31,7 +33,7 @@ export function toEmbedUrl(input: string | null | undefined): string | null {
     }
   }
 
-  // Video IDs are 11 chars of [A-Za-z0-9_-]; anything else is a bad paste.
+  // ID video terdiri dari 11 karakter [A-Za-z0-9_-]; selain itu berarti tempelan yang salah.
   if (!id || !/^[\w-]{11}$/.test(id)) return null;
 
   return `https://www.youtube.com/embed/${id}`;

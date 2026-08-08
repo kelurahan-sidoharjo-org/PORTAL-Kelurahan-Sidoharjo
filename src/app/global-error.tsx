@@ -1,13 +1,12 @@
 "use client";
 
 /**
- * Catches errors from (site)/layout.tsx itself — Header and Footer are async
- * and both fetch siteSettings, so a Sanity failure during a rebuild lands
- * here, not in (site)/error.tsx. Renders its own <html>/<body> since there is
- * no root layout at src/app/ to render inside (same reason opengraph-image.tsx
- * has to live in (site)/, not src/app/ — see CLAUDE.md). No site fonts or
- * Tailwind classes: the layout that would normally provide them is the thing
- * that failed.
+ * Menangkap error dari (site)/layout.tsx sendiri — Header/Footer async
+ * dan mengambil siteSettings, jadi kegagalan Sanity mendarat di sini,
+ * bukan di (site)/error.tsx. Merender <html>/<body> sendiri karena tidak
+ * ada root layout di src/app/ (alasan sama seperti opengraph-image.tsx —
+ * lihat CLAUDE.md). Tanpa font/class Tailwind: layout yang menyediakan
+ * itu adalah yang sedang gagal.
  */
 export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
   return (

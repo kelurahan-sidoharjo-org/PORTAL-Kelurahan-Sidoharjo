@@ -12,10 +12,10 @@ import type { PostSummary } from "@/lib/sanity/types";
 
 export const revalidate = 3600;
 
-// Next 16 hands both params over as a Promise.
+// Next 16 menyerahkan kedua param sebagai Promise.
 type SearchParams = Promise<{ page?: string | string[]; q?: string | string[] }>;
 
-// Suffix comes from the title template in the root layout.
+// Sufiks berasal dari template judul di root layout.
 export async function generateMetadata({
   searchParams,
 }: {
@@ -29,9 +29,10 @@ export async function generateMetadata({
       "Kabar, pengumuman, dan kegiatan terbaru dari Kelurahan Sidoharjo.",
     alternates: { canonical: "/berita" },
     /**
-     * A search result page is a thin slice of articles Google already has
-     * indexed individually, so it's noise in the index — but the links on it
-     * are still worth following. `follow: true` keeps that distinction.
+     * Halaman hasil pencarian cuma potongan tipis dari artikel yang sudah
+     * diindeks Google satu per satu, jadi ia jadi noise di indeks — tapi
+     * tautan di dalamnya tetap layak diikuti. `follow: true` menjaga
+     * perbedaan itu.
      */
     ...(searching && { robots: { index: false, follow: true } }),
   };
@@ -47,14 +48,14 @@ export default async function BeritaPage({
   const page = parsePageParam(params.page);
   if (page === null) notFound();
 
-  // null means "not searching" — the queries read that as no filter at all.
+  // null berarti "tidak sedang mencari" — query membacanya sebagai tanpa filter sama sekali.
   const pattern = toMatchPattern(params.q);
   const query = searchValue(params.q);
 
   const total = await sanityFetch<number>(beritaCountQuery, { q: pattern });
   const info = getPageInfo(page, total);
 
-  // Deep-linking past the last page is a dead end, not an empty grid.
+  // Deep-link melewati halaman terakhir adalah jalan buntu, bukan grid kosong.
   if (page > info.totalPages) notFound();
 
   const posts = await sanityFetch<PostSummary[]>(beritaListQuery, {
@@ -79,8 +80,9 @@ export default async function BeritaPage({
           <Pagination info={info} query={query} />
         </>
       ) : (
-        /* Two different nothings: an empty search is the reader's doing and
-           they can fix it, an empty archive is the kelurahan's. */
+        /* Dua "tidak ada" yang berbeda: pencarian kosong adalah perbuatan
+           pembaca dan mereka bisa memperbaikinya, arsip kosong adalah
+           perbuatan kelurahan. */
         <p className="mt-12 text-center text-xs sm:text-sm text-muted-foreground">
           {pattern
             ? "Tidak ada berita yang cocok."

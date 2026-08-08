@@ -232,7 +232,7 @@ Kalau Anda yang mengambil alih proyek ini:
 1. **Cek penggunaan aktual dulu** — sanity.io/manage → project → Usage.
    Jangan bertindak berdasarkan estimasi di atas; angka itu mengasumsikan
    frekuensi posting yang belum pernah diverifikasi.
-2. **Kalau penyimpanan naik lebih cepat dari perkiraan**, pertimbangkan tier berbayar setelah semua itu. 
+2. **Kalau penyimpanan naik lebih cepat dari perkiraan**, pertimbangkan tier berbayar.
 
 <br>
 
