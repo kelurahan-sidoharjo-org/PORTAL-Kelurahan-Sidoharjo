@@ -41,23 +41,38 @@ export default async function Home() {
           </div>
 
           {posts.length > 0 ? (
-            /* Mobile is a swipeable row with the next card peeking in; from
-               sm: up it becomes a normal grid. Pure CSS scroll-snap — no
-               carousel library and no client component. */
-            <ul className="-mx-5 mt-6 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto scroll-pl-5 px-5 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+            /* A swipeable row with the next card peeking in, becoming the
+               mockup's three-across grid at lg:. Pure CSS scroll-snap — no
+               carousel library and no client component.
+
+               The grid waits for lg: because the homepage always shows exactly
+               three posts, and three never divides evenly into two columns: a
+               two-column step would strand the third card beside an empty
+               cell at every width from 640px to 1023px — tablets, and any
+               un-maximised laptop window. Neither mockup has a two-column
+               state; they go straight from carousel to three-across, and the
+               carousel is what covers the widths in between. */
+            <ul className="-mx-5 mt-6 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto scroll-pl-5 px-5 pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0">
               {posts.map((post) => (
                 <BeritaCard
                   key={post._id}
                   post={post}
                   /*
-                   * Explicit height on mobile: the card's 3/5-image split is a
-                   * percentage, and a percentage of a content-derived height is
-                   * circular — the browser gives up and each image falls back
-                   * to its own natural size, so cards end up uneven. The grid
-                   * at sm: gets a definite height from the row, so h-full is
-                   * enough there.
+                   * Explicit height while it's a carousel: the card's 3/5-image
+                   * split is a percentage, and a percentage of a content-derived
+                   * height is circular — the browser gives up and each image
+                   * falls back to its own natural size, so cards end up uneven.
+                   * The grid at lg: gets a definite height from the row, so
+                   * h-full is enough there.
+                   *
+                   * Width has three jobs. `w-[72%]` sets the phone peek;
+                   * `sm:w-80` caps it once the viewport is wide enough that 72%
+                   * would be a 470px slab showing barely one card. `lg:min-w-0`
+                   * releases the floor for the grid — at 1024px a column is
+                   * ~283px, so a 320px minimum would push the cards out of
+                   * their own cells.
                    */
-                  className="h-[22rem] w-[72%] shrink-0 snap-start sm:h-full sm:w-auto"
+                  className="h-[22rem] w-[72%] min-w-[20rem] shrink-0 snap-start sm:w-80 lg:h-full lg:w-auto lg:min-w-0"
                 />
               ))}
             </ul>
