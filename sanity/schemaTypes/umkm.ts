@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { LocationInput } from "./components/locationInput";
 import { withUploadHint } from "./uploadHint";
 
 export const umkm = defineType({
@@ -36,9 +37,17 @@ export const umkm = defineType({
       name: "googleMapsUrl",
       title: "Tautan Google Maps",
       description:
-        "Opsional — tombol \"lihat peta\" hanya muncul jika tautan ini diisi",
+        "Opsional — tombol \"lihat peta\" di halaman UMKM hanya muncul jika tautan ini diisi. Jika Titik Lokasi di bawah terisi tapi ini kosong, pin di halaman Peta tetap membuka Google Maps memakai titik itu.",
       type: "url",
       validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
+    }),
+    defineField({
+      name: "location",
+      title: "Titik Lokasi",
+      description:
+        "Opsional — isi supaya usaha ini juga muncul sebagai pin di halaman Peta. Cari nama tempatnya, lalu geser pin sampai tepat.",
+      type: "geopoint",
+      components: { input: LocationInput },
     }),
   ],
   preview: {

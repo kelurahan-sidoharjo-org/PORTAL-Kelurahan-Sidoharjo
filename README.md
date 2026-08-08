@@ -9,8 +9,9 @@ statis/ISR dari Sanity.
 ## Tech stack
 
 - **[Next.js](https://nextjs.org/docs)** (App Router) + **[TypeScript](https://www.typescriptlang.org/docs/)**
-- **[Tailwind](https://tailwindcss.com/docs)** + **[shadcn/ui](https://ui.shadcn.com)**
+- **[Tailwind](https://tailwindcss.com/docs)** — [shadcn/ui](https://ui.shadcn.com) hanya menyumbang stylesheet token dasar; semua komponen di sini ditulis manual, tidak ada `npx shadcn add`
 - **[Sanity.io](https://www.sanity.io/docs)** + Studio, disematkan (embedded) di `/admin`
+- **[Leaflet](https://leafletjs.com) + react-leaflet** untuk peta interaktif di `/peta` — bukan Google Maps API, lihat catatan di bawah
 - **[Recharts](https://recharts.org)** untuk `/demografi` (Fase 6, belum dibangun)
 - **[Vercel Hobby](https://vercel.com/docs)** untuk hosting, ISR (biaya tidak tergantung traffic)
 - **[Vitest](https://vitest.dev)** + **[React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)** untuk testing
@@ -111,14 +112,25 @@ src/
   app/(site)/    # route group publik — berita, peta, pemerintah-kelurahan, umkm, prestasi, panduan
   app/admin/     # Sanity Studio yang disematkan, punya root layout sendiri (tanpa font/chrome situs)
   app/api/revalidate/
-  components/    # layout, home, berita, peta, pemerintah, umkm, prestasi, ui
-  lib/           # site.ts (URL/metadata situs), lib/sanity/{client,queries,image,imageLoader,env}.ts
-sanity/          # schemaTypes (model konten), assetSources (downscale gambar di sisi klien)
+  components/    # berita, home, icons, layout, panduan, pemerintah, peta, prestasi, umkm
+  lib/           # site.ts (URL/metadata situs), places.ts + geojson.ts (logika peta),
+                 # lib/sanity/{client,queries,image,imageLoader,env}.ts
+sanity/          # schemaTypes (model konten; schemaTypes/components menaruh input peta
+                 # lokasi kustom dan basemap yang dipakai bareng /peta), assetSources
+                 # (downscale gambar di sisi klien)
 docs/            # panduan-staf.md, handover.md, domain-go-id.md — semua Bahasa Indonesia
+public/geojson/  # opsional: batas-kelurahan.geojson, jalan.geojson, sungai.geojson — overlay di /peta
 ```
 
 Konvensi yang lebih detail dan alasan di balik tiap keputusan ada di
 [CLAUDE.md](./CLAUDE.md) (Bahasa Inggris) — tidak diulang di sini.
+
+**Peta `/peta`**: satelit dari [Esri World Imagery](https://server.arcgisonline.com),
+bukan Google Maps — tidak butuh API key atau kartu kredit, lihat alasannya di
+CLAUDE.md bagian Phase 3. Atribusi Esri di footer peta **wajib ada**, itu bukan
+hiasan — jangan dihapus kalau menyesuaikan gaya peta. File di `public/geojson/`
+(garis batas, jalan, sungai) sepenuhnya opsional — peta tetap jalan tanpanya,
+menampilkan tempat/UMKM saja tanpa garis overlay.
 
 <br>
 
@@ -230,13 +242,15 @@ Pekerjaan sisi developer yang masih terbuka di codebase (tidak termasuk
 pendaftaran domain dan logistik handover staf yang ada di
 `docs/handover.md` — itu urusan birokrasi, bukan kode):
 
-- **Fase 6 — Demografi.** `/demografi` belum dibangun: server component
-  yang mengelompokkan schema `demographicStat` yang sudah ada berdasarkan
-  `statType`, satu Recharts client component per chart. Sengaja ditaruh
-  terakhir di roadmap — kelurahan belum memberikan angka asli, jadi belum
-  ada yang bisa di-chart. Urutan prioritas dan empat chart yang
-  direncanakan (distribusi usia, tingkat pendidikan, mata pencaharian,
-  akses infrastruktur) ada di `CLAUDE.md`.
+- **Fase 6 — Demografi.** `/demografi` belum dibangun, dan skema
+  `demographicStat` sudah dihapus dari Studio karena belum dipakai — kalau
+  fase ini dilanjutkan, skemanya (baris datar: `statType`, `year`, `label`,
+  `value`, `unit`) perlu dibuat ulang, baru server component yang
+  mengelompokkannya berdasarkan `statType`, satu Recharts client component
+  per chart. Sengaja ditaruh terakhir di roadmap — kelurahan belum
+  memberikan angka asli, jadi belum ada yang bisa di-chart. Urutan
+  prioritas dan empat chart yang direncanakan (distribusi usia, tingkat
+  pendidikan, mata pencaharian, akses infrastruktur) ada di `CLAUDE.md`.
 - **Penyimpanan gambar.** Lihat bagian anggaran di atas — jalur upload
   drag-and-drop membuat kuota 5 GB tier gratis Sanity naik dalam hitungan
   tahun, bukan langsung. Cek penggunaan aktual di sanity.io/manage sebelum

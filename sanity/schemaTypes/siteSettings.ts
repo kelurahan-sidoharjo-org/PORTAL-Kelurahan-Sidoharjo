@@ -34,12 +34,10 @@ export const siteSettings = defineType({
       description: withUploadHint(),
       type: "image",
     }),
-    defineField({
-      name: "kelurahanMapImage",
-      title: "Peta Sidoharjo",
-      description: withUploadHint("Ditampilkan di halaman Peta & Tempat Umum"),
-      type: "image",
-    }),
+    // No `kelurahanMapImage`: /peta draws a real interactive map now, so the
+    // uploaded picture had no effect on anything. Dropped rather than left in
+    // place for the same reason `logo` was — a Studio control that changes
+    // nothing misleads staff after handover.
     defineField({
       name: "contactEmail",
       title: "Email Kontak",

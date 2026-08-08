@@ -1,6 +1,11 @@
 # Portal Kelurahan Sidoharjo
 
-test
+Public website for Kelurahan Sidoharjo, Kecamatan Sidoharjo, Kabupaten Wonogiri.
+Berita, prestasi, an interactive map of public places and UMKM, the kelurahan
+office and its staff — all edited by non-technical staff through an embedded
+Sanity Studio at `/admin`. Built to be **handed over and left running**: Rp 0 to
+operate, and documented so any developer can pick it up, not just the one who
+wrote it.
 
 ## Rules for the assistant
 
@@ -16,9 +21,16 @@ test
 
 ## Stack
 
-Next.js (App Router) + Tailwind + shadcn/ui → Vercel Hobby. Sanity.io + Studio
-embedded at `/admin` (Indonesian field labels; editors are non-technical).
-Recharts for `demographicStat`. Montserrat (headings) / Poppins (body).
+Next.js (App Router) + Tailwind → Vercel Hobby. Sanity.io + Studio embedded at
+`/admin` (Indonesian field labels; editors are non-technical). Leaflet +
+react-leaflet for the `/peta` map. Montserrat (headings) / Poppins (body).
+
+**shadcn/ui is not really in the stack.** `globals.css` imports
+`shadcn/tailwind.css` for its base tokens, but the one generated component
+(`ui/button.tsx`) was never imported by anything and has been deleted. Don't
+reach for `npx shadcn add` — every component here is hand-written.
+
+**Recharts is Phase 6 and not installed yet** — `/demografi` isn't built.
 
 No database, no forms, no server-side writes — read-only static/ISR. No public
 accounts, no login on the public site.
@@ -59,22 +71,39 @@ entry nobody can later distinguish from a real one.
 
 - **`siteSettings`** (singleton): `villageName`, `heroVideoUrl`, `contactEmail`,
   `contactWhatsapp`, `googleMapsUrl`, `instagramUrl`, `tiktokUrl`,
-  `orgChartImage`, `kelurahanMapImage` (`/peta`), `officeImage`
-  (`/pemerintah-kelurahan` hero). No `contactAddress` — dropped on purpose.
+  `orgChartImage`, `officeImage` (`/pemerintah-kelurahan` hero). No
+  `contactAddress` — dropped on purpose. No `kelurahanMapImage` either — `/peta`
+  is a real interactive map now (see Phase 3), so the uploaded picture had no
+  effect on anything and was dropped for the same reason `logo` was.
 - **`post`** — Berita + Prestasi merged; `/berita` and `/prestasi` filter on
   `category`: `title`, `slug`, `category` (`berita`|`prestasi`), `publishedAt`,
   `coverImage`, `images` (→ "Dokumentasi"), `excerpt`, `body`.
   - `slug` and `category` are auto-set and **hidden** — staff never see them.
   - `publishedAt` is **prefilled with today but visible and editable**, so old
     announcements can be backdated. Hiding it would make that impossible.
-- **`place`**: `name`, `category`
-  (`pemerintahan`|`masjid`|`sekolah`|`toko`|`lainnya` — drives icon AND filter),
-  `googleMapsUrl`.
+    **Required** since the Batch A audit fix — an empty value used to print
+    "Invalid Date" on cards and silently drop the article from `/prestasi`'s
+    `groupByYear`.
+  - `previousSlugs` (hidden, array of string) — every address the article used
+    to have. Editing the title moves the slug (it's derived from the title +
+    publish date), and this is what keeps the old URL alive instead of 404ing
+    a link already shared on WhatsApp or indexed by Google. Written by
+    `PostDocumentInput` via `nextSlugState()`
+    (`sanity/schemaTypes/components/slugHistory.ts`), which distinguishes a
+    real published address from the throwaway intermediate slugs produced
+    while someone is still typing a new title. See the `/berita/[slug]`
+    redirect below.
+- **`place`**: `name`, `category` (13 values — `pemerintahan`, `ibadah`,
+  `sekolah`, `kesehatan`, `toko`, `pertanian`, `perkebunan`, `kandang`,
+  `industri`, `jasa`, `wisata`, `landmark`, `lainnya` — drives the map pin's
+  emoji/colour AND the legend, see Phase 3), `googleMapsUrl`, `location`
+  (`geopoint`, optional — no point means no pin, not an error).
 - **`staffMember`**: `name`, `position`, `photo`, `order`.
 - **`umkm`**: `businessName`, `description`, `photo`, `contactUrl`,
-  `googleMapsUrl` (optional — "lihat peta" renders only when filled).
-- **`demographicStat`** (flat rows): `statType`, `year`, `label`, `value`,
-  `unit`.
+  `googleMapsUrl` (optional — "lihat peta" on `/umkm` renders only when
+  filled), `location` (`geopoint`, optional — a business with a point also
+  gets a pin on `/peta`; see Phase 3 for why it isn't a `place.category`
+  instead).
 - **`blockContent`**: portable text for `post.body`.
 
 ## Images
@@ -101,17 +130,18 @@ entry nobody can later distinguish from a real one.
 Figma MCP is quota-exhausted, so exports are manual. **All assets are exported
 and correctly named — the list is complete.**
 
-Naming: `ic-<name>.png`, kebab-case. Place icons are `ic-place-<category>.png`
-matching the `place.category` enum exactly, so `/peta` resolves them
-mechanically with no mapping table.
+Naming: `ic-<name>.png`, kebab-case.
 
 - Header: `ic-instagram`, `ic-tiktok`
 - `/pemerintah-kelurahan` contact lines: `ic-whatsapp`, `ic-gmail`. The Footer
   keeps the inline-SVG `WhatsAppIcon` instead — it tints with `currentColor` for
   hover, which a PNG can't.
 - Homepage Layanan: `ic-kantor-kelurahan`, `ic-peta`, `ic-umkm`, `ic-prestasi`
-- `/peta`: `ic-place-{pemerintahan,masjid,sekolah,toko,lainnya}`
 - `/prestasi`: `ic-trophy`
+
+**No `ic-place-*` files** — `/peta`'s map pins are emoji (`PLACE_CATEGORY_MARKERS`
+in `src/lib/places.ts`), not PNGs, so those five files were deleted along with
+the card list they used to serve. See Phase 3.
 
 **Two trophies, easy to confuse:** `ic-prestasi` is gold/glossy, homepage
 Layanan only. `ic-trophy` is a white glyph on dark green, used on `/prestasi` as
@@ -144,12 +174,18 @@ build/revalidation only, so load scales with content changes, not traffic.
 - **`/berita/[slug]` is the shared article route** — it serves Prestasi posts
   too, since `PrestasiCard` links into it. Never filter that query or
   `generateStaticParams` by `category`; doing so 404s every Prestasi article.
+  It also matches `previousSlugs`, then `permanentRedirect`s to the current
+  slug when the requested one is stale — see `previousSlugs` above.
+  `allPostSlugsQuery`/`sitemapPostsQuery` deliberately return only the
+  canonical slug: old addresses are served on demand, never prerendered or
+  listed in the sitemap.
 - **`/berita` is paginated** via GROQ slice (`[$start...$end]`). Never render
   all posts.
   - **Search (`?q=`) therefore runs in GROQ, not in the browser** — the opposite
-    of `/peta`. Copying `PlaceExplorer`'s client-side filter would search only
-    the twelve posts on screen and answer "tidak ada" for everything older,
-    looking correct while lying. `toMatchPattern` (`src/lib/search.ts`) turns
+    of `/peta`, where `PetaMap` holds every place and UMKM at once and filters
+    in memory. Copying that here would search only the twelve posts on screen
+    and answer "tidak ada" for everything older, looking correct while lying.
+    `toMatchPattern` (`src/lib/search.ts`) turns
     typed text into a `match` pattern; `null` means no filter, which
     `!defined($q)` short-circuits away, so one query serves both cases. The
     list and count queries **must** share that filter or the pager offers pages
@@ -213,12 +249,56 @@ clean.
 - [X] **Phase 2 — Pages wired to Sanity.** Homepage is only: Layanan row of 4
   static nav icons → "Berita Kelurahan" (3 latest + "lihat semua", the only
   fetched content) → "Video Profil" (`heroVideoUrl`).
-- [X] **Phase 3 — Peta.** `kelurahanMapImage` left, list right; stacked on
-  mobile. **Static image, no map library.** Search + filter pills + card grid,
-  filtered client-side. Pills lead with **"Semua"** (not a category); real
-  categories render capitalised, so no category→label map is needed.
-  `presentCategories`/`filterPlaces`/`categoryLabel` are pure helpers in
-  `src/lib/places.ts` (unit-tested); `PlaceExplorer` only does state + render.
+- [X] **Phase 3 — Peta.** Rebuilt from a static image + card list into a real
+  interactive map: `PetaMap`/`PetaMapCanvas` (`src/components/peta/`), Leaflet +
+  react-leaflet, Esri World Imagery satellite tiles, one pin per `place`/`umkm`
+  with a `location`, name on hover, click opens `googleMapsUrl` in a new tab.
+  `presentCategories`/`filterPins`/`categoryLabel`/`toMapPins`/`boundsOf` are
+  pure helpers in `src/lib/places.ts` (unit-tested); the components only do
+  state + render.
+  - **Leaflet, not the Google Maps JS API.** The obvious read of "use Google
+    Maps" turns out to conflict with the handover rules below it: Google Maps
+    — even on its free tier — requires a Google Cloud project with **billing
+    enabled** just to mint an API key, and that billing account would become
+    one more thing to transfer to the kelurahan (or worse, stay on the
+    developer's card). Leaflet needs no key, no account, and no billing at
+    all — Esri's tiles and Nominatim's search (used by the Studio input below)
+    are both free and anonymous. Zero handover cost, permanently.
+  - **Cards are gone entirely** — the map *is* the page now, not a companion to
+    a list. What a card used to show (name, category, a link out to Google
+    Maps) is now on the pin itself: hover for the tooltip, click for the link.
+    A `sr-only` list of every pin's name + Maps link sits below the map so
+    screen-reader and keyboard-only visitors aren't left with nothing — Leaflet
+    markers are Tab-reachable too, but give no sense of the full list.
+  - **Legend, not filter pills.** Clicking a legend row toggles that category's
+    pins on/off (multiple can be off at once) rather than picking one active
+    category — closer to what a map with a dozen-plus categories needs than the
+    old single-select pills were.
+  - **`location` is a `geopoint`, optional on both `place` and `umkm`.** A
+    document with no point simply gets no pin — not an error, not hidden from
+    Studio, just invisible on `/peta` until someone fills it in. `place`'s
+    Studio preview flags this in the subtitle so staff notice from the document
+    list, since there's no card view left to notice it from.
+  - **UMKM pins reuse the `umkm` document, not a new `place.category`.** Patik
+    (the reference project) has a `place`-equivalent "umkm" category; adding
+    one here would let staff describe the same business twice — once under
+    UMKM, once under Tempat Umum — with no guarantee the two copies agree.
+    `toMapPins()` merges both document types into one pin list instead. A UMKM
+    pin always opens Google Maps on click even when `googleMapsUrl` is empty —
+    it falls back to a `?q=<lat>,<lng>` link built from its own coordinates.
+  - **Custom Studio input (`sanity/schemaTypes/components/locationInput.tsx`),
+    not a plugin.** `sanity-plugin-leaflet-input` stopped at Sanity v2 (2022);
+    `@sanity/google-maps-input` would drag the Google billing requirement back
+    in through the side door. The custom input is a small Leaflet map with a
+    draggable pin plus a Nominatim-backed name search — no key, same reasoning
+    as the public map.
+  - **GeoJSON overlays (`public/geojson/`) are optional and independent.** Three
+    fixed filenames — `batas-kelurahan.geojson`, `jalan.geojson`,
+    `sungai.geojson` — each fetched separately; a missing one is skipped, not an
+    error, so the map works before any of them exist. `src/lib/geojson.ts`
+    accepts either real GeoJSON (what QGIS exports) or Esri JSON (`rings`/
+    `paths` — what patik-map-website's sample files use), since both circulate
+    as ".geojson" files in practice and Leaflet only understands the former.
 - [X] **Phase 4 — Deploy polish.** SEO metadata, `sitemap.ts`, `robots.ts`,
   generated OG card, favicon, `src/lib/site.ts`, `docs/`. Verified 2026-07-27:
   build/lint/tsc/50 tests clean, and a test post reached the live site in
@@ -247,11 +327,14 @@ clean.
     re-runs `npx sanity cors add <origin> --credentials`.
   - Still owed: real screenshots in `docs/panduan-staf.md` and the contact names
     at its end.
-- [ ] **Phase 6 — Demographics (post-launch).** Server component groups
-  `demographicStat` by `statType`; one Recharts client component per chart.
-  **Deliberately last** — the site launches and hands over without it, and the
-  kelurahan is unlikely to supply real numbers before handover. `/demografi`
-  stays unlinked and out of `sitemap.ts` until built.
+- [ ] **Phase 6 — Demographics (post-launch, not started).** No schema and no
+  page exist yet — `demographicStat` was removed as unused weight while this
+  phase sits unbuilt; recreate it if the phase resumes (flat rows: `statType`,
+  `year`, `label`, `value`, `unit`). Then: a server component that groups the
+  rows by `statType`, one Recharts client component per chart. **Deliberately
+  last** — the site launches and hands over without it, and the kelurahan is
+  unlikely to supply real numbers before handover. `/demografi` stays unlinked
+  and out of `sitemap.ts` until built.
 
 ## Handover (the project's actual end state)
 
@@ -312,9 +395,10 @@ site is static/ISR, so a broken build or Sanity outage leaves the last published
 version serving from cache rather than taking the site down; and the
 documentation means *any* developer can pick it up, not specifically this one.
 
-## Demographics (Phase 6 priority order)
+## Demographics (Phase 6 priority order — planning notes only, no schema yet)
 
-Each fed by `demographicStat`:
+Each would be fed by a `demographicStat` document (removed for now — see
+Phase 6 above; recreate it if this phase resumes):
 
 1. **Distribusi Usia** (bar/pyramid, 0–14/15–64/65+) — labor pool + dependency
    ratio.

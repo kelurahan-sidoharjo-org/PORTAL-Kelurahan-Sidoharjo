@@ -28,7 +28,10 @@ export function pathsFor(body: WebhookBody): string[] {
     case "staffMember":
       return ["/pemerintah-kelurahan"];
     case "umkm":
-      return ["/umkm"];
+      // Also /peta: an umkm with a `location` is a pin on the map, so editing
+      // one has to refresh both pages or the map keeps the old point for the
+      // rest of the ISR hour.
+      return ["/umkm", "/peta"];
     case "place":
       return ["/peta"];
     case "siteSettings":

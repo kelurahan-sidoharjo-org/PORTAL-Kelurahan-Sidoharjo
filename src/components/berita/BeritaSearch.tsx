@@ -8,10 +8,10 @@ import { LoaderCircle, Search, X } from "lucide-react";
 const DEBOUNCE_MS = 300;
 
 /**
- * The /berita search box — the same control as the one on /peta, doing a
+ * The /berita search box — the same control as the one on PetaMap, doing a
  * different job underneath.
  *
- * PlaceExplorer already holds every place in the browser, so it filters in
+ * PetaMap already holds every place and UMKM in the browser, so it filters in
  * memory. /berita only ever holds one page of posts (CLAUDE.md: "never render
  * all posts"), so searching there has to reach Sanity, or it would search the
  * visible twelve and report "nothing found" for everything older.

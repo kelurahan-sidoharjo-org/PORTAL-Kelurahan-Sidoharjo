@@ -41,8 +41,10 @@ describe("pathsFor", () => {
     ]);
   });
 
-  it("revalidates /umkm for an umkm", () => {
-    expect(pathsFor({ _type: "umkm" })).toEqual(["/umkm"]);
+  // /peta too: an umkm with a `location` renders as a map pin, so both pages
+  // show the same document and both have to be busted.
+  it("revalidates /umkm and /peta for an umkm", () => {
+    expect(pathsFor({ _type: "umkm" })).toEqual(["/umkm", "/peta"]);
   });
 
   it("revalidates /peta for a place", () => {
@@ -56,16 +58,6 @@ describe("pathsFor", () => {
    */
   it("returns the layout sentinel for siteSettings, not a page path", () => {
     expect(pathsFor({ _type: "siteSettings" })).toEqual([LAYOUT_SENTINEL]);
-  });
-
-  /**
-   * demographicStat is a registered schema type with no mapped page yet
-   * (Phase 6 isn't built). Falling through to an empty array is what makes the
-   * route reply 200 with revalidated: false instead of throwing — pin that as
-   * today's intentional behaviour.
-   */
-  it("returns nothing for demographicStat", () => {
-    expect(pathsFor({ _type: "demographicStat" })).toEqual([]);
   });
 
   it("returns nothing for an unrecognised type", () => {

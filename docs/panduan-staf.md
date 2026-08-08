@@ -27,7 +27,7 @@ Belum punya akses? Hubungi Administrator di kelurahan (bagian 12) dan sebutkan a
 
 Setelah masuk, di sisi kiri ada daftar Konten:
 
-- Pengaturan website — data umum: nama kelurahan, kontak, foto kantor, peta
+- Pengaturan website — data umum: nama kelurahan, kontak, foto kantor
 - Berita — pengumuman dan kegiatan
 - Prestasi — penghargaan dan capaian
 - Tempat Umum — daftar tempat di halaman Peta
@@ -90,7 +90,6 @@ Klik Pengaturan website di daftar sebelah kiri. Isinya dipakai di banyak halaman
 | Video Beranda (YouTube)   | Video di halaman depan                            |
 | Foto Kantor Kelurahan     | Foto besar di halaman Kantor Kelurahan            |
 | Struktur Organisasi       | Bagan di halaman Kantor Kelurahan                 |
-| Peta Sidoharjo            | Gambar peta di halaman Peta                       |
 | Email Kontak              | Halaman Kantor Kelurahan dan bagian bawah website |
 | Nomor WhatsApp            | Halaman Kantor Kelurahan dan bagian bawah website |
 | Tautan Google Maps Kantor | Tombol "lihat peta" di halaman Kantor Kelurahan   |
@@ -104,9 +103,33 @@ Nomor WhatsApp ditulis dengan kode negara, tanpa tanda plus dan tanpa spasi: `62
 
 Ketiganya sama caranya: pilih menunya di kiri, klik +, isi, lalu Publish.
 
-- UMKM — Nama Usaha, Deskripsi Singkat, Foto, Tautan Kontak, Tautan Google Maps. Tautan Google Maps boleh dikosongkan; tombol "lihat peta" hanya muncul bila diisi.
-- Tempat Umum — Nama, Kategori, Tautan Google Maps. Kategori menentukan ikonnya di halaman Peta: Pemerintahan, Masjid, Sekolah, Toko, atau Lainnya.
+- UMKM — Nama Usaha, Deskripsi Singkat, Foto, Tautan Kontak, Tautan Google Maps, Titik Lokasi. Tautan Google Maps boleh dikosongkan; tombol "lihat peta" di halaman UMKM hanya muncul bila diisi. Titik Lokasi juga boleh dikosongkan — isi kalau usaha ini juga ingin muncul sebagai titik di halaman Peta (lihat bagian 8a).
+- Tempat Umum — Nama, Kategori, Tautan Google Maps, Titik Lokasi. Kategori menentukan warna dan ikon titiknya di halaman Peta: Pemerintahan, Ibadah, Sekolah, Kesehatan, Toko, Pertanian, Perkebunan, Kandang, Industri, Jasa, Wisata, Landmark, atau Lainnya.
 - Anggota Kelurahan — Nama, Jabatan, Foto, Urutan Tampilan. Urutan Tampilan berupa angka: 1 tampil paling awal, lalu 2, 3, dan seterusnya. Lurah biasanya diberi angka 1.
+
+**Penting untuk Tempat Umum dan UMKM: tanpa Titik Lokasi, tempatnya tidak muncul di halaman Peta sama sekali.** Halaman Peta sekarang berupa peta sungguhan, bukan daftar — jadi Titik Lokasi bukan kolom hiasan, itu satu-satunya cara tempatnya bisa ditemukan warga di sana.
+
+### 8a. Mengisi Titik Lokasi
+
+1. Buka kolom Titik Lokasi. Di bawahnya ada peta kecil dan kotak pencarian.
+2. Ketik nama tempatnya di kotak pencarian, misalnya "Masjid Baiturrahman Sidoharjo". Tunggu sebentar, lalu pilih hasil yang paling cocok dari daftar yang muncul.
+3. Peta akan berpindah ke lokasi itu dengan pin merah/hijau menandai titiknya. Kalau titiknya masih kurang tepat, **geser pin itu langsung dengan mouse atau jari** sampai benar-benar berada di atas bangunannya.
+4. Selesai — koordinatnya sudah tersimpan. Publish seperti biasa.
+
+Belum ketemu lewat pencarian? Klik saja langsung di titik yang benar di peta — pin akan langsung pindah ke situ.
+
+**Cara ketiga: menempel koordinat dari Google Maps.** Berguna kalau pencarian tidak menemukan tempatnya dan mengklik peta terasa sulit tepat.
+
+1. Buka Google Maps, cari lokasinya.
+2. **Klik kanan** tepat di lokasi yang dituju.
+3. Di bagian paling atas menu yang muncul, ada deretan angka seperti `-7.8179, 111.0704`. **Klik angka itu** — angkanya otomatis tersalin.
+4. Kembali ke Ruang Kerja, tempel (Ctrl+V) ke kotak "Tempel koordinat" di bawah peta, lalu klik **Terapkan**.
+
+Pin akan langsung pindah ke titik itu. Tautan Google Maps yang memuat koordinat juga bisa ditempel di kotak yang sama.
+
+Urutan angkanya penting: **lintang dulu, baru bujur** — untuk daerah kita lintang selalu diawali tanda minus (`-7,…`) dan bujur diawali `111,…`. Kalau tertukar, kotaknya akan menolak dan memberi tahu, bukan memasang pin di tempat yang salah.
+
+![Kolom Titik Lokasi dengan peta kecil dan kotak pencarian](/images/panduan/08a-titik-lokasi.png)
 
 ## 9. Yang sebaiknya TIDAK diubah
 

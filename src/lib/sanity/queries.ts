@@ -16,7 +16,6 @@ export const siteSettingsQuery = groq`
     heroVideoUrl,
     officeImage${imageFields},
     orgChartImage${imageFields},
-    kelurahanMapImage${imageFields},
     contactEmail,
     contactWhatsapp,
     googleMapsUrl,
@@ -25,13 +24,20 @@ export const siteSettingsQuery = groq`
   }
 `;
 
-/** Public places for /peta — no images, just name + category + maps link. */
+/**
+ * Public places for /peta — no images, just what a map pin needs.
+ *
+ * `location` is projected flat (lat/lng only) so the shape matches `GeoPoint`
+ * exactly; asking for the whole geopoint would drag in `_type` and `alt` that
+ * nothing renders.
+ */
 export const placesQuery = groq`
   *[_type == "place"] | order(name asc){
     _id,
     name,
     category,
-    googleMapsUrl
+    googleMapsUrl,
+    location{ lat, lng }
   }
 `;
 
@@ -51,7 +57,8 @@ export const umkmListQuery = groq`
     description,
     photo${imageFields},
     contactUrl,
-    googleMapsUrl
+    googleMapsUrl,
+    location{ lat, lng }
   }
 `;
 

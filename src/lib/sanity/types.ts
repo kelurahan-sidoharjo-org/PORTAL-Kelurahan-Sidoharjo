@@ -24,7 +24,6 @@ export interface SiteSettings {
   heroVideoUrl: string | null;
   officeImage: SanityImage | null;
   orgChartImage: SanityImage | null;
-  kelurahanMapImage: SanityImage | null;
   contactEmail: string | null;
   contactWhatsapp: string | null;
   googleMapsUrl: string | null;
@@ -32,12 +31,33 @@ export interface SiteSettings {
   tiktokUrl: string | null;
 }
 
-/** The `place.category` enum — drives both the filter pills and the icon. */
+/**
+ * A `geopoint` as /peta needs it. Sanity stores an optional `alt` (altitude)
+ * too; nothing here reads it, so the queries never ask for it.
+ */
+export interface GeoPoint {
+  lat: number;
+  lng: number;
+}
+
+/**
+ * The `place.category` enum — drives the map marker (emoji + colour) and the
+ * legend row. Order here is only documentation; `PLACE_CATEGORIES` in
+ * src/lib/places.ts owns the order things render in.
+ */
 export type PlaceCategory =
   | "pemerintahan"
-  | "masjid"
+  | "ibadah"
   | "sekolah"
+  | "kesehatan"
   | "toko"
+  | "pertanian"
+  | "perkebunan"
+  | "kandang"
+  | "industri"
+  | "jasa"
+  | "wisata"
+  | "landmark"
   | "lainnya";
 
 export interface Place {
@@ -45,6 +65,8 @@ export interface Place {
   name: string;
   category: PlaceCategory;
   googleMapsUrl: string;
+  /** Optional: a place with no point simply gets no pin. */
+  location: GeoPoint | null;
 }
 
 export interface StaffMember {
@@ -61,6 +83,8 @@ export interface Umkm {
   photo: SanityImage | null;
   contactUrl: string | null;
   googleMapsUrl: string | null;
+  /** Optional, same as Place — UMKM with a point also appear on /peta. */
+  location: GeoPoint | null;
 }
 
 export interface PostSummary {
