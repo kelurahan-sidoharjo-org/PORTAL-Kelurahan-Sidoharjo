@@ -7,12 +7,11 @@ const expectedNames = [
   "place",
   "staffMember",
   "umkm",
-  "demographicStat",
   "blockContent",
 ];
 
 describe("sanity schema", () => {
-  it("registers exactly the seven content-model types", () => {
+  it("registers exactly the six content-model types", () => {
     expect(schemaTypes.map((t) => t.name).sort()).toEqual(
       [...expectedNames].sort(),
     );

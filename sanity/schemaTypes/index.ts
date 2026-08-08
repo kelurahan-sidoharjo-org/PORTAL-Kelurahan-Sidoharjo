@@ -1,5 +1,4 @@
 import { blockContent } from "./blockContent";
-import { demographicStat } from "./demographicStat";
 import { place } from "./place";
 import { post } from "./post";
 import { siteSettings } from "./siteSettings";
@@ -12,6 +11,5 @@ export const schemaTypes = [
   place,
   staffMember,
   umkm,
-  demographicStat,
   blockContent,
 ];
