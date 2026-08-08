@@ -78,7 +78,7 @@ export default async function ArticlePage({ params }: Params) {
   // flatMap rather than map+filter so `props` narrows to non-null.
   const gallery = (post.images ?? []).flatMap((image) => {
     const props = imageProps(image);
-    return props ? [{ image, props }] : [];
+    return props ? [props] : [];
   });
 
   // Prestasi articles are reached from /prestasi, so send readers back there.
@@ -120,11 +120,11 @@ export default async function ArticlePage({ params }: Params) {
           <section className="mt-12">
             <h2 className="text-lg sm:text-3xl">Dokumentasi Kegiatan</h2>
             <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {gallery.map(({ image, props }, i) => (
+              {gallery.map((props, i) => (
                 <li key={props.src}>
                   <Image
                     {...props}
-                    alt={image.alt ?? `${post.title} — dokumentasi ${i + 1}`}
+                    alt={`${post.title} — dokumentasi ${i + 1}`}
                     sizes="(min-width: 640px) 33vw, 50vw"
                     className="aspect-[4/3] w-full object-cover"
                   />
