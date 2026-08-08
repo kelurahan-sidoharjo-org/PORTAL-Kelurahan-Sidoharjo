@@ -192,6 +192,24 @@ build/revalidation only, so load scales with content changes, not traffic.
     that don't exist. `BeritaSearch` is a client component only to debounce
     typing — the URL stays the source of truth, so results are shareable and
     survive a reload.
+  - **The caps and the sorting in `toMatchPattern` are cost control, not
+    tidiness — don't "simplify" them away.** Each distinct `?q=` is its own
+    Data Cache key, and each new key is two live reads against Sanity's main
+    API (`useCdn: false`). Uncapped, anyone can spray `?q=aaa1`, `?q=aaa2`, …
+    until the Sanity quota is gone and revalidation stops — and the only
+    symptom is that published berita stop appearing, with no error anywhere.
+    So the pattern is built as a *canonical* form: lowercased, de-duplicated,
+    sorted, 60 chars / 6 words max. All four foldings are **result-neutral** —
+    `match` ignores case, word order and repeated words (verified against the
+    production dataset 2026-08-08), and a mid-word truncation still matches as
+    a prefix thanks to the trailing `*`. Nothing a reader can find changes; the
+    same search just stops being paid for twice.
+    - **This bounds the cost per query, not the number of queries.** Random
+      distinct values still miss the cache one-for-one. Closing that needs one
+      param-free query fetching the whole berita index (17 rows ≈ 7 KB in
+      2026-08) filtered and paged in memory — which would replace the GROQ
+      slice above. Deliberately not done; it's the next step if the site is
+      ever actually targeted.
 - **`/panduan` renders `docs/panduan-staf.md`** (read at build via
   `force-static`, so no filesystem access at request time; a missing file fails
   the build loudly). One source of truth — edit the Markdown, the page follows.
