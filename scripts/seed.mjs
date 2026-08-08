@@ -118,12 +118,21 @@ function slugify(text) {
 
 // --- build the documents from the CSVs -------------------------------------
 
+// Both `location` fields below are optional (a place/UMKM with no point just
+// gets no map pin), so they're only attached when the CSV cell has a value —
+// same "only set when filled" pattern as `googleMapsUrl` on umkm.
+function geopoint(r) {
+  if (!r.lat || !r.lng) return {};
+  return { location: { _type: "geopoint", lat: Number(r.lat), lng: Number(r.lng) } };
+}
+
 const places = readCsv("places.csv").map((r, i) => ({
   _id: `seed-place-${i + 1}`,
   _type: "place",
   name: r.name,
   category: r.category,
   googleMapsUrl: r.googleMapsUrl,
+  ...geopoint(r),
 }));
 
 const umkm = readCsv("umkm.csv").map((r, i) => ({
@@ -135,6 +144,7 @@ const umkm = readCsv("umkm.csv").map((r, i) => ({
   // Optional field — only set it when the CSV cell is filled, so the empty
   // rows exercise the "lihat peta" button's hide-when-absent behaviour.
   ...(r.googleMapsUrl ? { googleMapsUrl: r.googleMapsUrl } : {}),
+  ...geopoint(r),
 }));
 
 const staff = readCsv("staff.csv").map((r, i) => ({
@@ -172,7 +182,12 @@ const docs = [...places, ...umkm, ...staff, ...posts];
  * wrong, shifting columns) before anything is written to Sanity.
  */
 function validate() {
-  const CATEGORIES = ["sekolah", "masjid", "pemerintahan", "toko", "lainnya"];
+  // Mirrors PLACE_CATEGORIES in src/lib/places.ts — kept as a literal list
+  // rather than imported, since this script runs standalone with plain node.
+  const CATEGORIES = [
+    "pemerintahan", "ibadah", "sekolah", "kesehatan", "toko", "pertanian",
+    "perkebunan", "kandang", "industri", "jasa", "wisata", "landmark", "lainnya",
+  ];
   const problems = [];
   for (const p of places) {
     if (!CATEGORIES.includes(p.category))

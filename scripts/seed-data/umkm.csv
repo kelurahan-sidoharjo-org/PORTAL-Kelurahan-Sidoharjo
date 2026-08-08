@@ -1,7 +1,11 @@
-businessName,description,contactUrl,googleMapsUrl
-Warung Makan Bu Sri,Masakan rumahan khas Jawa dengan harga terjangkau.,https://wa.me/628123456701,https://www.google.com/maps?q=Warung+Makan+Bu+Sri+Sidoharjo+Wonogiri
-Keripik Singkong Pak Budi,Camilan keripik singkong renyah aneka rasa.,https://wa.me/628123456702,
-Batik Tulis Sekar Arum,Kerajinan batik tulis dengan motif khas Wonogiri.,https://wa.me/628123456703,https://www.google.com/maps?q=Batik+Tulis+Sekar+Arum+Sidoharjo+Wonogiri
-Bengkel Las Karya Jaya,Jasa las dan pembuatan pagar besi serta kanopi.,https://wa.me/628123456704,
-Konveksi Maju Bersama,Produksi seragam sekolah dan kaos sablon satuan.,https://wa.me/628123456705,https://www.google.com/maps?q=Konveksi+Maju+Bersama+Sidoharjo+Wonogiri
-Kopi Bubuk Sidoharjo,Kopi bubuk asli hasil olahan petani lokal.,https://wa.me/628123456706,
+businessName,description,contactUrl,googleMapsUrl,lat,lng
+Warung Makan Bu Sri,Masakan rumahan khas Jawa dengan harga terjangkau.,https://wa.me/628123456701,"https://www.google.com/maps?q=-7.8179,111.0740",-7.8179,111.0740
+Keripik Singkong Pak Budi,Camilan keripik singkong renyah aneka rasa.,https://wa.me/628123456702,,-7.8163,111.0686
+Batik Tulis Sekar Arum,Kerajinan batik tulis dengan motif khas Wonogiri.,https://wa.me/628123456703,"https://www.google.com/maps?q=-7.8147,111.0704",-7.8147,111.0704
+Bengkel Las Karya Jaya,Jasa las dan pembuatan pagar besi serta kanopi.,https://wa.me/628123456704,,,
+Konveksi Maju Bersama,Produksi seragam sekolah dan kaos sablon satuan.,https://wa.me/628123456705,"https://www.google.com/maps?q=-7.8131,111.0758",-7.8131,111.0758
+Kopi Bubuk Sidoharjo,Kopi bubuk asli hasil olahan petani lokal.,https://wa.me/628123456706,,,
+Angkringan Pak Tarno,Nasi kucing dan aneka gorengan setiap malam.,https://wa.me/628123456707,,-7.8195,111.0740
+Tempe Kripik Bu Yati,Tempe kripik gurih produksi rumahan setiap hari.,https://wa.me/628123456708,"https://www.google.com/maps?q=-7.8115,111.0722",-7.8115,111.0722
+Jamu Gendong Bu Painem,Jamu tradisional segar diracik tanpa bahan pengawet.,https://wa.me/628123456709,,-7.8227,111.0650
+Meubel Kayu Jati Sidoharjo,Pembuatan meja kursi dan lemari kayu jati pesanan.,https://wa.me/628123456710,"https://www.google.com/maps?q=-7.8163,111.0758",-7.8163,111.0758
