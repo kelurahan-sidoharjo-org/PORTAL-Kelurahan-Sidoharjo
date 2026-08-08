@@ -57,15 +57,18 @@ Akibat praktisnya: **jangan menyusun anggaran atau berkas dengan acuan
 
 **Biaya dan perpanjangan**
 
-- [ ] Berapa biaya pendaftarannya, kalau ada? `.go.id` sering kali gratis atau
-  bernilai kecil bagi instansi yang sudah terverifikasi — tetapi pastikan dulu,
-  jangan langsung dijadikan dasar rencana.
-- [ ] Berapa masa berlaku dan biaya perpanjangannya?
-- [ ] **Siapa yang menerima pemberitahuan perpanjangan, dan ke alamat mana?**
-  Domain yang telanjur kedaluwarsa membuat situs mati tanpa peringatan kepada
-  siapa pun. Pastikan pemberitahuannya masuk ke email institusi, bukan ke
-  perorangan.
-- [ ] Apakah ini harus melewati mata anggaran tertentu, dan bagaimana jadwalnya?
+Berapa biaya pendaftarannya, kalau ada? `.go.id` sering kali gratis atau
+bernilai kecil bagi instansi yang sudah terverifikasi — tetapi pastikan dulu,
+jangan langsung dijadikan dasar rencana.
+
+Berapa masa berlaku dan biaya perpanjangannya?
+
+**Siapa yang menerima pemberitahuan perpanjangan, dan ke alamat mana?**
+Domain yang telanjur kedaluwarsa membuat situs mati tanpa peringatan kepada
+siapa pun. Pastikan pemberitahuannya masuk ke email institusi, bukan ke
+perorangan.
+
+Apakah ini harus melewati mata anggaran tertentu, dan bagaimana jadwalnya?
 
 **Teknis** — satu-satunya bagian yang menyangkut situsnya sendiri
 
@@ -100,17 +103,17 @@ dipakai.
 
 ## Jawaban — isi begitu diperoleh
 
-| Pertanyaan                              | Jawaban | Tanggal | Sumber jawaban |
-| --------------------------------------- | ------- | ------- | -------------- |
-| Boleh langsung, atau lewat kabupaten?   |         |         |                |
-| Domain sendiri atau subdomain?          |         |         |                |
-| Dokumen yang diperlukan                 |         |         |                |
-| Siapa yang menandatangani               |         |         |                |
-| Biaya pendaftaran                       |         |         |                |
-| Masa berlaku + biaya perpanjangan       |         |         |                |
-| Pemberitahuan perpanjangan dikirim ke   |         |         |                |
-| Bisakah kami mengelola DNS sendiri?     |         |         |                |
-| Perkiraan jangka waktu                  |         |         |                |
+| Pertanyaan                            | Jawaban | Tanggal | Sumber jawaban |
+| ------------------------------------- | ------- | ------- | -------------- |
+| Boleh langsung, atau lewat kabupaten? |         |         |                |
+| Domain sendiri atau subdomain?        |         |         |                |
+| Dokumen yang diperlukan               |         |         |                |
+| Siapa yang menandatangani             |         |         |                |
+| Biaya pendaftaran                     |         |         |                |
+| Masa berlaku + biaya perpanjangan     |         |         |                |
+| Pemberitahuan perpanjangan dikirim ke |         |         |                |
+| Bisakah kami mengelola DNS sendiri?   |         |         |                |
+| Perkiraan jangka waktu                |         |         |                |
 
 **Domain yang dipilih:** ..............................................
 
