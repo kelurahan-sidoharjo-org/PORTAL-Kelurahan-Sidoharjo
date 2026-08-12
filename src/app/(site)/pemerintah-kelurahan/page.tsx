@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { BackButton } from "@/components/layout/BackButton";
+import { HeroWave } from "@/components/layout/HeroWave";
 import { StaffCard } from "@/components/pemerintah/StaffCard";
 import { getSiteSettings, sanityFetch } from "@/lib/sanity/client";
 import { imageFillProps, imageProps } from "@/lib/sanity/image";
@@ -29,10 +30,12 @@ export default async function PemerintahKelurahanPage() {
 
   return (
     <>
+      <HeroWave />
+
       {/* Hero + header bersama-sama mengisi satu layar. svh (bukan vh)
           supaya toolbar browser mobile tidak mendorong bagian bawah ke
           luar tampilan. */}
-      <section className="relative isolate flex min-h-[calc(100svh_-_var(--header-height))] items-center overflow-hidden bg-brand-navy">
+      <section className="hero-wave-clip relative isolate flex min-h-[calc(100svh_-_var(--header-height))] items-center overflow-hidden bg-brand-navy">
         {office && (
           <Image
             {...office}
@@ -40,21 +43,34 @@ export default async function PemerintahKelurahanPage() {
             fill
             priority
             sizes="100vw"
-            className="object-cover"
+            className="hero-zoom object-cover"
           />
         )}
-        {/* Menjaga teks putih tetap terbaca apa pun foto yang diunggah staf. */}
-        <div className="absolute inset-0 bg-brand-navy/50" />
+        {/* Menjaga teks putih tetap terbaca apa pun foto yang diunggah staf.
+            Gelap di kiri lalu memudar ke kanan (mengikuti pulungmerdiko), jadi
+            fotonya ikut kelihatan alih-alih tertutup rata.
+            `to-…/60` di mobile, bukan /40: di layar sempit judulnya melebar
+            sampai hampir tepi kanan, tempat overlay-nya paling tipis. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/90 via-brand-navy/65 to-brand-navy/10 sm:to-brand-navy/40" />
 
-        <div className="relative mx-auto w-full max-w-6xl px-4 py-10 text-white drop-shadow-2xl sm:px-6 sm:py-16">
-          <BackButton className="sm:bg-white/15 sm:backdrop-blur-lg hover:text-white hover:bg-white/20" />
-          <h1 className="mt-6 text-xl tracking-[-0.05em] sm:text-4xl">
-            Kantor Kelurahan {villageName}
+        {/* pb lebih besar dari pt: gelombangnya memakan sudut kanan-bawah
+            hero, jadi isinya digeser sedikit ke atas supaya tetap lega. */}
+        <div className="relative mx-auto w-full max-w-6xl px-4 pt-10 pb-20 text-white drop-shadow-2xl sm:px-6 sm:pt-16 sm:pb-28">
+          <BackButton className="hero-rise sm:bg-white/15 sm:backdrop-blur-lg hover:text-white hover:bg-white/20" />
+          {/* Ukuran dan gradiennya mengikuti hero pulungmerdiko: baris
+              pengantar putih polos, lalu nama tempatnya sebagai teks
+              bergradien. `text-transparent` + `bg-clip-text` -> yang
+              terlihat adalah background gradien, dipotong bentuk hurufnya. */}
+          <h1 className="hero-rise-1 mt-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            Kantor Kelurahan <br />
+            <span className="bg-gradient-to-r from-teal-400 via-sky-400 to-emerald-400 bg-clip-text font-extrabold text-transparent">
+              {villageName}
+            </span>
           </h1>
 
           {/* w-fit supaya panelnya mepet ke baris kontak alih-alih
               meregang selebar hero-nya. */}
-          <div className="mt-4 w-fit space-y-1.5 rounded-lg bg-white/15 px-5 py-2.5 text-xs font-medium backdrop-blur-lg sm:text-base">
+          <div className="hero-rise-2 mt-4 w-fit space-y-1.5 rounded-lg bg-brand-navy/30 px-5 py-2.5 text-xs font-medium backdrop-blur-lg sm:text-base">
             {settings?.contactWhatsapp && (
               <p className="flex items-center gap-2">
                 <Image
@@ -83,7 +99,7 @@ export default async function PemerintahKelurahanPage() {
             )}
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="hero-rise-3 mt-6 flex flex-wrap gap-3">
             {settings?.contactWhatsapp && (
               <a
                 href={`https://wa.me/${settings.contactWhatsapp}`}

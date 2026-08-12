@@ -98,6 +98,70 @@
   }
 }
 
+/* -- Hero: gelombang + animasi masuk ------------------------------------ */
+
+/* Bentuk gelombangnya ada di <HeroWave />, bukan di sini — komponen itu
+   harus ikut dirender di halaman yang sama, kalau tidak tepinya cuma lurus
+   (degradasi yang aman, bukan halaman rusak). */
+.hero-wave-clip {
+  clip-path: url(#hero-wave);
+}
+
+/* Zoom pelan pada foto kantor. Mulai dari 1.06, bukan 1, supaya tepi foto
+   tidak pernah masuk bingkai selama animasinya berjalan. */
+.hero-zoom {
+  animation: hero-zoom 24s ease-out both;
+}
+
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1.16);
+  }
+}
+
+/* Naik-sambil-memudar, bertahap: judul lebih dulu, lalu kontak, lalu tombol.
+   `both` menahan keadaan awal, jadi tidak ada kedipan sebelum animasi mulai. */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-rise {
+  animation: hero-rise 0.7s ease-out both;
+}
+
+.hero-rise-1 {
+  animation: hero-rise 0.7s ease-out 0.1s both;
+}
+
+.hero-rise-2 {
+  animation: hero-rise 0.7s ease-out 0.25s both;
+}
+
+.hero-rise-3 {
+  animation: hero-rise 0.7s ease-out 0.4s both;
+}
+
+/* Gelombangnya bukan gerakan, jadi tetap dipertahankan di sini. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-zoom,
+  .hero-rise,
+  .hero-rise-1,
+  .hero-rise-2,
+  .hero-rise-3 {
+    animation: none;
+  }
+}
+
 /* -- /peta map — adapted from patik-map-website's globals.css ------------ */
 
 .peta-map-wrapper {

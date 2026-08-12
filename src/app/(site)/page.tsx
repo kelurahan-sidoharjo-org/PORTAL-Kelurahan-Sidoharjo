@@ -60,13 +60,11 @@ export default async function Home() {
                   key={post._id}
                   post={post}
                   /*
-                   * Tinggi eksplisit selama masih carousel: pembagian gambar
-                   * 3/5 pada kartu adalah persentase, dan persentase dari
-                   * tinggi yang diturunkan dari konten bersifat sirkular —
-                   * browser menyerah dan tiap gambar jatuh balik ke ukuran
-                   * aslinya, jadi kartu-kartunya jadi tidak rata. Grid di
-                   * lg: mendapat tinggi pasti dari barisnya, jadi h-full
-                   * sudah cukup di situ.
+                   * Cuma lebar yang diatur di sini. Tingginya sekarang jatuh
+                   * sendiri dari kartunya (gambar aspect ratio + jatah baris
+                   * teks yang tetap), jadi tiga kartu selebar sama otomatis
+                   * setinggi sama — tidak perlu lagi h-[22rem] yang dulu
+                   * dipakai untuk memutus perhitungan tinggi yang sirkular.
                    *
                    * Width punya tiga tugas. `w-[72%]` mengatur intipan di
                    * HP; `sm:w-80` membatasinya begitu viewport cukup lebar
@@ -75,7 +73,7 @@ export default async function Home() {
                    * untuk grid — di 1024px satu kolom sekitar 283px, jadi
                    * minimum 320px akan mendorong kartu-kartunya keluar dari selnya sendiri.
                    */
-                  className="h-[22rem] w-[72%] min-w-[20rem] shrink-0 snap-start sm:w-80 lg:h-full lg:w-auto lg:min-w-0"
+                  className="w-[72%] min-w-[20rem] shrink-0 snap-start sm:w-80 lg:w-auto lg:min-w-0"
                 />
               ))}
             </ul>
