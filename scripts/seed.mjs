@@ -18,6 +18,11 @@
  *   node --env-file=.env.local scripts/seed.mjs --commit   # tulis sungguhan
  *   node --env-file=.env.local scripts/seed.mjs --delete   # hapus semua seed
  *
+ * Bisa dijalankan per bagian dengan --only (berlaku untuk ketiga mode di
+ * atas), supaya mengubah satu CSV tidak perlu menulis ulang semuanya:
+ *   node --env-file=.env.local scripts/seed.mjs --commit --only=places
+ *   node --env-file=.env.local scripts/seed.mjs --delete --only=posts,umkm
+ *
  * --commit dan --delete butuh SANITY_WRITE_TOKEN di .env.local.
  */
 
@@ -28,6 +33,36 @@ const mode = process.argv.includes("--delete")
   : process.argv.includes("--commit")
     ? "commit"
     : "dry";
+
+// --- Pilihan bagian (--only) ---------------------------------------------
+
+const GROUP_NAMES = ["places", "umkm", "staff", "posts"];
+
+/** Membaca `--only=a,b` maupun `--only a,b`; null artinya semua bagian. */
+function parseOnly(argv) {
+  const inline = argv.find((a) => a.startsWith("--only="));
+  const at = argv.indexOf("--only");
+  if (!inline && at === -1) return null;
+  const raw = inline ? inline.slice("--only=".length) : argv[at + 1];
+  if (!raw || raw.startsWith("--")) {
+    console.error(`--only butuh nilai, mis. --only=${GROUP_NAMES[0]}`);
+    process.exit(1);
+  }
+  const names = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  const unknown = names.filter((n) => !GROUP_NAMES.includes(n));
+  if (unknown.length) {
+    console.error(
+      `--only tidak mengenal: ${unknown.join(", ")}\n` +
+        `Pilihan: ${GROUP_NAMES.join(", ")}`,
+    );
+    process.exit(1);
+  }
+  // De-duplikasi sambil menjaga urutan tetap seperti GROUP_NAMES, supaya
+  // ringkasan yang dicetak selalu sama urutannya tak peduli urutan ketikan.
+  return GROUP_NAMES.filter((n) => names.includes(n));
+}
+
+const only = parseOnly(process.argv);
 
 // --- Baca CSV -----------------------------------------------------------
 
@@ -166,11 +201,25 @@ const posts = readCsv("posts.csv").map((r) => {
   };
 });
 
-const docs = [...places, ...umkm, ...staff, ...posts];
+// Satu tempat yang menghubungkan nama --only ke dokumennya dan ke _type
+// Sanity-nya (yang dipakai --delete untuk mempersempit sapuannya).
+const GROUPS = {
+  places: { docs: places, type: "place" },
+  umkm: { docs: umkm, type: "umkm" },
+  staff: { docs: staff, type: "staffMember" },
+  posts: { docs: posts, type: "post" },
+};
+
+const selectedNames = only ?? GROUP_NAMES;
+const docs = selectedNames.flatMap((n) => GROUPS[n].docs);
+const selectedTypes = selectedNames.map((n) => GROUPS[n].type);
+const scope = only ? ` (${selectedNames.join(", ")})` : "";
 
 /**
  * Pengecekan murah yang menangkap CSV yang rusak (mis. koma berkutip
  * ter-parse salah, kolom bergeser) sebelum apa pun ditulis ke Sanity.
+ * Jalan atas `docs`, jadi ikut mengecil kalau --only dipakai — CSV yang
+ * rusak di bagian yang tidak dipilih tidak memblokir seed bagian lain.
  */
 function validate() {
   // Mencerminkan PLACE_CATEGORIES di src/lib/places.ts — dijaga sebagai
@@ -180,23 +229,29 @@ function validate() {
     "perkebunan", "kandang", "industri", "jasa", "wisata", "landmark", "lainnya",
   ];
   const problems = [];
-  for (const p of places) {
-    if (!CATEGORIES.includes(p.category))
-      problems.push(`${p._id}: bad category "${p.category}"`);
-    if (!p.name || !p.googleMapsUrl) problems.push(`${p._id}: missing name/map`);
-  }
-  for (const s of staff) {
-    if (!Number.isFinite(s.order))
-      problems.push(`${s._id}: order is not a number ("${s.order}")`);
-    if (!s.name || !s.position) problems.push(`${s._id}: missing name/position`);
-  }
-  for (const u of umkm) {
-    if (!u.businessName || !u.contactUrl)
-      problems.push(`${u._id}: missing name/contact`);
-  }
-  for (const post of posts) {
-    if (!post.title || !post.body.length)
-      problems.push(`${post._id}: missing title/body`);
+  for (const doc of docs) {
+    switch (doc._type) {
+      case "place":
+        if (!CATEGORIES.includes(doc.category))
+          problems.push(`${doc._id}: bad category "${doc.category}"`);
+        if (!doc.name || !doc.googleMapsUrl)
+          problems.push(`${doc._id}: missing name/map`);
+        break;
+      case "staffMember":
+        if (!Number.isFinite(doc.order))
+          problems.push(`${doc._id}: order is not a number ("${doc.order}")`);
+        if (!doc.name || !doc.position)
+          problems.push(`${doc._id}: missing name/position`);
+        break;
+      case "umkm":
+        if (!doc.businessName || !doc.contactUrl)
+          problems.push(`${doc._id}: missing name/contact`);
+        break;
+      case "post":
+        if (!doc.title || !doc.body.length)
+          problems.push(`${doc._id}: missing title/body`);
+        break;
+    }
   }
   if (problems.length) {
     console.error("CSV validation failed:\n  " + problems.join("\n  "));
@@ -238,8 +293,10 @@ async function makeClient() {
 async function main() {
   validate();
 
+  const onlyFlag = only ? ` --only=${selectedNames.join(",")}` : "";
+
   if (mode === "dry") {
-    console.log("DRY RUN — nothing will be written.\n");
+    console.log(`DRY RUN${scope} — nothing will be written.\n`);
     summarize();
     // Satu contoh per tipe, supaya CSV yang salah parse (koma berkutip,
     // body dipisah "|") langsung terlihat di sini sebelum apa pun ditulis.
@@ -252,7 +309,7 @@ async function main() {
     }
     console.log(
       "\nTo write these, run:\n" +
-        "  node --env-file=.env.local scripts/seed.mjs --commit",
+        `  node --env-file=.env.local scripts/seed.mjs --commit${onlyFlag}`,
     );
     return;
   }
@@ -262,23 +319,28 @@ async function main() {
   if (mode === "delete") {
     // Cocokkan id strip baru (`seed-…`) plus id titik lama
     // (`seed.…` dan versi `drafts.seed.…`-nya) supaya seed lama ikut terbersihkan.
+    // Batasnya lewat _type, bukan prefix id, karena id seed lama tidak selalu
+    // memuat nama tipenya — jadi --only tetap tepat sasaran untuk seed lama.
     const ids = await client.fetch(
-      '*[string::startsWith(_id, "seed-") || string::startsWith(_id, "seed.") || string::startsWith(_id, "drafts.seed.")]._id',
+      '*[_type in $types && (string::startsWith(_id, "seed-") ||' +
+        ' string::startsWith(_id, "seed.") ||' +
+        ' string::startsWith(_id, "drafts.seed."))]._id',
+      { types: selectedTypes },
     );
     if (ids.length === 0) {
-      console.log("No seeded documents found.");
+      console.log(`No seeded documents found${scope}.`);
       return;
     }
     const tx = ids.reduce((t, id) => t.delete(id), client.transaction());
     await tx.commit();
-    console.log(`Deleted ${ids.length} seeded documents.`);
+    console.log(`Deleted ${ids.length} seeded documents${scope}.`);
     return;
   }
 
   // commit
   const tx = docs.reduce((t, doc) => t.createOrReplace(doc), client.transaction());
   await tx.commit();
-  console.log(`Wrote ${docs.length} documents.`);
+  console.log(`Wrote ${docs.length} documents${scope}.`);
   summarize();
 }
 

@@ -86,6 +86,15 @@ Dataset Sanity yang baru atau pribadi **tidak punya konten** — daftar berita, 
 ```bash
 node scripts/seed.mjs                                  # dry run — hanya print, tidak menulis apa pun
 node --env-file=.env.local scripts/seed.mjs --commit   # menulis; butuh SANITY_WRITE_TOKEN
+node --env-file=.env.local scripts/seed.mjs --delete   # hapus semua dokumen seed
+```
+
+Tiap bagian bisa dijalankan sendiri dengan `--only=places|umkm|staff|posts` (boleh dipisah koma), berlaku untuk ketiga mode di atas — berguna kalau hanya satu CSV yang diubah:
+
+```bash
+node scripts/seed.mjs --only=places                            # dry run bagian places saja
+node --env-file=.env.local scripts/seed.mjs --commit --only=places
+node --env-file=.env.local scripts/seed.mjs --delete --only=posts,umkm
 ```
 
 `SANITY_WRITE_TOKEN` tidak ada di `.env.local` secara default — buat di sanity.io/manage → API → Tokens dengan izin Editor, dan jangan pernah tambahkan ke Vercel (lihat tabel environment variable di bawah untuk alasannya).

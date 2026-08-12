@@ -1,37 +1,23 @@
 name,category,googleMapsUrl,lat,lng
-Kantor Kelurahan Sidoharjo,pemerintahan,"https://www.google.com/maps?q=-7.8179,111.0704",-7.8179,111.0704
-Balai Kelurahan Sidoharjo,pemerintahan,"https://www.google.com/maps?q=-7.8179,111.0722",-7.8179,111.0722
-Pos Pelayanan Terpadu RW 02,pemerintahan,"https://www.google.com/maps?q=-7.8195,111.0686",-7.8195,111.0686
-Masjid Al-Ikhlas,ibadah,"https://www.google.com/maps?q=-7.8195,111.0668",-7.8195,111.0668
-Masjid Baiturrahman,ibadah,"https://www.google.com/maps?q=-7.8147,111.0758",-7.8147,111.0758
-Masjid Nurul Huda,ibadah,"https://www.google.com/maps?q=-7.8227,111.0632",-7.8227,111.0632
-Mushola Al-Amin,ibadah,"https://www.google.com/maps?q=-7.8115,111.0740",-7.8115,111.0740
-Gereja Kristen Jawa Sidoharjo,ibadah,"https://www.google.com/maps?q=-7.8163,111.0722",-7.8163,111.0722
-SD Negeri 1 Sidoharjo,sekolah,"https://www.google.com/maps?q=-7.8211,111.0686",-7.8211,111.0686
-SD Negeri 2 Sidoharjo,sekolah,"https://www.google.com/maps?q=-7.8131,111.0776",-7.8131,111.0776
-SMP Negeri 1 Sidoharjo,sekolah,"https://www.google.com/maps?q=-7.8163,111.0740",-7.8163,111.0740
-TK Pertiwi Sidoharjo,sekolah,"https://www.google.com/maps?q=-7.8195,111.0722",-7.8195,111.0722
-PAUD Melati,sekolah,"https://www.google.com/maps?q=-7.8243,111.0686",-7.8243,111.0686
-Puskesmas Sidoharjo,kesehatan,"https://www.google.com/maps?q=-7.8179,111.0686",-7.8179,111.0686
-Posyandu Melati RW 03,kesehatan,"https://www.google.com/maps?q=-7.8211,111.0704",-7.8211,111.0704
-Apotek Sehat Sidoharjo,kesehatan,"https://www.google.com/maps?q=-7.8163,111.0704",-7.8163,111.0704
-Praktik Bidan Ny. Sutinah,kesehatan,"https://www.google.com/maps?q=-7.8131,111.0722",-7.8131,111.0722
-Toko Sembako Berkah,toko,"https://www.google.com/maps?q=-7.8179,111.0668",-7.8179,111.0668
-Pasar Sidoharjo,toko,"https://www.google.com/maps?q=-7.8195,111.0704",-7.8195,111.0704
-Toko Bangunan Rejeki,toko,"https://www.google.com/maps?q=-7.8147,111.0722",-7.8147,111.0722
-Sawah Kelompok Tani Sri Rejeki,pertanian,"https://www.google.com/maps?q=-7.8243,111.0614",-7.8243,111.0614
-Lumbung Padi Kelurahan,pertanian,"https://www.google.com/maps?q=-7.8227,111.0614",-7.8227,111.0614
-Kebun Jagung Warga,perkebunan,"https://www.google.com/maps?q=-7.8259,111.0704",-7.8259,111.0704
-Kebun Singkong Dusun Kulon,perkebunan,"https://www.google.com/maps?q=-7.8243,111.0596",-7.8243,111.0596
-Kandang Ayam Pak Warno,kandang,"https://www.google.com/maps?q=-7.8115,111.0794",-7.8115,111.0794
-Kandang Sapi Kelompok Ternak Maju,kandang,"https://www.google.com/maps?q=-7.8099,111.0758",-7.8099,111.0758
-Penggilingan Padi Sumber Makmur,industri,"https://www.google.com/maps?q=-7.8147,111.0794",-7.8147,111.0794
-Industri Tahu Pak Slamet,industri,"https://www.google.com/maps?q=-7.8131,111.0812",-7.8131,111.0812
-Bengkel Motor Jaya,jasa,"https://www.google.com/maps?q=-7.8163,111.0776",-7.8163,111.0776
-Pangkas Rambut Barokah,jasa,"https://www.google.com/maps?q=-7.8147,111.0776",-7.8147,111.0776
-Embung Sidoharjo,wisata,"https://www.google.com/maps?q=-7.8083,111.0722",-7.8083,111.0722
-Taman Desa Sidoharjo,wisata,"https://www.google.com/maps?q=-7.8099,111.0704",-7.8099,111.0704
-Tugu Batas Kelurahan Sidoharjo,landmark,"https://www.google.com/maps?q=-7.8211,111.0758",-7.8211,111.0758
-Gapura Selamat Datang,landmark,"https://www.google.com/maps?q=-7.8195,111.0794",-7.8195,111.0794
-Lapangan Olahraga Sidoharjo,lainnya,"https://www.google.com/maps?q=-7.8211,111.0722",-7.8211,111.0722
-Tempat Pemakaman Umum Sidoharjo,lainnya,"https://www.google.com/maps?q=-7.8227,111.0722",-7.8227,111.0722
+Kecamatan Sidoharjo,pemerintahan,https://maps.app.goo.gl/TGEvCSP9iLdXbANh8?g_st=ac,,
+Kelurahan Sidoharjo,pemerintahan,https://maps.app.goo.gl/DKVxAuADLeNjdnBS8?g_st=ic,-7.8165996,111.0692239
+Polsek Sidoharjo,pemerintahan,https://maps.app.goo.gl/ZiLg7GpAGskixyiR9?g_st=ac,-7.8211030,111.0676822
+Masjid An-Nur Keron Kidul,ibadah,https://maps.app.goo.gl/aNSpfNDyeEmqD8A79?g_st=ac,-7.8183906,111.0723031
+Masjid Keden,ibadah,https://maps.app.goo.gl/nxrJHJukr5mdBuhu6?g_st=ic,,
+Gereja GPdI Siloam,ibadah,https://maps.app.goo.gl/H4WrkDjGJpcDXq4H9?g_st=ac,-7.8237640,111.0692022
+Gereja GBIS Sidoharjo,ibadah,https://maps.app.goo.gl/mMck4vGWuuscPoPe6?g_st=ac,-7.8159917,111.0715829
+SDN 1 Sidoharjo,sekolah,https://maps.app.goo.gl/NhZFAAFDebEzAexU6,-7.8235065,111.0634464
+SDN 3 Sidoharjo,sekolah,https://maps.app.goo.gl/F6rwFyubAT6czFZg7?g_st=ac,-7.8235706,111.0655140
+SDN 4 Sidoharjo,sekolah,https://maps.app.goo.gl/Y7aqZZyGZjkn9ra66,-7.8133130,111.0736048
+SDN 5 Sidoharjo,sekolah,https://maps.app.goo.gl/XnCt5u563RBBm8268,-7.8206031,111.0704023
+SDIT Al Huda Sidoharjo,sekolah,https://maps.app.goo.gl/4PD4zZQuSoojYhrz6?g_st=ac,-7.8149537,111.0743767
+SD Islam Unggulan Al Amanah,sekolah,https://maps.app.goo.gl/PfTcrAZ8kpjYNKfx9?g_st=ac,-7.8200799,111.0652629
+SMPN 1 Sidoharjo,sekolah,https://maps.app.goo.gl/TTWeQaES674T2DJe9,-7.8223760,111.0669711
+SMKS Gajah Mungkur Sidoharjo,sekolah,https://maps.app.goo.gl/xq6DdBwfLimNKTp6A?g_st=ac,-7.8195655,111.0651782
+TK Pembina,sekolah,https://maps.app.goo.gl/4PD4zZQuSoojYhrz6?g_st=ac,,
+TK Sidoharjo 2,sekolah,https://maps.app.goo.gl/CHRW3w5j3RYEBoMx5,-7.8149301,111.0747380
+Puskesmas Sidoharjo,kesehatan,https://maps.app.goo.gl/2SLcTcKbGpj2hgtc6?g_st=ac,-7.8218977,111.0663937
+Pasar Sidoharjo,toko,https://maps.app.goo.gl/Bfhre3boXxQ91x1k6?g_st=ac,-7.8236781,111.0672865
+Lapangan Kiran,lainnya,https://maps.app.goo.gl/mFxDQnHVNBkxA5r8A,-7.8187110,111.0653720
+Lapangan Voli Keron Kidul,lainnya,https://maps.app.goo.gl/hbwrjS4sXbbym2k18?g_st=ac,-7.8190011,111.0737883
+GOR Bulu Tangkis,lainnya,https://maps.app.goo.gl/y95KgnCeP3rdAqqK7?g_st=ic,,
