@@ -166,5 +166,5 @@ Pengembang website (bantuan sebatas kesediaan, bukan kontrak pemeliharaan):
 
 - Kontak Whatsapp : 6285819994291
 
-Urutan yang dianjurkan: coba dulu sendiri → tanya Administrator di kelurahan →
+Urutan yang dianjurkan: coba dulu sendiri → tanya pengelola kabupaten →
 baru hubungi pengembang.
